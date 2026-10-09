@@ -69,6 +69,12 @@ describe('SpeciesPageComponent', () => {
     await noViolations(container);
   });
 
+  it('makes the hero lower without a photo, per SpeciesPageNoPhoto', async () => {
+    const container = await build();
+
+    expect(container.querySelector<HTMLElement>('.heroframe')?.style.height).toBe('220px');
+  });
+
   it('puts the sections in the order of the boards', async () => {
     const container = await build();
 

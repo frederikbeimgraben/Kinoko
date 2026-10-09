@@ -2,7 +2,15 @@ import { TestBed } from '@angular/core/testing';
 import { I18nService } from '../../../core/i18n/i18n.service';
 import { PALETTE, speciesEntry } from '../../../testing/species-fixture';
 import { catalogueNames } from '../catalogue-text';
-import { capShapeOf, measurementOf, partNoteOf, seasonOf, senseSmellOf, swatchOf } from './comparison.rows';
+import {
+  capShapeOf,
+  measurementOf,
+  partNoteOf,
+  seasonOf,
+  senseSmellOf,
+  stemFeatureOf,
+  swatchOf,
+} from './comparison.rows';
 
 const WHITE = { name: 'weiß', hex: '#f2efe6' };
 const BROWN = { name: 'braun', hex: '#7a5230' };
@@ -81,6 +89,36 @@ describe('comparison.rows', () => {
         catalogueNames(i18n(), () => PALETTE),
       ),
     ).toBeNull();
+  });
+
+  it('zeigt den deutschen Geruchssatz nur auf Deutsch', async () => {
+    const worded = speciesEntry({ ...KNIGHT, smellText: 'Nussig, der typische Steinpilzgeruch.' });
+    expect(
+      senseSmellOf(
+        worded,
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toBe('Nussig, der typische Steinpilzgeruch.');
+
+    i18n().setLocale('en');
+    await vi.waitFor(() => {
+      expect(i18n().locale()).toBe('en');
+    });
+    expect(
+      senseSmellOf(
+        worded,
+        catalogueNames(i18n(), () => PALETTE),
+      ),
+    ).toBeNull();
+    i18n().setLocale('de');
+  });
+
+  it('sagt ja oder nein zu einem Stielmerkmal, ohne Stieldaten nichts', () => {
+    const ringed = speciesEntry({ ...KNIGHT, stemFeatures: [{ feature: 'ring', phase: 'old' }] });
+
+    expect(stemFeatureOf(ringed, ['ring'], i18n())).toBe('ja');
+    expect(stemFeatureOf(ringed, ['volva'], i18n())).toBe('nein');
+    expect(stemFeatureOf(KNIGHT, ['ring'], i18n())).toBeNull();
   });
 
   it('schreibt die Saison mit kurzen Monaten', () => {

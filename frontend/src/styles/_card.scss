@@ -17,12 +17,14 @@
   }
 }
 
+// The same label as `app-section`: kit `.sec > .lbl`.
 @mixin section-title {
   margin: 0 0 10px;
-  font-size: var(--fs-caption);
+  padding-left: 4px;
+  font-size: var(--fs-xs);
   line-height: normal;
   font-weight: var(--fw-semibold);
-  color: var(--color-text-muted);
+  color: var(--label);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
 }

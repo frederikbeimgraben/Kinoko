@@ -7,6 +7,8 @@ import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SafetyNoticeComponent } from '../../../ui/safety-notice/safety-notice.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import type { SpeciesEntry } from '../../../core/api/models';
+import { DEFAULT_LOCALE } from '../../../core/i18n/translations';
+import { GermanHintComponent } from './german-hint.component';
 import { EDIBILITY_TEXT, EDIBILITY_TONE, MUTED_TONE, PROTECTION_TEXT } from '../labels';
 
 /** A rating badge: text and colours. */
@@ -21,6 +23,7 @@ export interface Level {
   selector: 'app-species-features',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    GermanHintComponent,
     LevelPillComponent,
     ListRowComponent,
     RowGroupComponent,
@@ -35,6 +38,8 @@ export class SpeciesFeaturesComponent {
   private readonly i18n = inject(I18nService);
 
   readonly species = input.required<SpeciesEntry>();
+  /** The note on edibility is a German catalogue text. */
+  protected readonly catalogueLang = DEFAULT_LOCALE;
 
   protected readonly edibility = computed<Level>(() => {
     const held = this.species();

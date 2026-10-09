@@ -3,7 +3,12 @@ import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { noViolations } from '../../testing/axe';
-import { SpeciesRowComponent, type SpeciesRowSpecies } from './species-row.component';
+import {
+  SpeciesRowComponent,
+  speciesHasText,
+  speciesSubline,
+  type SpeciesRowSpecies,
+} from './species-row.component';
 
 /** The computed styles of an element that must be present. */
 function styleOf(element: Element | null): CSSStyleDeclaration {
@@ -43,6 +48,19 @@ describe('SpeciesRowComponent', () => {
     expect(screen.getByText('essbar')).toBeInTheDocument();
     expect(container.querySelector('app-private-image')).not.toBeNull();
     await noViolations(container);
+  });
+
+  it('zeigt unter einem lateinischen Titel den deutschen Namen, aufrecht und mit Sprache', async () => {
+    const latin = { ...STEINPILZ, name: 'Boletus edulis', alias: 'Steinpilz' };
+    const { container } = await render(SpeciesRowComponent, { inputs: { species: latin } });
+
+    const line = container.querySelector('.row__latin--alias');
+    expect(line?.textContent).toBe('Steinpilz');
+    expect(line?.getAttribute('lang')).toBe('de');
+    expect(screen.getAllByText('Boletus edulis')).toHaveLength(1);
+    expect(speciesSubline(latin)).toBe('Steinpilz');
+    expect(speciesSubline(STEINPILZ)).toBe('Boletus edulis');
+    expect(speciesHasText(latin, 'steinp')).toBe(true);
   });
 
   it('zeigt ohne Titelbild das Ersatzsymbol, nicht die Bildspalte leer', async () => {

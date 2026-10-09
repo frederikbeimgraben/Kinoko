@@ -1,4 +1,6 @@
+import { TestBed } from '@angular/core/testing';
 import { render, screen } from '@testing-library/angular';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { noViolations } from '../../../testing/axe';
 import { speciesEntry } from '../../../testing/species-fixture';
 import { SpeciesTraitsComponent } from './species-traits.component';
@@ -47,5 +49,43 @@ describe('SpeciesTraitsComponent', () => {
     });
 
     expect(container.querySelector('app-section')).toBeNull();
+  });
+
+  it('zeigt die Stielmerkmale nach dem Stiel, die Merkmale gegen Knollenblätterpilze zuerst', async () => {
+    const { container } = await render(SpeciesTraitsComponent, {
+      inputs: {
+        species: speciesEntry({
+          ...STONE,
+          stemFeatures: [
+            { feature: 'hollow', phase: 'old' },
+            { feature: 'ring', phase: 'young' },
+            { feature: 'ring', phase: 'old' },
+          ],
+        }),
+      },
+    });
+
+    const rows = [...container.querySelectorAll('app-list-row.trait')];
+    expect(rows[3]?.querySelector('.row__title')?.textContent).toBe('Stielmerkmale');
+    expect(rows[3]?.querySelector('.row__sub')?.textContent).toBe('Ring, hohl (alt)');
+    expect(rows[2]?.querySelector('.row__sub')?.getAttribute('lang')).toBe('de');
+    expect(rows[3]?.querySelector('.row__sub')?.getAttribute('lang')).toBeNull();
+    expect(screen.queryByText('Beschreibungen nur auf Deutsch')).toBeNull();
+  });
+
+  it('sagt auf Englisch, dass die Sätze nur auf Deutsch vorliegen', async () => {
+    const { fixture } = await render(SpeciesTraitsComponent, {
+      inputs: { species: speciesEntry({ ...STONE, stemFeatures: [{ feature: 'netted', phase: 'old' }] }) },
+    });
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+    await vi.waitFor(() => {
+      expect(i18n.locale()).toBe('en');
+    });
+    fixture.detectChanges();
+
+    expect(screen.getByText('Descriptions only in German')).toBeInTheDocument();
+    expect(screen.getByText('Net (old)')).toBeInTheDocument();
+    i18n.setLocale('de');
   });
 });

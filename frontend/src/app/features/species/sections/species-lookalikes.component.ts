@@ -7,7 +7,9 @@ import { RowGroupComponent } from '../../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../../ui/section/section.component';
 import { RippleDirective } from '../../../ui/ripple/ripple.directive';
 import { photoPath, type Lookalike } from '../../../core/api/models';
+import { DEFAULT_LOCALE } from '../../../core/i18n/translations';
 import { SpeciesStore } from '../species.store';
+import { GermanHintComponent } from './german-hint.component';
 
 const FALLBACK_COLOUR = '#7a5230';
 
@@ -25,6 +27,7 @@ interface LookalikeRow {
   selector: 'app-species-lookalikes',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    GermanHintComponent,
     ListRowComponent,
     IconButtonComponent,
     PrivateImageComponent,
@@ -46,6 +49,9 @@ export class SpeciesLookalikesComponent {
   readonly compared = output<string>();
   readonly opened = output<string>();
 
+  /** The notes are German catalogue texts. */
+  protected readonly catalogueLang = DEFAULT_LOCALE;
+
   protected readonly rows = computed<LookalikeRow[]>(() =>
     this.lookalikes().map((one) => {
       const lead = this.catalogue.entryOf(one.slug)?.leadPhotoId ?? null;
@@ -58,4 +64,6 @@ export class SpeciesLookalikesComponent {
       };
     }),
   );
+
+  protected readonly noted = computed(() => this.rows().some((row) => row.note !== ''));
 }

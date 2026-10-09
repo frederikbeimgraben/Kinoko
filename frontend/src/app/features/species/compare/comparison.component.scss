@@ -73,7 +73,8 @@
   font-weight: 600;
 }
 
-.cmph em {
+.cmph em,
+.cmph__alias {
   font-size: 13px;
   color: var(--text-var);
 }

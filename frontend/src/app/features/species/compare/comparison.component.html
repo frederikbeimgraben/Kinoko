@@ -27,6 +27,8 @@
               <b>{{ head.name }}</b>
               @if (head.latin !== head.name) {
                 <em>{{ head.latin }}</em>
+              } @else if (head.alias) {
+                <span class="cmph__alias" [attr.lang]="catalogueLang">{{ head.alias }}</span>
               }
             </button>
           }

@@ -1,6 +1,7 @@
 import type { AccountExport } from '../../core/api/models';
 import { exportFile, partsFor, selected, speciesNames, toCsv } from './export-files';
 import { toGpx } from './export-gpx';
+import type { LocalSpecies } from '../species/species-names';
 
 const DATA = {
   me: { id: 'me', sub: 'sub', email: 'frederik@example.org', name: 'Frederik' },
@@ -66,7 +67,7 @@ const DATA = {
 
 const STEINPILZ = { name: 'Steinpilz', scientificName: 'Boletus edulis' };
 
-const species = speciesNames((id) => (id === 'steinpilz' ? STEINPILZ : null));
+const species = speciesNames((id) => (id === 'steinpilz' ? (STEINPILZ as LocalSpecies) : null));
 
 describe('export files', () => {
   it('keeps only the selected parts', () => {
@@ -121,9 +122,40 @@ describe('export files', () => {
   });
 
   it('gives the shown name and the scientific name, without a repeat', () => {
-    expect(species('steinpilz')).toEqual({ name: 'Steinpilz', scientific: 'Boletus edulis' });
+    expect(species('steinpilz')).toEqual({
+      name: 'Steinpilz',
+      scientific: 'Boletus edulis',
+      common: 'Steinpilz',
+    });
     expect(species(null)).toBeNull();
     expect(toGpx(DATA, species)).toContain('<name>Steinpilz</name>');
+  });
+
+  it('gives the German common name in English, where the shown name is the scientific name', () => {
+    const english = speciesNames(
+      () =>
+        ({
+          ...STEINPILZ,
+          name: 'Boletus edulis',
+          alias: 'Steinpilz',
+        }) as LocalSpecies,
+    );
+
+    expect(english('steinpilz')).toEqual({
+      name: 'Boletus edulis',
+      scientific: 'Boletus edulis',
+      common: 'Steinpilz',
+    });
+    expect(toCsv(DATA, english)).toContain('find,find-1,Steinpilz,Boletus edulis,');
+    expect(toGpx(DATA, english)).toContain('<name>Boletus edulis</name>');
+  });
+
+  it('leaves the common name empty where the catalogue has none', () => {
+    const latinOnly = speciesNames(
+      () => ({ name: 'Boletus edulis', scientificName: 'Boletus edulis' }) as LocalSpecies,
+    );
+
+    expect(latinOnly('steinpilz')?.common).toBe('');
   });
 
   it('names the file after the day and the format', () => {

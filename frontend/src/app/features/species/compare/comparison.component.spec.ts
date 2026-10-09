@@ -12,6 +12,7 @@ import { ANY_ROUTE } from '../../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../../testing/species-fixture';
 import { ComparisonComponent } from './comparison.component';
 import { ComparisonStore } from './comparison.store';
+import { ToastService } from '../../../ui/toast/toast.service';
 
 const WHITE = { name: 'weiß', hex: '#f0ece0' };
 const PINK = { name: 'rosa', hex: '#e8c8cf' };
@@ -29,7 +30,7 @@ const STONE = speciesEntry({
     { part: 'tubes', mode: 'distinct', colours: [WHITE] },
   ],
   hymeniumType: 'tubes',
-  partNotes: [{ part: 'stem', description: 'weiß, fein', comment: '' }],
+  stemFeatures: [{ feature: 'netted', phase: 'old' }],
 });
 
 const GALL = speciesEntry({
@@ -61,6 +62,19 @@ async function build(slugs: readonly string[], extra: Provider[] = []): Promise<
 }
 
 describe('ComparisonComponent', () => {
+  it('names only the shown species in the address and tells about an unknown one', async () => {
+    const show = vi.fn();
+    await build(
+      ['steinpilz', 'nope-nope', 'gallenroehrling'],
+      [{ provide: ToastService, useValue: { show } }],
+    );
+
+    await vi.waitFor(() => {
+      expect(decodeURIComponent(TestBed.inject(Router).url)).toContain('arten=steinpilz,gallenroehrling');
+    });
+    expect(show).toHaveBeenCalledWith('Eine Art aus dem Link ist nicht bekannt.');
+  });
+
   it('names the species as the heads of the columns', async () => {
     const container = await build(['steinpilz', 'gallenroehrling']);
 
@@ -76,12 +90,13 @@ describe('ComparisonComponent', () => {
     expect(screen.getByText('ungenießbar')).toBeInTheDocument();
   });
 
-  it('shows the cap width and the note of the stem from the catalogue', async () => {
+  it('shows the cap width and the net of the stem from the catalogue', async () => {
     const container = await build(['steinpilz', 'gallenroehrling']);
 
     expect(screen.getByText('Breite')).toBeInTheDocument();
     expect(container.querySelector('.cmpr .v')?.textContent).toContain('20');
-    expect(screen.getByText('weiß, fein')).toBeInTheDocument();
+    expect(screen.getByText('Netz')).toBeInTheDocument();
+    expect(screen.getByText('ja')).toBeInTheDocument();
   });
 
   it('names the kind of hymenium', async () => {

@@ -13,7 +13,7 @@
       >{{ title() }}</span
     >
     @if (subline()) {
-      <span class="row__sub">{{ subline() }}</span>
+      <span class="row__sub" [attr.lang]="sublineLang()">{{ subline() }}</span>
     }
   </span>
   @if (value()) {

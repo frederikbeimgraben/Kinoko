@@ -7,6 +7,7 @@ import {
   output,
   viewChild,
 } from '@angular/core';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { shareOnNextRoute } from '../../core/navigation/shared-element';
 import { RippleDirective } from '../ripple/ripple.directive';
 import { LevelPillComponent, type BadgeKind } from '../level-pill/level-pill.component';
@@ -17,6 +18,8 @@ import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 export interface SpeciesRowSpecies {
   readonly name: string;
   readonly latin: string;
+  /** The German catalogue name under a Latin title, per `features/species/species-names.ts`. */
+  readonly alias?: string;
   readonly levelText: string;
   readonly levelColour: string;
   readonly levelBackground?: string;
@@ -26,6 +29,19 @@ export interface SpeciesRowSpecies {
   readonly colour?: string;
   /** The path to the lead photo. Without a photo the fallback icon shows. */
   readonly image?: string | null;
+}
+
+/** The second line under the name: the Latin name, or the German name where the title is the Latin name. */
+export function speciesSubline(species: SpeciesRowSpecies): string {
+  return species.latin !== species.name ? species.latin : (species.alias ?? '');
+}
+
+/** True when the name, the Latin name or the German name has the search text. */
+export function speciesHasText(species: SpeciesRowSpecies, term: string): boolean {
+  const needle = term.trim().toLocaleLowerCase();
+  return [species.name, species.latin, species.alias ?? ''].some((one) =>
+    one.toLocaleLowerCase().includes(needle),
+  );
 }
 
 /** The species row, 72 px high: thumb, names and the edibility badge, per `SpeciesRow.dc.html`. */
@@ -50,6 +66,9 @@ export class SpeciesRowComponent {
   readonly shareKey = input<string>();
 
   readonly chosen = output();
+
+  /** The German catalogue name keeps its language for a screen reader. */
+  protected readonly aliasLang = DEFAULT_LOCALE;
 
   /** Puts the focus on the row. The list moves with the arrow keys this way. */
   constructor() {

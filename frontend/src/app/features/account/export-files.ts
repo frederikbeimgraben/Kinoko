@@ -1,4 +1,5 @@
-import type { AccountExport, SpeciesEntry } from '../../core/api/models';
+import type { AccountExport } from '../../core/api/models';
+import type { LocalSpecies } from '../species/species-names';
 import { isoDatum } from '../entries/formats';
 import { toGpx } from './export-gpx';
 
@@ -20,26 +21,28 @@ export interface ExportFile {
   readonly content: string;
 }
 
-/** The names of a species in the export: the common name and the scientific name. */
+/** The names of a species in the export: the name that the app shows, the scientific name and the
+ * common name. The catalogue has German common names only. */
 export interface SpeciesLabel {
   readonly name: string;
   readonly scientific: string;
+  readonly common: string;
 }
 
 /** Gives the names of the species of an id, or `null` for no or an unknown species. */
 export type SpeciesName = (id: string | null | undefined) => SpeciesLabel | null;
 
-/** The species names of the export. The common name is the name that the app shows in each language,
- * so the two columns do not repeat the scientific name. */
-export function speciesNames(
-  entry: (id: string) => Pick<SpeciesEntry, 'name' | 'scientificName'> | null,
-): SpeciesName {
+/** The species names of the export, per the name rule of `species-names.ts`. In English the shown name is
+ * the scientific name, so the common column takes the German name and does not repeat the scientific name. */
+export function speciesNames(entry: (id: string) => LocalSpecies | null): SpeciesName {
   return (id) => {
     const known = id ? entry(id) : null;
     if (known === null) return null;
+    const german = known.alias ?? known.name;
     return {
       name: known.name,
       scientific: known.scientificName,
+      common: german === known.scientificName ? '' : german,
     };
   };
 }
@@ -100,7 +103,7 @@ function hectares(area: number | null | undefined): number | null {
 
 function speciesColumns(species: SpeciesName, id: string | null | undefined): CsvLine {
   const label = species(id);
-  return { name: label?.name, scientific_name: label?.scientific };
+  return { name: label?.common, scientific_name: label?.scientific };
 }
 
 /** One CSV file for all parts. The column `kind` tells the part of a row. */

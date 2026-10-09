@@ -10,7 +10,7 @@ import { HistoryService } from '../../core/navigation/history.service';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesSummary, taxonPage, taxonStep } from '../../testing/species-fixture';
-import { TaxonomyComponent, rankRows } from './taxonomy.component';
+import { TaxonomyComponent, rankRows, speciesRanks } from './taxonomy.component';
 
 const NOT_FOUND = 404;
 
@@ -64,6 +64,29 @@ describe('rankRows', () => {
   });
 });
 
+describe('speciesRanks', () => {
+  it('shows family, genus and the species, as the board Taxonomy', () => {
+    const genus = taxonPage({
+      rank: 'genus',
+      slug: 'boletus',
+      name: 'Boletus',
+      path: [taxonStep('order', 'boletales', 'Boletales'), taxonStep('family', 'boletaceae', 'Boletaceae')],
+    });
+    const rows = speciesRanks(
+      rankRows(genus, (rank) => rank),
+      'Boletus edulis',
+      'Art',
+    );
+
+    expect(rows.map((row) => `${row.rank} ${row.name}`)).toEqual([
+      'family Boletaceae',
+      'genus Boletus',
+      'Art Boletus edulis',
+    ]);
+    expect(rows.map((row) => row.current)).toEqual([false, true, true]);
+  });
+});
+
 describe('TaxonomyComponent', () => {
   it('shows the ranks from the top as rows', async () => {
     const { container } = await build('family', 'boletaceae');
@@ -86,7 +109,7 @@ describe('TaxonomyComponent', () => {
   it('shows the species of this step', async () => {
     await build('family', 'boletaceae');
 
-    expect(screen.getByText('Arten dieser Familie')).toBeInTheDocument();
+    expect(screen.getByText('Arten der Familie')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('Boletus edulis')).toBeInTheDocument();
   });

@@ -6,13 +6,14 @@ import { SpeciesApi } from '../../core/api/species.api';
 import type { SpeciesBundle, SpeciesEntry, StandardColour } from '../../core/api/models';
 import type { components } from '../../core/api/contract';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { OfflineStore } from '../../core/offline/offline-store';
 import { factsOf, type Counts, type Facts } from './facets';
-import { localSpecies } from './species-names';
+import { localSpecies, type LocalSpecies } from './species-names';
 
 /** A species with the filter axes calculated from it. */
 export interface CatalogueEntry {
-  readonly species: SpeciesEntry;
+  readonly species: LocalSpecies;
   readonly facts: Facts;
 }
 
@@ -58,9 +59,14 @@ export const SpeciesStore = signalStore(
   withState<SpeciesStoreState>(INITIAL),
   withProps(() => ({ _api: inject(SpeciesApi), _offline: inject(OfflineStore), _i18n: inject(I18nService) })),
   withComputed(({ bundle, _i18n }) => {
-    const species = computed<readonly SpeciesEntry[]>(() =>
-      (bundle()?.items ?? []).map((one) => localSpecies(one, _i18n.locale())),
-    );
+    // The service gives the German order. Where the Latin name is the shown name, the pickers sort by it.
+    const species = computed<readonly LocalSpecies[]>(() => {
+      const locale = _i18n.locale();
+      const local = (bundle()?.items ?? []).map((one) => localSpecies(one, locale));
+      return locale === DEFAULT_LOCALE
+        ? local
+        : local.sort((one, other) => one.name.localeCompare(other.name, locale, { numeric: true }));
+    });
     const palette = computed<readonly StandardColour[]>(() => bundle()?.standardColours ?? []);
     const entries = computed<readonly CatalogueEntry[]>(() =>
       species().map((one) => ({ species: one, facts: factsOf(one, palette()) })),
@@ -123,11 +129,11 @@ export const SpeciesStore = signalStore(
         void loadBundle();
       },
 
-      entryOf(slug: string): SpeciesEntry | null {
+      entryOf(slug: string): LocalSpecies | null {
         return store._bySlug().get(slug) ?? null;
       },
 
-      entryById(id: string): SpeciesEntry | null {
+      entryById(id: string): LocalSpecies | null {
         return store._byId().get(id) ?? null;
       },
 

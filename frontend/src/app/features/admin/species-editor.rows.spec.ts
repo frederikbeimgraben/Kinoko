@@ -224,4 +224,24 @@ describe('lookalikeRows', () => {
       { key: 'b', title: 'Maronenröhrling', value: '' },
     ]);
   });
+
+  it('nennt auf Englisch den lateinischen Namen, wie die ganze App', () => {
+    const rows = lookalikeRows(
+      entry({
+        lookalikes: [
+          {
+            slug: 'a',
+            name: 'Gallenröhrling',
+            scientificName: 'Tylopilus felleus',
+            edibility: 'inedible',
+            capColours: [],
+            difference: null,
+          },
+        ],
+      }),
+      'en',
+    );
+
+    expect(rows[0]?.title).toBe('Tylopilus felleus');
+  });
 });
