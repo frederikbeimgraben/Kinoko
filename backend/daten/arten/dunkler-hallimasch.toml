@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "kiefer"]
 speisewertHinweis = "123pilzsuche führt ihn als giftig und erst nach besonderer Vorbehandlung essbar. Roh macht er ein Taubheitsgefühl im Hals. Nur die Hüte, lange kochen, das Kochwasser weggießen. Auch dann kommen Magen-Darm-Beschwerden vor."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer Lamellenpilz mit rotbraunem Hut mit abwischbaren braunen Schüppchen, weißlichen, später rostbraunen Lamellen und zähem, längsfaserigem Stiel mit dickem Ring und weißen, wolligen Schüppchen darunter; meist wächst er büschelig. Er wächst von Juni bis November an Nadelholz in Wäldern, Gärten und Parks, als Parasit an kranken Bäumen oder an totem Holz, und ist sehr häufig. Vom Honiggelben Hallimasch unterscheiden ihn vor allem der rotbraune Hut und das Wachstum an Nadelholz, denn der Honiggelbe Hallimasch hat einen gelblichen bis zitronengelben Hut und wächst an Laubholz."
+beschreibungEn = "A medium-sized gilled mushroom with a red-brown cap with brown scales that rub off, whitish gills that turn rust-brown, and a tough, fibrous stem with a thick ring and white, woolly scales below it; it mostly grows in clusters. The dark honey fungus grows from June to November on coniferous wood in woods, gardens and parks, as a parasite on weak trees or on dead wood, and is very common. The key difference from the honey fungus is the red-brown cap and the growth on conifers, because the honey fungus has a yellowish to lemon-yellow cap and grows on broadleaf wood."
+entwurf = true
 weitereNamen = ["Dunkler Hallimasch", "Nadelholzhallimasch"]
 synonyme = ["Armillaria mellea var. obscura", "Armillariella solidipes", "Armillariella polymyces sensu", "Armillaria obscura sensu", "Armillaria polymyces sensu"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

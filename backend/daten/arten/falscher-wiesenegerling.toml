@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = []
 speisewertHinweis = "Er riecht unangenehm nach Karbol, Tinte oder Urin, nicht pilzig wie die Wiesenchampignons. Die Stielbasis gilbt auf Druck oder im Schnitt, manchmal nur schwach und später rötend. Riecht ein Champignon nicht nach Champignon, bleibt er stehen."
 gefaehrdung = "extremSelten"
+beschreibung = "Mittelgroßer Champignon mit weißem, alt graubraunem Hut, der beim Reiben gilbt, rosa, später braunschwarzen, freien Lamellen und weißem, glattem Stiel mit hängendem Ring mit doppeltem Rand; die Stielbasis gilbt im Schnitt. Er wächst von März bis August auf Wiesen und in Parkanlagen, seltener im Wald, auf sauren, gern sandigen Böden und ist in Deutschland extrem selten. Vom Wiesenchampignon unterscheidet ihn vor allem der unangenehme Geruch nach Tinte, Karbol oder Urin, denn der Wiesenchampignon riecht angenehm pilzig und gilbt nicht. Der Falsche Wiesenegerling ist giftig."
+beschreibungEn = "A medium-sized mushroom with a white cap that turns grey-brown with age and yellow when rubbed, free gills that are pink first and brownish-black later, and a white, smooth stem with a hanging ring with a double edge; the stem base turns yellow when cut. Agaricus pseudopratensis grows from March to August in meadows and parks, less often in woods, on acid, often sandy soil, and is extremely rare in Germany. The key difference from the field mushroom is the unpleasant smell of ink, carbolic or urine, because the field mushroom smells pleasantly of mushrooms and does not turn yellow. Agaricus pseudopratensis is poisonous."
+entwurf = true
 weitereNamen = ["Falscher Wiesen-Egerling", "Schmalberingter Karbol-Egerling", "Rötender Karbolegerling"]
 synonyme = ["Agaricus xanthoderma var. pseudopratensis"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

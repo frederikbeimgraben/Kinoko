@@ -7,6 +7,9 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Mittelgroßer Lamellenpilz mit ledergelbem, blass braungrauem bis orangebraunem Hut mit wellig eingerolltem Rand, weißlichen, breit angewachsenen Lamellen und weißlichem, längsfaserigem Stiel; meist wachsen viele Fruchtkörper büschelig aus einem gemeinsamen Strunk. Er wächst von August bis November im Laubwald, an Wegen und Wegrändern und in Parks. Vom Weißstieligen Rötling unterscheiden ihn vor allem die weißlich bleibenden Lamellen und das büschelige Wachstum, denn beim Rötling laufen die Lamellen rosa an, das Sporenpulver ist rosa und er wächst nicht büschelig."
+beschreibungEn = "A medium-sized gilled mushroom with a leather-yellow, pale grey-brown to orange-brown cap with a wavy, inrolled margin, whitish, broadly attached gills and a whitish, fibrous stem; mostly many fruit bodies grow in a cluster from a common base. The clustered domecap grows from August to November in broadleaf woods, on and beside paths and in parks. The key difference from Entoloma lividoalbum is the gills, which stay whitish, and the growth in clusters, because the gills of Entoloma lividoalbum turn pink, its spore print is pink and it does not grow in clusters."
+entwurf = true
 weitereNamen = ["Büscheliger Rasling", "Büschelrasling", "Geselliger Rasling", "Gepanzerter Rasling", "Knorpeliger Knäuelrasling", "Frostrasling", "Geselliger Ritterling", "Buchele"]
 synonyme = ["Lyophyllum aggregatum"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

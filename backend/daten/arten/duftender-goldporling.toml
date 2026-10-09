@@ -9,6 +9,9 @@ baeume = ["fichte", "kiefer"]
 speisewertHinweis = "Er wächst flach auf dem Holz und besteht fast nur aus Röhren. Als Speisepilz kommt er nicht infrage. In Deutschland extrem selten, deshalb stehen lassen."
 haeufigkeit = "selten"
 gefaehrdung = "extremSelten"
+beschreibung = "Flach dem Holz aufliegender, ungestielter Porling, der fast nur aus orangen bis leuchtend gelben Röhren zu bestehen scheint, mit oft ausgefranstem Rand und orangerotem Myzel. Er wächst das ganze Jahr an totem, verrottetem Nadelholz, gern von Fichte und Kiefer, und ist in Deutschland extrem selten. Vom Leuchtenden Weichporling unterscheidet ihn vor allem der Geruch nach Anis, Aprikosenkompott oder Vanille, denn der Leuchtende Weichporling ist blasser gelborange und riecht nicht süßlich nach Anis."
+beschreibungEn = "A stemless polypore that lies flat on the wood and seems to consist almost only of orange to bright yellow tubes, with an often frayed margin and orange-red mycelium. It grows all year on dead, rotting coniferous wood, often spruce and pine, and is extremely rare in Germany. The key difference from Pycnoporellus fulgens is the smell of aniseed, stewed apricots or vanilla, because Pycnoporellus fulgens is paler yellow-orange and has no sweet aniseed smell."
+entwurf = true
 fruchtschicht = { art = "poren" }
 hutrand = { von = ["fransig"] }
 

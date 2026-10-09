@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst", "winter"]
 baeume = []
 karte = "hygrophoropsis_aurantiaca"
 speisewertHinweis = "Erst in größeren Mengen magen-darm-giftig, einzelne Fruchtkörper gelten als harmlos. Empfindliche Personen lassen ihn stehen. Er schmeckt mild, echte Pfifferlinge schmecken pfefferig scharf; sein Hut fühlt sich zwischen zwei Fingern weich und wässrig an."
+beschreibung = "Kleiner bis mittelgroßer Lamellenpilz mit leuchtend orangem, feinfilzigem Hut mit lange eingerolltem Rand, dicht stehenden, vielfach gegabelten, gelben bis orangegelben, herablaufenden Lamellen und biegsamem, meist hohlem Stiel. Er wächst von Juni bis Februar im Nadelwald auf Nadelstreu, seltener im Laubwald an Strünken oder vergrabenem Holz. Vom Pfifferling unterscheiden ihn vor allem die echten, dicht stehenden Lamellen, die sich leicht vom Fleisch lösen, denn der Pfifferling hat niedrige Leisten, die fest mit dem Fleisch verwachsen sind. Der Falsche Pfifferling ist giftig."
+beschreibungEn = "A small to medium-sized gilled mushroom with a bright orange, finely felty cap with a long inrolled margin, crowded, often forked, yellow to orange-yellow, decurrent gills and a flexible, mostly hollow stem. The false chanterelle grows from June to February in coniferous woods on needle litter, less often in broadleaf woods on stumps or buried wood. The key difference from the chanterelle is the true, crowded gills, which come off the flesh easily, because the chanterelle has low ridges that are firmly joined to the flesh. The false chanterelle is poisonous."
+entwurf = true
 weitereNamen = ["Orangegelber Gabelblättling", "Falscher Eierschwamm"]
 synonyme = ["Hygrophoropsis aurantiaca var. nigripes", "Hygrophoropsis aurantiaca var. pallida", "Cantharellus aurantiacus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }

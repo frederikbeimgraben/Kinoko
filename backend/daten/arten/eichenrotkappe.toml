@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "hasel"]
 speisewertHinweis = "Raufußröhrlinge sind besonders geschützt und die Art ist selten. Nur wenig für den Eigenbedarf nehmen. Roh sind Rotkappen unverträglich, deshalb durchgaren."
 haeufigkeit = "selten"
+beschreibung = "Kräftiger Röhrling mit rotbraunem, ziegelfarbenem bis rotem, feinfilzigem Hut, weißlichen bis grauweißen, später bräunlichen Röhren und weißem Stiel mit rötlichen bis rotgrauen Schüppchen. Die Eichenrotkappe wächst von Juni bis November im Laubwald, überwiegend bei Eiche, selten bei Buche oder Hasel, und ist selten. Von der Birken-Rotkappe unterscheiden sie vor allem die rötlichen Stielschuppen, denn die Birken-Rotkappe hat schwärzliche Schuppen und wächst bei Birke."
+beschreibungEn = "A stout bolete with a red-brown, brick-coloured to red, finely felty cap, whitish to grey-white tubes that later turn brownish, and a white stem with reddish to red-grey scales. Leccinum quercinum grows from June to November in broadleaf woods, mainly with oak, rarely with beech or hazel, and is rare. The key difference from the orange birch bolete is the reddish stem scales, because the orange birch bolete has blackish scales and grows with birch."
+entwurf = true
 weitereNamen = ["Eichenraufuss", "Laubwald-Rotkappe"]
 synonyme = ["Leccinum aurantiacum var. quercinum", "Leccinum rufum", "Boletus quercinus", "Krombholziella quercina"]
 fruchtschicht = { art = "roehren" }

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst", "winter"]
 baeume = ["buche", "birke"]
 speisewertHinweis = "In Deutschland und der Schweiz auf der Roten Liste und generell sehr selten. Den Fund besser stehen lassen."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Weißer, später schmutzig gelber Stachelpilz aus einzelnen, unregelmäßig gelappten, oft verbogenen Hüten mit abwärts gerichteten, weißlichen bis gelblichen Stacheln; das weiche Fleisch gilbt bei Verletzung. Er wächst von August bis Februar an Totholz von Laubbäumen, gern an Buche und Birke, und ist sehr selten und in Deutschland gefährdet. Vom Nördlichen Stachelseitling unterscheidet ihn vor allem das weiche Fleisch, denn der Nördliche Stachelseitling hat zähes, elastisches Fleisch und dachziegelig übereinander stehende Hüte mit rauhaariger Oberseite."
+beschreibungEn = "A white tooth fungus that later turns dirty yellow, made of single, irregularly lobed, often bent caps with downward whitish to yellowish spines; the soft flesh turns yellow where damaged. The tiered tooth grows from August to February on dead wood of broadleaf trees, often beech and birch, and is very rare and endangered in Germany. The key difference from Climacodon septentrionalis is the soft flesh, because Climacodon septentrionalis has tough, elastic flesh and overlapping caps with a hairy upper side."
+entwurf = true
 synonyme = ["Creolophus cirrhatus", "Creolophus cirratus"]
 fruchtschicht = { art = "stacheln" }
 hutmerkmale = ["unregelmaessig"]

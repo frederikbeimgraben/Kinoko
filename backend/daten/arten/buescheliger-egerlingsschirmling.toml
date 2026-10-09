@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er gilbt und rötet bei Verletzung sehr stark, erst orange, dann weinrot bis rotbraun. Wer ihn für einen Safranschirmling hält, achte auf die freistehende Wuchsform am Kompost und den fehlenden Buckel aus Schuppen."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer bis großer Schirmling mit weißem Hut mit konzentrisch angeordneten braunen bis rotbraunen Schüppchen und glatter, gebuckelter Mitte, weißen, freien Lamellen und unten rotbräunlichem Stiel mit dickem, weißem, braun gerandetem Ring. Er wächst von Juni bis November, oft büschelig, in Parks und Gärten, auf Kompost und Rindenmulch und ist selten. Vom Gerandetknolligen Garten-Safranschirmling unterscheidet ihn vor allem die Verfärbung bei Verletzung, denn sein Fleisch gilbt erst stark, wird über Orange weinrot, während der Safranschirmling ohne starken Gelbton rötet und eine gerandete Knolle hat. Der Büschelige Egerlingsschirmling ist giftig."
+beschreibungEn = "A medium-sized to large dapperling with a white cap with brown to red-brown scales in concentric rings and a smooth, umbonate centre, white free gills and a stem that is red-brownish below, with a thick, white ring with a brown edge. The reddening lepiota grows from June to November, often in clusters, in parks and gardens, on compost and bark mulch, and is rare. The key difference from Chlorophyllum brunneum is the colour change where damaged, because its flesh first turns strongly yellow and then wine-red via orange, while Chlorophyllum brunneum turns red without a strong yellow tone and has a bulb with a rim. The reddening lepiota is poisonous."
+entwurf = true
 weitereNamen = ["Gelbfüßiger Egerlingsschirmling"]
 synonyme = ["Leucoagaricus bresadolae"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

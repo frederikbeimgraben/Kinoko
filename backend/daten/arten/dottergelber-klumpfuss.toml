@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "buche", "eiche"]
 speisewertHinweis = "Er ist wegen der Verwechslungsgefahr gefährlich. Zu erkennen an schwefelgelbem, schmierigem Hut mit rotbraunen Schuppen, chromgelbem Stiel mit gerandeter Knolle, rostbraunem Sporenpulver auf dem Stiel und dem widerlich erdigen Geruch."
+beschreibung = "Mittelgroßer Schleierling mit schwefelgelbem, schmierigem Hut mit rotbraunen Schuppen, kanariengelben bis olivgelben Lamellen und chromgelbem Stiel mit zwiebelartiger, gerandeter Knolle, der von rostbraunem Sporenpulver bestäubt ist. Er wächst von Juni bis November im Nadelwald, gern bei Fichte, auch bei Buche und Eiche, bevorzugt auf kalkreichem Boden. Kennzeichnend sind das durchgehend gelbe Fleisch und der widerlich erdige Geruch. Der Dottergelbe Klumpfuß ist tödlich giftig."
+beschreibungEn = "A medium-sized webcap with a sulphur-yellow, slimy cap with red-brown scales, canary-yellow to olive-yellow gills and a chrome-yellow stem with an onion-like bulb with a rim, dusted with rust-brown spores. It grows from June to November in coniferous woods, often with spruce, also with beech and oak, mainly on calcareous soil. Key features are the yellow flesh throughout and the repulsive earthy smell. Cortinarius meinhardii is deadly poisonous."
+entwurf = true
 synonyme = ["Cortinarius splendens var. meinhardii", "Cortinarius vitellinus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 stielmerkmale = ["knolle"]

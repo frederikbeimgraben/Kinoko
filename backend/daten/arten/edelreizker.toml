@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 karte = "reizker"
+beschreibung = "Mittelgroßer Milchling mit orangem, weißlich bereiftem Hut mit konzentrisch angeordneten Flecken, orangeockerfarbenen Lamellen, karottenroter Milch und kurzem, hohlem Stiel mit orangefarbenen Grübchen; verletzte Stellen laufen grün an. Er wächst von Juni bis November bei Kiefern. Vom Fichtenreizker unterscheidet ihn vor allem die Milch, die karottenrot bleibt, denn beim Fichtenreizker wird sie nach etwa 15 Minuten weinrot; dieser hat außerdem keine Grübchen am Stiel und wächst bei Fichte."
+beschreibungEn = "A medium-sized milkcap with an orange cap with a whitish bloom and concentric spots, orange-ochre gills, carrot-red milk and a short, hollow stem with orange pits; damaged parts turn green. The saffron milkcap grows from June to November with pine. The key difference from the false saffron milkcap is the milk, which stays carrot-red, because the milk of the false saffron milkcap turns wine-red after about 15 minutes; it also has no pits on the stem and grows with spruce."
+entwurf = true
 weitereNamen = ["Echter Reizker", "Kiefernreizker", "Kiefern Blutreizker", "Röstling", "Karottenmilchling", "Rizke", "Kiefernblut-Reizker", "Reske"]
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gezont"]

@@ -10,6 +10,9 @@ baeume = ["eiche"]
 speisewertHinweis = "Nur ganz jung weich, sonst hart. Die Wertigkeit liegt bei 4. In Deutschland vom Aussterben bedroht, deshalb stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "vomAussterbenBedroht"
+beschreibung = "Mittelgroßer bis großer, zungenförmiger Porling mit blass lederfarbenem bis orangebraunem, flockig körnigem Hut, der auf Druck rotbraun wird, weißlichen, später rötlichen Poren und kurzem, seitlichem Stiel. Er wächst von Juni bis November meist parasitisch an Eichen und ist sehr selten und in Deutschland vom Aussterben bedroht. Vom Zimtfarbenen Weichporling unterscheidet ihn vor allem die Zungenform mit blass lederfarbenen bis orangebraunen Tönen, denn der Zimtfarbene Weichporling ist zimtbraun."
+beschreibungEn = "A medium-sized to large, tongue-shaped polypore with a pale leather-coloured to orange-brown, flaky-granular cap that turns red-brown when pressed, whitish pores that later turn reddish, and a short, lateral stem. The oak polypore grows from June to November mostly as a parasite on oaks and is very rare and threatened with extinction in Germany. The key difference from the cinnamon bracket is the tongue shape with pale leather-coloured to orange-brown tones, because the cinnamon bracket is cinnamon-brown."
+entwurf = true
 weitereNamen = ["Eichenzungenporling"]
 synonyme = ["Antrodia quercina", "Polyporus quercicola", "Polystictus fuscopellis"]
 fruchtschicht = { art = "poren" }

@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "In Europa selten, in der Schweiz verletzlich. Kein Sammelpilz."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer Röhrling mit braunem bis nussbraunem, filzigem, im Alter aufreißendem Hut, gelben Röhren und gelblichem bis graugelbem Stiel mit nur wenigen rötlichen Punkten, der zur Basis schwärzlich wird. Er wächst von Juni bis November im Mischwald und ist in Europa selten. Vom Herbstrotfußröhrling unterscheidet ihn vor allem der kaum rot gefärbte Stiel, denn der Herbstrotfußröhrling hat einen deutlich rot punktierten Stiel und eine kräftig rote Schicht unter der Huthaut."
+beschreibungEn = "A small to medium-sized bolete with a brown to nut-brown, felty cap that cracks with age, yellow tubes and a yellowish to grey-yellow stem with only a few reddish dots, which turns blackish towards the base. The sepia bolete grows from June to November in mixed woods and is rare in Europe. The key difference from Xerocomellus pruinatus is the stem with hardly any red, because Xerocomellus pruinatus has a stem with clear red dots and a strong red layer under the cap skin."
+entwurf = true
 weitereNamen = ["Falscher Rotfuß", "Düsterner Rotfußröhrling"]
 synonyme = ["Boletus porosporus", "Xerocomus porosporus", "Boletus porosporus var. americanus"]
 fruchtschicht = { art = "roehren" }

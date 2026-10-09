@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Selten und wärmeliebend, in der Schweiz auf der Roten Liste. Wenn überhaupt, nur einzelne Fruchtkörper nehmen."
 haeufigkeit = "selten"
+beschreibung = "Kräftiger Röhrling mit ocker-, kastanienbraunem bis braunorangem, trockenem, filzigem Hut, hell- bis zitronengelben Röhren und gelblichem Stiel mit hellgelbem Netz und oft einem wurzelnden Fortsatz an der Basis; Röhren und Fleisch blauen nie. Er wächst von Juni bis November im Nadelwald, größtenteils bei Fichte, gern auf saurem Boden an warmen Stellen, und ist selten. Vom Steinpilz unterscheiden ihn vor allem die schon jung gelben Röhren und das gelbe Fleisch, denn der Steinpilz hat jung weiße Röhren, ein weißes Netz und weißes Fleisch."
+beschreibungEn = "A stout bolete with an ochre, chestnut-brown to brownish-orange, dry, felty cap, light to lemon-yellow tubes and a yellowish stem with a light yellow net and often a rooting extension at the base; tubes and flesh never turn blue. It grows from June to November in coniferous woods, mostly with spruce, often on acid soil in warm places, and is rare. The key difference from the cep is the tubes, which are yellow even when young, and the yellow flesh, because the cep has white tubes when young, a white net and white flesh."
+entwurf = true
 weitereNamen = ["Nadelwald Anhängselröhrling", "Gelber Steinpilz"]
 synonyme = ["Boletus subappendiculatus"]
 fruchtschicht = { art = "roehren" }
