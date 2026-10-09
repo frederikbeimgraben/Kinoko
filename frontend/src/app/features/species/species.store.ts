@@ -6,6 +6,7 @@ import { SpeciesApi } from '../../core/api/species.api';
 import type { SpeciesBundle, SpeciesEntry, StandardColour } from '../../core/api/models';
 import type { components } from '../../core/api/contract';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { OfflineStore } from '../../core/offline/offline-store';
 import { factsOf, type Counts, type Facts } from './facets';
 import { localSpecies, type LocalSpecies } from './species-names';
@@ -58,12 +59,14 @@ export const SpeciesStore = signalStore(
   withState<SpeciesStoreState>(INITIAL),
   withProps(() => ({ _api: inject(SpeciesApi), _offline: inject(OfflineStore), _i18n: inject(I18nService) })),
   withComputed(({ bundle, _i18n }) => {
-    // Each picker and list shows the species in the order of the shown name, also where it is the Latin name.
-    const species = computed<readonly LocalSpecies[]>(() =>
-      (bundle()?.items ?? [])
-        .map((one) => localSpecies(one, _i18n.locale()))
-        .sort((one, other) => one.name.localeCompare(other.name, _i18n.locale(), { numeric: true })),
-    );
+    // The service gives the German order. Where the Latin name is the shown name, the pickers sort by it.
+    const species = computed<readonly LocalSpecies[]>(() => {
+      const locale = _i18n.locale();
+      const local = (bundle()?.items ?? []).map((one) => localSpecies(one, locale));
+      return locale === DEFAULT_LOCALE
+        ? local
+        : local.sort((one, other) => one.name.localeCompare(other.name, locale, { numeric: true }));
+    });
     const palette = computed<readonly StandardColour[]>(() => bundle()?.standardColours ?? []);
     const entries = computed<readonly CatalogueEntry[]>(() =>
       species().map((one) => ({ species: one, facts: factsOf(one, palette()) })),

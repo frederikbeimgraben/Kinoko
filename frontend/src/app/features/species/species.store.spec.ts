@@ -58,7 +58,7 @@ describe('SpeciesStore', () => {
     setup.http.verify();
   });
 
-  it('ordnet die Arten nach dem gezeigten Namen, auf Englisch nach dem lateinischen', async () => {
+  it('behält auf Deutsch die Ordnung des Dienstes und ordnet auf Englisch nach dem lateinischen Namen', async () => {
     const setup = build({
       bundle: speciesBundle([
         speciesEntry({ slug: 'boletus-edulis', name: 'Steinpilz', scientificName: 'Boletus edulis' }),
@@ -75,7 +75,7 @@ describe('SpeciesStore', () => {
       expect(setup.state.species()).toHaveLength(3);
     });
 
-    expect(setup.state.species().map((one) => one.name)).toEqual(['Fliegenpilz', 'Pfifferling', 'Steinpilz']);
+    expect(setup.state.species().map((one) => one.name)).toEqual(['Steinpilz', 'Pfifferling', 'Fliegenpilz']);
     const i18n = TestBed.inject(I18nService);
     i18n.setLocale('en');
     await vi.waitFor(() => {
