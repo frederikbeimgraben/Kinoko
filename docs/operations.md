@@ -11,9 +11,9 @@ the flake (`deploy/module.nix`). Its options are under `services.kinoko`.
 
 | Host | Function |
 | --- | --- |
-| Server | Ends TLS for `pilze.beimgraben.net`. Sends the traffic through WireGuard to the homeserver. No body limit |
+| Server | Ends TLS for `kinoko.reutlingen.university`. Sends the traffic through WireGuard to the homeserver. No body limit |
 | Homeserver | Caddy virtual host on port 8110, on `wg0` only. Serves the Angular build and the maps from `/var/www/pilze`. Sends `/api/*` to the service. Runs the service `kinoko` with the weekly pipeline |
-| Authentik | `https://sso.beimgraben.net/`, client `pilze`. Read `sso-authentik.md` |
+| Authentik | `https://sso.projekte.reutlingen.university/`, client `kinoko`. Read `sso-authentik.md` |
 
 ## Paths on the homeserver
 
@@ -436,6 +436,6 @@ deploy the frontend.
 
 - Use `nix develop` for both sides. Use `nix develop .#backend` or `nix develop .#frontend` for one side.
 - Service: `cd backend && go run ./cmd/kinoko serve`.
-- App: `cd frontend && npm ci && npm start`. `proxy.conf.json` sends `/api` to `127.0.0.1:8111` and the tile paths to `https://pilze.beimgraben.net/`.
+- App: `cd frontend && npm ci && npm start`. `proxy.conf.json` sends `/api` to `127.0.0.1:8111` and the tile paths to `https://kinoko.reutlingen.university/`.
 - SSO: use your Authentik instance with the redirect `http://localhost:4200/anmeldung`. Set `PILZE_OIDC_ISSUER` for it.
 - SSO without Authentik: `cd backend && go run ./tools/devsso -admin`. It signs in a test person at once. Start the service with `PILZE_OIDC_ISSUER=http://127.0.0.1:9000/`. Use it only on localhost.

@@ -10,7 +10,7 @@ cd "$(dirname "$0")"
 ZIEL=${ZIEL:-pilzedeploy@10.66.66.6}
 SCHLUESSEL=${SCHLUESSEL:-$HOME/.ssh/pilze_deploy}
 QUELLE=${QUELLE:-arbeit/deutschland.pmtiles}
-URL=${URL:-https://pilze.beimgraben.net/karte/deutschland.pmtiles}
+URL=${URL:-https://kinoko.reutlingen.university/karte/deutschland.pmtiles}
 
 [ -f "$QUELLE" ] || { echo "kein Archiv in $QUELLE, erst: ./bauen.sh"; exit 1; }
 

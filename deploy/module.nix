@@ -50,14 +50,14 @@ in
 
     origin = mkOption {
       type = types.str;
-      example = "https://pilze.beimgraben.net";
+      example = "https://kinoko.reutlingen.university";
       description = "Public origin of the app, for CORS and links.";
     };
 
     oidc = {
       issuer = mkOption {
         type = types.str;
-        example = "https://sso.beimgraben.net/application/o/pilze/";
+        example = "https://sso.projekte.reutlingen.university/application/o/kinoko/";
         description = "OpenID issuer. Discovery and keys follow from it.";
       };
       name = mkOption {

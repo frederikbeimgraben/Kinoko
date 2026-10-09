@@ -7,7 +7,7 @@ each calendar week, where an edible species probably fruits. The app also
 shows input layers, a factor finder and a species catalogue. With an account,
 a person can keep finds, markers and zones.
 
-Live: https://pilze.beimgraben.net/
+Live: https://kinoko.reutlingen.university/
 
 ## Layout
 
@@ -60,7 +60,7 @@ npm start
 ```
 
 The app opens on `http://localhost:4200`. The proxy sends `/api` to the
-local service. It sends the tile paths to `https://pilze.beimgraben.net`.
+local service. It sends the tile paths to `https://kinoko.reutlingen.university`.
 Thus you do not need a local render run.
 
 ## Checks

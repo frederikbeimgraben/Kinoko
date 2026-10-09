@@ -9,14 +9,14 @@ the client in agreement with the blueprint. Do not change the client by hand.
 
 | Object | Value |
 | --- | --- |
-| Provider `pilze` | Public client, authorization code with PKCE, refresh token |
-| Client ID | `pilze` |
+| Provider `kinoko` | Public client, authorization code with PKCE, refresh token |
+| Client ID | `kinoko` |
 | Signing key | The self-signed certificate of the instance |
 | Access token | 1 hour |
 | Refresh token | 30 days |
 | Scopes | `openid`, `email`, `profile`, `offline_access` |
-| Redirect URIs | `https://pilze.beimgraben.net/anmeldung`, `…/anmeldung/still`, and `http://localhost:4200/…` for development |
-| Application `pilze` | Name Kinoko, launch URL `https://pilze.beimgraben.net/` |
+| Redirect URIs | `https://kinoko.reutlingen.university/anmeldung`, `…/anmeldung/still`, and `http://localhost:4200/…` for development |
+| Application `kinoko` | Name Kinoko, launch URL `https://kinoko.reutlingen.university/` |
 | Group `app_pilze` | The persons who can save. Add the members in the admin interface |
 
 `/anmeldung/still` is the silent renewal in an iframe. The client has no
@@ -37,10 +37,10 @@ thus signs out at each restart.
 
 | Item | Value |
 | --- | --- |
-| Issuer | `https://sso.beimgraben.net/application/o/pilze/` |
-| Discovery | `https://sso.beimgraben.net/application/o/pilze/.well-known/openid-configuration` |
-| JWKS | `https://sso.beimgraben.net/application/o/pilze/jwks/` |
-| Client ID | `pilze` |
+| Issuer | `https://sso.projekte.reutlingen.university/application/o/kinoko/` |
+| Discovery | `https://sso.projekte.reutlingen.university/application/o/kinoko/.well-known/openid-configuration` |
+| JWKS | `https://sso.projekte.reutlingen.university/application/o/kinoko/jwks/` |
+| Client ID | `kinoko` |
 
 The NixOS module `services.kinoko` gives the issuer and the client ID to the
 service. The options are `oidc.issuer` and `oidc.clientId`. The variables are
@@ -53,9 +53,9 @@ permission.
 ## Check
 
 ```
-curl -s https://sso.beimgraben.net/application/o/pilze/.well-known/openid-configuration | jq .issuer
+curl -s https://sso.projekte.reutlingen.university/application/o/kinoko/.well-known/openid-configuration | jq .issuer
 ```
 
-The expected result is `"https://sso.beimgraben.net/application/o/pilze/"`.
+The expected result is `"https://sso.projekte.reutlingen.university/application/o/kinoko/"`.
 If the result is 404, the worker did not apply the blueprint. Then read
 `journalctl -u authentik-worker` on the server.
