@@ -14,6 +14,7 @@ weitereNamen = ["Karbolegerling", "Giftchampignon", "Tintenegerling", "Giftegerl
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "halbkugelig", nach = "flach" }
 stielmerkmale = ["ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

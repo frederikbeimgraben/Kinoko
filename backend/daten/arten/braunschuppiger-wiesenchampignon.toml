@@ -17,6 +17,7 @@ synonyme = ["Agaricus floccipes", "Agaricus campestris cf. var floccipes", "Psal
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["bruechig", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

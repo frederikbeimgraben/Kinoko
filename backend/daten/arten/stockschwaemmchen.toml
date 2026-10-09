@@ -11,6 +11,7 @@ speisewertHinweis = "Nicht roh essen. Nur für Sammler, die den tödlich giftige
 weitereNamen = ["Echtes Stockschwämmchen", "Gemeines Stockschwämmchen"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["ring", "beflockt", "hohl"]
+ringform = "aufsteigend"
 
 [baeumeAusErfahrung]
 baeume = ["buche", "birke"]

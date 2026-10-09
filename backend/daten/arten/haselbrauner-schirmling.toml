@@ -14,6 +14,7 @@ weitereNamen = ["Rosabrauner Schirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gezont"]
 stielmerkmale = ["hohl", "ring", "faserig", "genattert"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

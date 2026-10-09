@@ -14,6 +14,7 @@ entwurf = true
 weitereNamen = ["Großer Waldchampignon", "Großer Blutegerling", "Grosser Blutchampignon"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

@@ -18,6 +18,7 @@ fruchtschicht = { art = "roehren" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl", "beflockt", "faserig", "ring"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

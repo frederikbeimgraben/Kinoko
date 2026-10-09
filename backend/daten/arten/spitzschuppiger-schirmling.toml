@@ -12,6 +12,7 @@ weitereNamen = ["Rauer Schirmling", "Kegelschuppiger Schirmling", "Spitzschuppig
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "flach" }
 stielmerkmale = ["ring", "beflockt", "knolle", "wurzelnd"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

@@ -12,6 +12,7 @@ weitereNamen = ["Weißer Grüner Knollenblätterpilz", "Weißhütiger Knollenbl�
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "halbkugelig", nach = "flach" }
 stielmerkmale = ["faserig", "genattert", "beflockt", "voll", "knolle", "scheide", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

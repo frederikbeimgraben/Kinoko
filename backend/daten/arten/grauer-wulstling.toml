@@ -15,6 +15,7 @@ weitereNamen = ["Hoher Wulstling", "Gedrungener Wulstling", "Eingesenkter Wulstl
 synonyme = ["Amanita excelsa", "Amanita spissa var. valida", "Amanita spissa var. cariosa", "Amanita cariosa"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["faserig", "genattert", "knolle", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

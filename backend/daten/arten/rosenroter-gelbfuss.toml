@@ -13,6 +13,7 @@ weitereNamen = ["Rosenroter Gelbfuss", "Rosenroter Schmierling", "Rosa Schmierli
 synonyme = ["Agaricus glutinosus roseus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 stielmerkmale = ["ring"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

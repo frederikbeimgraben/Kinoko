@@ -17,6 +17,7 @@ fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["eingebogen"] }
 stielmerkmale = ["faserig", "hohl"]
+ringform = "spinnwebartig"
 
 [quelle]
 titel = "123pilzsuche"

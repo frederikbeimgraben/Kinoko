@@ -16,6 +16,7 @@ entwurf = true
 synonyme = ["Chroogomphus rutilus var. fulmineus", "Gomphidius viscidus var. fulmineus", "Chroogomphus ochraceus subsp. fulmineus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 stielmerkmale = ["ring", "voll"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

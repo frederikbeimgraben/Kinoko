@@ -15,6 +15,7 @@ haeufigkeit = "selten"
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 hutform = { von = "gewoelbt", nach = "flach" }
 stielmerkmale = ["voll", "ring", "beflockt"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

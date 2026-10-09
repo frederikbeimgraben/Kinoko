@@ -11,6 +11,7 @@ speisewertHinweis = "Nur Fruchtkörper mit rosa Lamellen nehmen; sind die Lamell
 weitereNamen = ["Maichampignon", "Feldegerling", "Wiesenegerling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["bruechig", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

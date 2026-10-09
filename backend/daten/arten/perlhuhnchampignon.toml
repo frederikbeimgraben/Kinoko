@@ -14,6 +14,7 @@ weitereNamen = ["Perlhuhnchampignon"]
 synonyme = ["Agaricus meleagris", "Agaricus praeclaresquamosus", "Agaricus placomyces var. meleagris", "Agaricus xanthodermus var. obscuratus", "Psalliota meleagris var. obscurata"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", schneide = "gesaegt" }
 stielmerkmale = ["faserig", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

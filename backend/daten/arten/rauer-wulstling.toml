@@ -16,6 +16,7 @@ weitereNamen = ["Rauer Wulstling"]
 synonyme = ["Amanita aspera", "Amanita aspera var. franchetii", "Amanita aspera f. franchetii", "Amanita queletii var. franchetii", "Amanita franchetii var. lactella", "Amanita rubescens f. aspera"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["beflockt", "genattert", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

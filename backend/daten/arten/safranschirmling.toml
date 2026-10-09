@@ -13,6 +13,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutform = { von = "eifoermig", nach = "halbkugelig" }
 hutrand = { von = ["fransig"] }
 stielmerkmale = ["faserig", "ring", "knolle"]
+ringform = "doppelt"
 
 [baeumeAusErfahrung]
 baeume = ["fichte"]

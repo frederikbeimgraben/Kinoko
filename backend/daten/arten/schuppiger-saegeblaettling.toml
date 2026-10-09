@@ -11,6 +11,7 @@ speisewertHinweis = "Ungenießbar, weil das Fleisch rasch zäh wird. Nur ganz ju
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }
 hutrand = { von = ["eingerollt", "scharf"] }
 stielmerkmale = ["ring", "beflockt"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

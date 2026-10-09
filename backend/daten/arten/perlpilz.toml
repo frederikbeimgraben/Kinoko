@@ -15,6 +15,7 @@ entwurf = true
 weitereNamen = ["Rötender Knollenblätterpilz", "Rötender Wulstling", "Perlen-Wulstling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["knolle", "genattert", "wurzelnd", "ring"]
+ringform = "haengend"
 
 [baeumeAusErfahrung]
 baeume = ["buche", "fichte", "eiche"]

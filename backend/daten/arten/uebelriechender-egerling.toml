@@ -13,6 +13,7 @@ synonyme = ["Psalliota ingrata", "Agaricus ingratus", "Agaricus bernardii syn. m
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

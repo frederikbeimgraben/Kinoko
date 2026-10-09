@@ -17,6 +17,7 @@ synonyme = ["Amanita phalloides f. citrina", "Amanita phalloides f. dunensis", "
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "eifoermig", nach = "flach" }
 stielmerkmale = ["faserig", "genattert", "knolle", "scheide", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

@@ -17,6 +17,7 @@ synonyme = ["Amanitaria eliae", "Amanita eliae f. griseovelata", "Amanita raymon
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutrand = { von = ["gerieft"] }
 stielmerkmale = ["hohl", "knolle", "ring", "genattert"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

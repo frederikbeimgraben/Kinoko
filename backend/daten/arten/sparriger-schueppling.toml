@@ -11,6 +11,7 @@ speisewertHinweis = "Verursacht gelegentlich Magen-Darm-Beschwerden; vom Verzehr
 synonyme = ["Pholiota jahnii sensu", "Hypodendrum floccosum", "Fungus squarrosus", "Stropharia squarrosa", "Dryophila muelleri", "Pholiota squarrosa f. annulosa"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 stielmerkmale = ["ring", "beflockt"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

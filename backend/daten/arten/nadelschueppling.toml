@@ -15,6 +15,7 @@ weitereNamen = ["Nadelwaldschüppling", "Nadelholzschüppling"]
 synonyme = ["Gymnopilus spumosus", "Pholiotina spumosa", "Pholiota graveolens", "Naucoria spuniosa"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 stielmerkmale = ["faserig", "ring", "hohl"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"
