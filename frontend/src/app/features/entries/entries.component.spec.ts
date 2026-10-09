@@ -281,6 +281,8 @@ describe('EntriesComponent', () => {
         call.url === '/api/photos' &&
         call.params.get('mine') === 'true' &&
         call.params.get('cursor') === cursor;
+    // The list reads the own photos once at the start, for the thumbs of the finds.
+    for (const call of http.match(photos(null))) call.flush({ items: [], nextCursor: null });
 
     await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
     setup.refresh();
@@ -292,6 +294,28 @@ describe('EntriesComponent', () => {
       .flush({ items: [photo({ id: 'p2', findId: FIND_ENTRY.id })], nextCursor: null });
 
     expect([...TestBed.inject(MyImagesStore).findIds()]).toEqual([FIND_ENTRY.id]);
+    expect(TestBed.inject(EntriesStore).filter().withPhoto).toBe(true);
+  });
+
+  it('shows the own photo of a find as the thumb of its row', async () => {
+    const setup = await build({ pending: [] });
+    const http = TestBed.inject(HttpTestingController);
+    http
+      .expectOne((call) => call.url === '/api/photos' && call.params.get('mine') === 'true')
+      .flush({ items: [photo({ id: 'p9', findId: FIND_ENTRY.id, speciesId: null })], nextCursor: null });
+    setup.refresh();
+
+    await vi.waitFor(() => {
+      http.expectOne('/api/photos/p9/list');
+    });
+  });
+
+  it('toggles the photo filter also with a tap on the row text', async () => {
+    const setup = await build();
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'nur mit Foto' }));
+
     expect(TestBed.inject(EntriesStore).filter().withPhoto).toBe(true);
   });
 });

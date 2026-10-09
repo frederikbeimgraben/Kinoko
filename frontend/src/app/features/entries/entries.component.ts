@@ -112,6 +112,7 @@ export class EntriesComponent {
   private readonly context = computed<RowContext>(() => {
     // The rows follow the bundle and the names: a name that arrives later fills its row.
     this.species.species();
+    const thumbs = this.photos.findThumbs();
     return {
       i18n: this.i18n,
       today: this.today,
@@ -121,6 +122,7 @@ export class EntriesComponent {
         const name = this.names.nameOf(ownerId);
         return name === null ? null : firstName(name);
       },
+      photo: (findId) => thumbs.get(findId),
     };
   });
 
@@ -198,7 +200,8 @@ export class EntriesComponent {
     void this.store.loadShared();
     this.store.loadOnSignIn(this.signedIn);
     this.groups.loadOnSignIn(this.signedIn);
-    if (this.filter().withPhoto) this.photos.loadAll();
+    // The rows show the photo of a find, and the photo filter needs each own photo.
+    this.photos.loadAllOnSignIn(this.signedIn);
   }
 
   protected selectSegment(segment: Segment): void {

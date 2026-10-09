@@ -23,6 +23,8 @@ export interface Find extends SharedFind {
   visibility: Visibility;
   groupId: string | null;
   forTraining: boolean;
+  /** The instant of the first save. The entry list sorts the finds of one day by it. */
+  createdAt?: string;
 }
 
 /** An own marker: a point with a name, a colour and a note. */

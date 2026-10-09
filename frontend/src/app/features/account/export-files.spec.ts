@@ -66,7 +66,7 @@ const DATA = {
 
 const STEINPILZ = { name: 'Steinpilz', scientificName: 'Boletus edulis' };
 
-const species = speciesNames((id) => (id === 'steinpilz' ? STEINPILZ : null), 'de');
+const species = speciesNames((id) => (id === 'steinpilz' ? STEINPILZ : null));
 
 describe('export files', () => {
   it('keeps only the selected parts', () => {
@@ -120,12 +120,10 @@ describe('export files', () => {
     expect(lines[3]).toBe('zone,zone-1,Schönbuch,,2026-09-02,,,,163.52,private,');
   });
 
-  it('names a species in English by its scientific name', () => {
-    const english = speciesNames((id) => (id === 'steinpilz' ? STEINPILZ : null), 'en');
-
-    expect(english('steinpilz')).toEqual({ name: 'Boletus edulis', scientific: 'Boletus edulis' });
-    expect(english(null)).toBeNull();
-    expect(toGpx(DATA, english)).toContain('<name>Boletus edulis</name>');
+  it('gives the shown name and the scientific name, without a repeat', () => {
+    expect(species('steinpilz')).toEqual({ name: 'Steinpilz', scientific: 'Boletus edulis' });
+    expect(species(null)).toBeNull();
+    expect(toGpx(DATA, species)).toContain('<name>Steinpilz</name>');
   });
 
   it('names the file after the day and the format', () => {

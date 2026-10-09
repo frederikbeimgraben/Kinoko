@@ -17,7 +17,11 @@
     >
       <app-popover-item icon="share" [label]="'species.menu.share' | t" (chosen)="share()" />
       @if (canSubmitImage()) {
-        <app-popover-item icon="image" [label]="'image.submit.title' | t" (chosen)="submitImage()" />
+        <app-popover-item
+          icon="image"
+          [label]="(curatesImages() ? 'image.add.title' : 'image.submit.title') | t"
+          (chosen)="submitImage()"
+        />
       }
       @if (mayEdit()) {
         <app-popover-item icon="compare" [label]="'species.compare' | t" (chosen)="compareSelf()" />

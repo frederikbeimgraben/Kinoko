@@ -122,14 +122,25 @@ describe('PhotoDialogComponent', () => {
     expect(screen.getByRole('img', { name: 'Foto 2' })).toBeInTheDocument();
   });
 
-  it('führt vom ersten Foto zum letzten zurück', async () => {
+  it('bleibt am ersten Foto stehen und zeigt nur den Pfeil nach vorn', async () => {
     const { detectChanges } = await build(PHOTOS, 0);
     await settle(detectChanges, 'bild-eins');
 
     await userEvent.keyboard('{ArrowLeft}');
-    await settle(detectChanges, 'bild-drei');
+    detectChanges();
 
-    expect(screen.getByRole('img', { name: 'Foto 3' })).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: 'Voriges Bild' })).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Nächstes Bild' })).toBeInTheDocument();
+  });
+
+  it('nennt unter dem Bild den Tag und die Stelle, wie das Board MapFindPhoto', async () => {
+    const { detectChanges, fixture } = await build(PHOTOS, 1);
+    fixture.componentRef.setInput('day', '2026-09-06');
+    await settle(detectChanges, 'bild-zwei');
+
+    expect(screen.getByText('6. September 2026')).toBeInTheDocument();
+    expect(screen.getByText('2 von 3')).toBeInTheDocument();
   });
 
   it('zeigt keine Pfeile bei genau einem Foto', async () => {

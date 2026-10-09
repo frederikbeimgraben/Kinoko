@@ -1,10 +1,13 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
-import type { Photo } from '../../core/api/models';
+import type { Find, Photo } from '../../core/api/models';
+import { FIND } from '../../testing/entries-fixture';
+import { EntriesStore } from '../entries/entries.store';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../testing/routes';
@@ -19,14 +22,23 @@ interface Setup {
   refresh: () => void;
 }
 
-async function build(items: Photo[], nextCursor: string | null = null): Promise<Setup> {
+async function build(items: Photo[], nextCursor: string | null = null, finds: Find[] = []): Promise<Setup> {
   vi.stubGlobal('URL', {
     ...URL,
     createObjectURL: () => 'blob:one',
     revokeObjectURL: () => undefined,
   });
   const { container, detectChanges } = await render(MyImagesComponent, {
-    providers: [provideHttpClient(), provideHttpClientTesting(), provideRouter(ANY_ROUTE)],
+    providers: [
+      provideHttpClient(),
+      provideHttpClientTesting(),
+      provideRouter(ANY_ROUTE),
+      // A find photo takes its species from the own find.
+      {
+        provide: EntriesStore,
+        useValue: { finds: signal(finds), signedIn: signal(true), loadOnSignIn: () => undefined },
+      },
+    ],
   });
   const http = TestBed.inject(HttpTestingController);
   await vi.waitFor(() => {
@@ -57,6 +69,20 @@ describe('MyImagesComponent', () => {
     expect(screen.getByText('offen')).toBeInTheDocument();
     expect(screen.getByText('Steinpilz')).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('names a find photo after the species of its find', async () => {
+    await build(
+      [
+        photo({ id: 'find-photo', speciesId: null, findId: FIND.id, state: 'private' }),
+        photo({ id: 'other-photo', speciesId: null, findId: 'unknown-find', state: 'private' }),
+      ],
+      null,
+      [FIND],
+    );
+
+    expect(screen.getByText('Steinpilz')).toBeInTheDocument();
+    expect(screen.getByText('Fundfoto')).toBeInTheDocument();
   });
 
   it('names the reason of a rejection', async () => {

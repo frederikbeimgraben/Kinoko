@@ -1,5 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { signal, type WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
@@ -23,6 +24,7 @@ import { MapAdapterDouble, RAW_MANIFEST } from '../../testing/map-doubles';
 import { SpeciesStore } from '../species/species.store';
 import { EntriesStore } from '../entries/entries.store';
 import { MapStore } from '../map/map.store';
+import { MapSurface } from '../map/map-surface';
 import { ObjectSheetComponent } from './object-sheet.component';
 import { ObjectSheetStore } from './object-sheet.store';
 
@@ -32,6 +34,8 @@ interface Setup {
   state: MapStore;
   router: Router;
   http: HttpTestingController;
+  /** True when the map has started. */
+  ready: WritableSignal<boolean>;
   refresh: () => void;
 }
 
@@ -45,12 +49,14 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     }),
   );
   const map = new MapAdapterDouble();
+  const ready = signal(true);
   const { container, detectChanges } = await render(ObjectSheetComponent, {
     providers: [
       provideHttpClient(),
       provideHttpClientTesting(),
       provideRouter([]),
       { provide: MAP_ADAPTER, useValue: map },
+      { provide: MapSurface, useValue: { ready } },
       ...authStubProviders(new AuthStub()),
     ],
   });
@@ -76,6 +82,7 @@ async function build(findEntry = FIND_ENTRY): Promise<Setup> {
     state: TestBed.inject(MapStore),
     router: TestBed.inject(Router),
     http,
+    ready,
     refresh: detectChanges,
   };
 }
@@ -255,9 +262,28 @@ describe('ObjektBlattComponent', () => {
     setup.state.setObject({ kind: 'marker', id: MARKER.id });
     setup.refresh();
 
-    expect(setup.map.flights).toHaveLength(1);
+    await vi.waitFor(() => {
+      expect(setup.map.flights).toHaveLength(1);
+    });
     expect(setup.map.flights[0].target).toEqual([MARKER.lon, MARKER.lat]);
     expect(setup.map.flights[0].zoom).toBe(14);
+  });
+
+  it('zoomt erst, wenn die Karte steht, auch wenn das Objekt vorher offen ist', async () => {
+    const setup = await build();
+    setup.ready.set(false);
+
+    setup.state.setObject({ kind: 'find', id: FIND.id });
+    setup.refresh();
+    await new Promise((done) => setTimeout(done, 400));
+    expect(setup.map.flights).toHaveLength(0);
+
+    setup.ready.set(true);
+    setup.refresh();
+    await vi.waitFor(() => {
+      expect(setup.map.flights).toHaveLength(1);
+    });
+    expect(setup.map.flights[0].target).toEqual([FIND.lon, FIND.lat]);
   });
 
   it('zeigt bei einer Zone den ganzen Umriss', async () => {
@@ -286,6 +312,7 @@ describe('ObjektBlattComponent', () => {
 
     setup.state.setObject({ kind: 'find', id: 'weg' });
     setup.refresh();
+    await new Promise((done) => setTimeout(done, 400));
 
     expect(setup.map.flights).toHaveLength(0);
   });

@@ -54,5 +54,10 @@
   (cancelled)="deleteAsk.set(false)"
 />
 @if (viewing() !== null) {
-  <app-photo-dialog [photos]="held()" [index]="viewing() ?? 0" (closed)="closeGallery()" />
+  <app-photo-dialog
+    [photos]="held()"
+    [index]="viewing() ?? 0"
+    [day]="find().foundOn"
+    (closed)="closeGallery()"
+  />
 }

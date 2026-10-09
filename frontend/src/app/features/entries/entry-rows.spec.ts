@@ -143,4 +143,37 @@ describe('entry rows', () => {
 
     expect(byDay(rows).map((row) => row.key)).toEqual(['first', 'second', 'old']);
   });
+
+  it('puts the newest save of a day first, and a pending row above both', () => {
+    const early = {
+      ...ownFindRow(contextOf(), { ...FIND, createdAt: '2026-09-06T08:00:00Z' }),
+      key: 'early',
+    };
+    const late = { ...ownFindRow(contextOf(), { ...FIND, createdAt: '2026-09-06T09:00:00Z' }), key: 'late' };
+    const waiting = pendingRow(
+      contextOf(),
+      task({ lat: 1, lon: 2, foundOn: '2026-09-06', forTraining: false }),
+    );
+
+    expect(byDay([early, late, waiting]).map((row) => row.key)).toEqual(['waiting-task-1', 'late', 'early']);
+  });
+
+  it('shows the photo of an own find as its thumb', () => {
+    const row = ownFindRow(
+      contextOf({ photo: (id) => (id === FIND.id ? '/photos/p1/list' : undefined) }),
+      FIND,
+    );
+
+    expect(row.entry.photo).toBe('/photos/p1/list');
+  });
+
+  it('shows no day at a marker of today, as at a find', () => {
+    const row = markerRow(contextOf({ today: '2026-09-01' }), {
+      ...MARKER,
+      createdAt: '2026-09-01T10:00:00',
+    });
+
+    expect(row.day).toBe('Today');
+    expect(row.entry.meta).toBe('private');
+  });
 });

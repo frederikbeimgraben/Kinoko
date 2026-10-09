@@ -1499,6 +1499,36 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+  /photos/{id}/review:
+    parameters:
+      - $ref: "#/components/parameters/Id"
+    delete:
+      operationId: reopenPhoto
+      description: Takes back an approval or a rejection. The photo is submitted again.
+      tags: [photos]
+      x-permission: image.review
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Photo"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "409":
+          description: Conflict
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "422":
+          $ref: "#/components/responses/Validation"
+
   /photos/{id}/lead:
     parameters:
       - $ref: "#/components/parameters/Id"

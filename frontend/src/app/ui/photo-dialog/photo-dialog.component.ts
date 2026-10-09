@@ -1,47 +1,68 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  ElementRef,
   inject,
+  Injector,
   input,
   linkedSignal,
   output,
+  viewChild,
 } from '@angular/core';
 import { photoPath, type Photo } from '../../core/api/models';
+import { longDate } from '../../core/i18n/dates';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { IconButtonComponent } from '../icon-button/icon-button.component';
 import { ModalLayerDirective } from '../modal-layer/modal-layer.directive';
 import { PrivateImageComponent } from '../private-image/private-image.component';
-import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 /** Above this horizontal movement in px, a drag is a swipe and not a tremble. */
 const SWIPE_THRESHOLD = 60;
 
-/** A photo above the sheet: a dark ground, the image fitted, a close button and arrows. */
+/** A photo above the sheet, per the board `MapFindPhoto`: a panel with the image, the close button,
+ * the arrows and a line with the day and the position. */
 @Component({
   selector: 'app-photo-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ModalLayerDirective, PrivateImageComponent, SvgIconComponent, TranslatePipe],
+  imports: [IconButtonComponent, ModalLayerDirective, PrivateImageComponent, TranslatePipe],
   templateUrl: './photo-dialog.component.html',
   styleUrl: './photo-dialog.component.scss',
 })
 export class PhotoDialogComponent {
   private readonly i18n = inject(I18nService);
+  private readonly injector = inject(Injector);
+  private readonly scrim = viewChild<ElementRef<HTMLElement>>('scrim');
 
   readonly photos = input.required<readonly Photo[]>();
   readonly index = input(0);
+  /** The ISO day of the caption, for example the day of the find. Without it the photo gives its day. */
+  readonly day = input<string | null>(null);
 
   readonly closed = output();
 
   /** The index follows the input. An arrow or a swipe sets a new index. */
   protected readonly shown = linkedSignal(() => this.index());
 
-  protected readonly many = computed(() => this.photos().length > 1);
-
   protected readonly path = computed(() => {
     const photo = this.photos().at(this.shown());
     return photo === undefined ? null : photoPath(photo.id, 'full');
   });
+
+  protected readonly dayText = computed(() => {
+    const photo = this.photos().at(this.shown());
+    const day = this.day() ?? photo?.takenOn ?? photo?.createdAt.slice(0, 10);
+    return day ? longDate(day, this.i18n.locale()) : '';
+  });
+
+  protected readonly counter = computed(() =>
+    this.i18n.translate('common.counter', { done: this.shown() + 1, total: this.photos().length }),
+  );
+
+  protected readonly hasPrev = computed(() => this.shown() > 0);
+  protected readonly hasNext = computed(() => this.shown() < this.photos().length - 1);
 
   protected readonly label = computed(() =>
     this.i18n.translate('melden.fotoVorschau', { nummer: this.shown() + 1 }),
@@ -50,11 +71,19 @@ export class PhotoDialogComponent {
   private pointer: number | null = null;
   private startX = 0;
 
-  /** The last photo goes back to the first: the ring has no dead end. */
+  /** The arrows stop at the first and at the last photo, as the counter shows. */
   protected step(delta: number): void {
-    const total = this.photos().length;
-    if (total < 2) return;
-    this.shown.set((this.shown() + delta + total) % total);
+    const next = this.shown() + delta;
+    if (next < 0 || next >= this.photos().length) return;
+    this.shown.set(next);
+    // The arrow at the end goes away. The focus then stays in the dialog, so Escape still closes it.
+    afterNextRender(
+      () => {
+        const host = this.scrim()?.nativeElement;
+        if (host !== undefined && !host.contains(document.activeElement)) host.focus();
+      },
+      { injector: this.injector },
+    );
   }
 
   protected onKeydown(event: KeyboardEvent): void {

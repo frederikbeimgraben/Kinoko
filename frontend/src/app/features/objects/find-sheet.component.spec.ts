@@ -141,6 +141,55 @@ describe('FindSheetComponent', () => {
     await answerPhotos(setup, []);
   });
 
+  it('uploads a photo that the edit adds, and gets the list again', async () => {
+    const setup = await build();
+    await answerPhotos(setup, []);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const input = setup.container.querySelector('input[type=file]');
+    if (!(input instanceof HTMLInputElement)) throw new Error('no file input');
+    await userEvent.upload(input, new File(['bild'], 'pilz.jpg', { type: 'image/jpeg' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await vi.waitFor(() => {
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(FIND);
+    });
+    await vi.waitFor(() => {
+      const upload = setup.http.expectOne({ url: '/api/photos', method: 'POST' });
+      expect((upload.request.body as FormData).get('findId')).toBe(FIND.id);
+      upload.flush({ id: 'foto-neu' });
+    });
+    await answerPhotos(setup, ['foto-neu']);
+
+    expect(setup.toasts.success).toEqual(['Gespeichert.']);
+  });
+
+  it('says so when the find is saved but a new photo fails', async () => {
+    const setup = await build();
+    await answerPhotos(setup, []);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Bearbeiten' }));
+    setup.refresh();
+    const input = setup.container.querySelector('input[type=file]');
+    if (!(input instanceof HTMLInputElement)) throw new Error('no file input');
+    await userEvent.upload(input, new File(['bild'], 'pilz.jpg', { type: 'image/jpeg' }));
+    setup.refresh();
+    await userEvent.click(screen.getByRole('button', { name: 'Speichern' }));
+    await vi.waitFor(() => {
+      setup.http.expectOne(`/api/finds/${FIND.id}`).flush(FIND);
+    });
+    await vi.waitFor(() => {
+      setup.http
+        .expectOne({ url: '/api/photos', method: 'POST' })
+        .flush(null, { status: 500, statusText: 'Server Error' });
+    });
+
+    await vi.waitFor(() => {
+      expect(setup.toasts.failure).toContain('Gespeichert, aber ein Foto ließ sich nicht hochladen.');
+    });
+  });
+
   it('asks before the delete and closes before the answer', async () => {
     const setup = await build();
 

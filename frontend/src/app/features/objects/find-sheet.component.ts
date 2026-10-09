@@ -32,8 +32,10 @@ import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { ScrollFadeDirective } from '../../ui/scroll-fade/scroll-fade.directive';
 import { SectionComponent } from '../../ui/section/section.component';
 import { ToastService } from '../../ui/toast/toast.service';
+import { MyImagesStore } from '../account/my-images.store';
 import { FindFormComponent, type FindSubmission } from '../add-entry/find-form.component';
 import { EntriesStore } from '../entries/entries.store';
+import { attachPhotos } from '../entries/photos';
 import { findSubline } from '../entries/find-subline';
 import { SpeciesStore } from '../species/species.store';
 import { ObjectSheetStore } from './object-sheet.store';
@@ -70,6 +72,7 @@ export class FindSheetComponent {
   protected readonly sheet = inject(ObjectSheetStore);
   protected readonly wide = inject(ViewportService).wide;
   private readonly photos = inject(PhotosApi);
+  private readonly images = inject(MyImagesStore);
   private readonly injector = inject(Injector);
 
   readonly find = input.required<Find>();
@@ -166,10 +169,16 @@ export class FindSheetComponent {
   protected async save(submission: FindSubmission): Promise<void> {
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateFind(this.find(), submission.input)) {
-        this.toasts.success(this.i18n.translate('melden.gespeichert'));
-        this.sheet.setEditing(false);
+      if (!(await this.eintraege.updateFind(this.find(), submission.input))) return;
+      const reporter = this.eintraege.reporter() ?? '';
+      const sent = await attachPhotos(this.photos, this.find().id, reporter, submission.photos);
+      if (submission.photos.length > 0) {
+        this.photoList.reload();
+        this.images.load();
       }
+      if (sent) this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+      else this.toasts.error(this.i18n.translate('find.photoUploadFailed'));
+      this.sheet.setEditing(false);
     } finally {
       this.busy.set(false);
     }

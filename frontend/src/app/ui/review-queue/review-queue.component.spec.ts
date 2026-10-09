@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, viewChild } from '@angular/core';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { noViolations } from '../../testing/axe';
@@ -65,6 +65,22 @@ class AsciiHostComponent {
 })
 class NoActionsHostComponent {
   readonly items = ['Pfifferling'];
+}
+
+@Component({
+  imports: [ReviewQueueComponent],
+  template: `
+    <app-review-queue [items]="items" [rejectAsks]="true">
+      <p>Fertig</p>
+      <ng-template let-item>
+        <p>{{ item }}</p>
+      </ng-template>
+    </app-review-queue>
+  `,
+})
+class AskingHostComponent {
+  readonly items = ['Pfifferling', 'Steinpilz'];
+  readonly queue = viewChild.required(ReviewQueueComponent);
 }
 
 function swipe(card: Element, from: number, to: number): void {
@@ -176,6 +192,32 @@ describe('ReviewQueueComponent', () => {
 
     expect(fixture.componentInstance.acceptedCalls).toHaveLength(3);
     expect(container.querySelector('.queue__card--top')).toBeNull();
+  });
+
+  it('lässt nach der letzten Entscheidung das Rückgängig stehen und zeigt den Inhalt des Hosts', async () => {
+    const { fixture } = await render(HostComponent);
+
+    for (let i = 0; i < 3; i += 1) await userEvent.click(screen.getByRole('button', { name: 'Freigeben' }));
+    fixture.detectChanges();
+    await userEvent.click(screen.getByRole('button', { name: 'Rückgängig' }));
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.undoneCalls).toEqual(['Perlpilz']);
+    expect(screen.getByText('Perlpilz')).toBeInTheDocument();
+  });
+
+  it('bleibt bei einer Absage mit Frage auf der Karte, bis der Host weitergeht', async () => {
+    const { fixture } = await render(AskingHostComponent);
+
+    await userEvent.click(screen.getByRole('button', { name: 'Ablehnen' }));
+    fixture.detectChanges();
+    expect(screen.getAllByText('Pfifferling').length).toBeGreaterThan(0);
+
+    fixture.componentInstance.queue().advance();
+    fixture.componentInstance.queue().advance();
+    fixture.detectChanges();
+    expect(screen.getByText('Fertig')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Ablehnen' })).toBeDisabled();
   });
 
   it('trägt den Druckzustand an jedem runden Knopf', async () => {

@@ -36,6 +36,8 @@ export class ReviewQueueComponent<T> {
   readonly fill = input(false);
   /** When false, the three round buttons do not show. Use this for an empty card. */
   readonly showActions = input(true);
+  /** When true, a reject does not go to the next card. The host calls `advance()` when the reason is given. */
+  readonly rejectAsks = input(false);
   readonly card = contentChild.required(TemplateRef);
 
   readonly accepted = output<T>();
@@ -104,8 +106,13 @@ export class ReviewQueueComponent<T> {
   protected reject(): void {
     const item = this.current();
     if (item === undefined) return;
-    this.index.update((i) => i + 1);
+    if (!this.rejectAsks()) this.index.update((i) => i + 1);
     this.rejected.emit(item);
+  }
+
+  /** Goes to the next card after a reject that asked for a reason. */
+  advance(): void {
+    if (this.current() !== undefined) this.index.update((i) => i + 1);
   }
 
   protected undo(): void {

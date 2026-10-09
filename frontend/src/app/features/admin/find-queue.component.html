@@ -8,7 +8,7 @@
   }
 </app-page-header>
 
-<div class="queue" [class.queue--empty]="loaded() && cards().length === 0">
+<div class="queue" [class.queue--empty]="loaded() && open() === 0">
   @if (!loaded()) {
     <app-queue-card-skeleton />
   } @else if (cards().length === 0) {
@@ -21,6 +21,7 @@
       (rejected)="reject($event)"
       (undone)="undo()"
     >
+      <app-state-view icon="check" [title]="'find.queue.empty' | t" />
       <ng-template let-card>
         <article class="card">
           <app-find-map class="card__map" [point]="card.point" [colour]="card.colour" />

@@ -103,6 +103,8 @@ export class SpeciesPageComponent {
   /** A person who may change profiles goes from the head into the editor. */
   protected readonly mayEdit = computed(() => this.rights.can('species.edit'));
   protected readonly canSubmitImage = this.auth.signedIn;
+  /** A person who reviews photos adds a photo directly. The menu names it as the form does. */
+  protected readonly curatesImages = computed(() => this.rights.can('image.review'));
 
   protected readonly menuOpen = signal(false);
   protected readonly compareOpen = signal(false);

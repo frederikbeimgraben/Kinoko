@@ -3,62 +3,94 @@
 <app-form-sheet
   [title]="title()"
   [submit]="action()"
+  [submitIcon]="curates() ? 'check' : undefined"
   [busy]="busy()"
   (submitted)="save()"
   (cancelled)="cancel()"
 >
   <div class="form">
-    <app-photo-strip
-      mode="edit"
-      [max]="1"
-      [pending]="files()"
-      [removable]="!busy()"
-      (pendingChange)="files.set($event)"
-    />
+    <div class="form__photo">
+      <app-photo-strip
+        mode="edit"
+        [max]="1"
+        [pending]="files()"
+        [removable]="!busy()"
+        (pendingChange)="setFiles($event)"
+      />
+      @if (photoError(); as message) {
+        <p class="form__error" role="alert">{{ message }}</p>
+      } @else if (failed()) {
+        <p class="form__error" role="alert">{{ 'image.submit.failed' | t }}</p>
+      }
+    </div>
     @if (busy()) {
       <app-progress class="form__progress" [value]="percent() ?? 0" />
     }
-    <app-row-group>
-      <app-list-row
-        [title]="'image.field.origin' | t"
-        [plain]="licenceLabel(licence())"
-        [chevron]="true"
-        [clickable]="!busy()"
-        (chosen)="picking.set(true)"
-      />
-    </app-row-group>
-    <app-form-field
-      [label]="'image.field.author' | t"
-      [value]="photographer()"
-      (valueChange)="photographer.set($event)"
-    />
     @if (curates()) {
       <app-form-field
+        [label]="'image.field.author' | t"
+        [value]="photographer()"
+        [error]="photographerError()"
+        (valueChange)="photographer.set($event)"
+      />
+      <app-form-field
         [label]="'image.field.sourcePlaceholder' | t"
+        [placeholder]="'image.field.sourceHint' | t"
         [value]="source()"
         (valueChange)="source.set($event)"
       />
+      <div class="form__group">
+        <span class="form__label">{{ 'image.field.licence' | t }}</span>
+        <app-segmented
+          [label]="'image.field.licence' | t"
+          [options]="curatedLicences()"
+          [value]="licence()"
+          [locked]="busy()"
+          (valueChange)="setLicence($event)"
+        />
+      </div>
+    } @else {
+      <app-row-group>
+        <app-list-row
+          [title]="'image.field.origin' | t"
+          [plain]="licenceLabel(licence())"
+          [chevron]="true"
+          [clickable]="!busy()"
+          (chosen)="picking.set(true)"
+        />
+      </app-row-group>
+      <app-form-field
+        [label]="'image.field.author' | t"
+        [value]="photographer()"
+        [error]="photographerError()"
+        (valueChange)="photographer.set($event)"
+      />
+      <app-form-field
+        kind="date"
+        [label]="'image.field.takenOn' | t"
+        [value]="takenOn()"
+        [display]="takenOnText()"
+        (valueChange)="takenOn.set($event)"
+      />
     }
     <app-form-field
-      kind="date"
-      [label]="'image.field.takenOn' | t"
-      [value]="takenOn()"
-      [display]="takenOnText()"
-      (valueChange)="takenOn.set($event)"
-    />
-    <app-form-field
       [label]="'image.field.caption' | t"
-      [placeholder]="'image.field.captionPlaceholder' | t"
+      [placeholder]="(curates() ? 'common.optional' : 'image.field.captionPlaceholder') | t"
       [multiline]="true"
       [value]="caption()"
       (valueChange)="caption.set($event)"
     />
     @if (curates()) {
-      <app-check-row
-        [title]="'image.setAsCoverToggle' | t"
-        [checked]="cover()"
-        (toggled)="cover.set($event)"
-      />
+      <app-row-group>
+        <app-list-row [title]="'image.cover' | t" [clickable]="!busy()" (chosen)="cover.set(!cover())">
+          <app-switch
+            action
+            [checked]="cover()"
+            [label]="'image.setAsCoverToggle' | t"
+            (checkedChange)="cover.set($event)"
+          />
+        </app-list-row>
+      </app-row-group>
     }
   </div>
 </app-form-sheet>
