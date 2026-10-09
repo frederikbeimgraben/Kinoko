@@ -45,7 +45,13 @@ async function start(page: Page): Promise<void> {
     '/api/me/permissions': { permissions: ['find.review'], roles: [] },
   });
   await page.goto('/verwaltung/funde');
-  await expect(page.getByText('1 von 2')).toBeVisible();
+  await expectOpen(page, '2', '2 offene Funde');
+}
+
+/** The head badge shows the open count; a hidden label reads it out. */
+async function expectOpen(page: Page, badge: string, label: string): Promise<void> {
+  await expect(page.locator('.queue__badge')).toHaveText(badge);
+  await expect(page.getByText(label)).toBeAttached();
 }
 
 test('nimmt den obersten Fund an und zählt weiter', async ({ page }) => {
@@ -60,7 +66,7 @@ test('nimmt den obersten Fund an und zählt weiter', async ({ page }) => {
   await page.getByRole('button', { name: 'Freigeben' }).click();
 
   await expect.poll(() => decided).toEqual(['/api/finds/fund-eins/review {"decision":"accepted"}']);
-  await expect(page.getByText('2 von 2')).toBeVisible();
+  await expectOpen(page, '1', '1 offener Fund');
 });
 
 test('nimmt nach der Bestätigung jeden offenen Fund an', async ({ page }) => {
@@ -75,5 +81,5 @@ test('nimmt nach der Bestätigung jeden offenen Fund an', async ({ page }) => {
   await page.locator('.confirm__panel').getByRole('button', { name: 'Alle annehmen' }).click();
 
   await expect.poll(() => calls).toEqual(['POST']);
-  await expect(page.getByText('Nichts zu prüfen')).toBeVisible();
+  await expect(page.getByText('Keine Funde offen')).toBeVisible();
 });

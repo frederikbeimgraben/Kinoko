@@ -19,10 +19,12 @@ test('Methode und Quellen und Lizenzen zeigen ihre Absätze', async ({ page }) =
     await page.getByText('Methode').click();
     await expect(page).toHaveURL(/\/konto\/methode$/, { timeout: 2_000 });
   }).toPass();
-  await expect(page.getByText('Was die Karte zeigt')).toBeVisible();
+  await expect(page.getByText('Begehungen')).toBeVisible();
+  await expect(page.getByText('GBIF, iNaturalist, eigene Funde')).toBeVisible();
 
   await page.getByRole('button', { name: 'Zurück' }).click();
   await page.getByText('Quellen und Lizenzen').click();
   await expect(page).toHaveURL(/\/konto\/lizenzen$/);
-  await expect(page.getByText('OpenStreetMap')).toBeVisible();
+  await expect(page.getByText('Kartendaten')).toBeVisible();
+  await expect(page.getByText('OpenStreetMap · ODbL')).toBeVisible();
 });
