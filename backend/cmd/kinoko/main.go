@@ -13,6 +13,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"strings"
 	"syscall"
 	"time"
 
@@ -22,6 +23,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog/exporter"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/catalog/importer"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/photos/photoseed"
 )
 
 func main() {
@@ -71,8 +73,10 @@ func run(args []string) (err error) {
 		return importer.Run(ctx, handle, data, time.Now, os.Stdout)
 	case "export-catalog":
 		return exportCatalog(ctx, handle, args[1:])
+	case "seed-photos":
+		return seedPhotos(ctx, handle, settings, args[1:])
 	default:
-		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog, export-catalog or version", command)
+		return fmt.Errorf("unknown command %q; use serve, migrate, import-catalog, export-catalog, seed-photos or version", command)
 	}
 }
 
@@ -92,6 +96,53 @@ func exportCatalog(ctx context.Context, handle *sql.DB, args []string) error {
 		base = os.DirFS(*out)
 	}
 	return exporter.Run(ctx, handle, base, *out, os.Stdout)
+}
+
+// seedPhotos downloads the photos of daten/fotos.json into the photo folder.
+func seedPhotos(ctx context.Context, handle *sql.DB, settings config.Settings, args []string) error {
+	flags := flag.NewFlagSet("seed-photos", flag.ContinueOnError)
+	file := flags.String("file", "", "seed file of the photos")
+	pause := flags.Duration("pause", 2*time.Second, "pause between two downloads")
+	if err := flags.Parse(args); err != nil {
+		return err
+	}
+	entries, err := photoEntries(settings, *file)
+	if err != nil {
+		return err
+	}
+	report, err := photoseed.Run(ctx, handle, entries, photoseed.Options{
+		Photos: settings.Photos, MaxBytes: settings.MaxPhotoBytes, Pause: *pause, Out: os.Stdout,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("photos: %d added, %d lead photos, %d present, %d failed\n",
+		report.Added, report.Lead, report.Skipped, len(report.Failed))
+	if len(report.Failed) > 0 {
+		return fmt.Errorf("%d photos failed: %s; run the command again", len(report.Failed),
+			strings.Join(report.Failed, ", "))
+	}
+	return nil
+}
+
+// photoEntries reads the photo seed file: --file, else fotos.json of the data folder of the
+// settings, else the embedded seed.
+func photoEntries(settings config.Settings, file string) (map[string]photoseed.Entry, error) {
+	if file != "" {
+		raw, err := os.ReadFile(file)
+		if err != nil {
+			return nil, err
+		}
+		return photoseed.Parse(raw)
+	}
+	if settings.DataDir != "" {
+		return photoseed.Load(os.DirFS(settings.DataDir))
+	}
+	data, err := fs.Sub(backend.Data, "daten")
+	if err != nil {
+		return nil, err
+	}
+	return photoseed.Load(data)
 }
 
 func serve(ctx context.Context, listen string, handler http.Handler) error {
