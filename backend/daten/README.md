@@ -42,7 +42,7 @@ terms of the source before you publish or share the data.
 | Season table (`saison.json`) | The pipeline calculates it from GBIF occurrence records. `docs/model/data-sources.md` gives the licences of the GBIF datasets (CC BY 4.0 and CC BY-NC 4.0). | Per dataset |
 | Glossary (`glossar.json`) | Kinoko glossary, written for this project | Not stated |
 | Texts (`texte.json`) | Written for this project | Licence of the repository |
-| Lead photos (`fotos.json`) | Wikimedia Commons, https://commons.wikimedia.org/. English captions: the English common names of Wikidata (property P1843) | Per photo: CC0, public domain, CC BY or CC BY-SA. Each entry gives the author and the licence. Show both with the photo |
+| Lead photos (`fotos.json`) | Wikimedia Commons, https://commons.wikimedia.org/. English captions: the English names of GBIF from the UK Species Inventory and the IUCN Red List | Per photo: CC0, public domain, CC BY or CC BY-SA. Each entry gives the author and the licence. Show both with the photo |
 
 ## Correct the data
 

@@ -223,7 +223,7 @@ the licence text and the author to the source page.
 ### Make the seed file
 
 `backend/tools/commonsfotos` makes `fotos.json` from the Commons API and
-Wikidata. It sends the User-Agent of the project and waits between the
+the GBIF species API. It sends the User-Agent of the project and waits between the
 requests. A full search of all species takes some hours.
 
 ```sh
@@ -233,6 +233,11 @@ go run ./tools/commonsfotos names -arten daten/arten -candidates /tmp/candidates
 go run ./tools/commonsfotos pick -arten daten/arten -candidates /tmp/candidates.json \
   -picks /tmp/picks.json -out daten/fotos.json
 ```
+
+`names` adds the English common name of each species for the English
+caption. It takes only the names of the UK Species Inventory (the
+recommended English names of the British Mycological Society) and of the
+IUCN Red List. Without such a name the English caption is the latin name.
 
 `find` keeps the 8 best files of each species and the reasons of their
 scores. Examine the candidates. To choose another file, or no file, for a

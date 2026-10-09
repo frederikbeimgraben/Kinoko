@@ -73,3 +73,32 @@ func TestWithoutTracking(t *testing.T) {
 		t.Fatal(got)
 	}
 }
+
+func TestBestEnglish(t *testing.T) {
+	list := []vernacular{
+		{Name: "King Bolete", Language: "eng", Source: "Checklist of Vermont Fungi", Preferred: true},
+		{Name: "Cep", Language: "eng", Source: "United Kingdom Species Inventory (UKSI)"},
+		{Name: "Penny Bun", Language: "eng", Source: "United Kingdom Species Inventory (UKSI)", Preferred: true},
+		{Name: "Steinpilz", Language: "deu", Source: "United Kingdom Species Inventory (UKSI)", Preferred: true},
+	}
+	if got := bestEnglish(list); got != "Penny bun" {
+		t.Fatal(got)
+	}
+	if got := bestEnglish(list[:1]); got != "" {
+		t.Fatal(got)
+	}
+}
+
+func TestSentenceCase(t *testing.T) {
+	cases := map[string]string{
+		"Penny Bun":            "Penny bun",
+		"St George's Mushroom": "St George's mushroom",
+		"Slippery Jack":        "Slippery jack",
+		"Oyster mushroom":      "Oyster mushroom",
+	}
+	for in, want := range cases {
+		if got := sentenceCase(in); got != want {
+			t.Errorf("%q: got %q, want %q", in, got, want)
+		}
+	}
+}

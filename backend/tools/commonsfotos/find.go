@@ -23,8 +23,7 @@ import (
 var errOut io.Writer = os.Stderr
 
 const (
-	commonsAPI  = "https://commons.wikimedia.org/w/api.php"
-	wikidataAPI = "https://www.wikidata.org/w/api.php"
+	commonsAPI = "https://commons.wikimedia.org/w/api.php"
 	// thumbWidth is a standard thumbnail width of Commons, above the longest edge of the app (1600).
 	thumbWidth = 1920
 	// keep is the count of candidates that the file keeps for each species.

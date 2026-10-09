@@ -6,7 +6,7 @@
 //
 //	go run ./tools/commonsfotos find -arten daten/arten -out candidates.json
 //
-// Step 2 adds the English common names of Wikidata to the candidates:
+// Step 2 adds the English common names of GBIF to the candidates:
 //
 //	go run ./tools/commonsfotos names -arten daten/arten -candidates candidates.json
 //
