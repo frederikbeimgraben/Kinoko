@@ -1,4 +1,4 @@
-import { DestroyRef, computed, inject } from '@angular/core';
+import { DestroyRef, computed, effect, inject, untracked } from '@angular/core';
 import {
   patchState,
   signalStore,
@@ -182,6 +182,10 @@ export const SyncStore = signalStore(
   }),
   withHooks({
     onInit(store) {
+      // A queued entry goes out at the sign-in on each page, not only on the map.
+      effect(() => {
+        if (store._auth.signedIn()) untracked(() => void store.flush());
+      });
       const online = (): void => {
         store._setOnline(true);
         void store.flush();

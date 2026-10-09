@@ -144,6 +144,13 @@ export const EntriesStore = signalStore(
       }
     }
 
+    /** Sends what waits, then gets the own entries again. */
+    async function sendPending(): Promise<number> {
+      const sent = store._auth.signedIn() ? await store._sync.flush() : 0;
+      if (sent > 0) await load();
+      return sent;
+    }
+
     async function load(): Promise<void> {
       await store._sync.read();
       if (!store._auth.signedIn()) {
@@ -170,10 +177,10 @@ export const EntriesStore = signalStore(
       /** Gets all own entries. Without an account there is nothing to get. */
       load,
 
-      /** Gets the own entries again at each change of the sign-in: it can come after the first render. */
+      /** At each change of the sign-in: gets the own entries again and sends what waits in the queue. */
       loadOnSignIn: rxMethod<boolean>(
         tap(() => {
-          void load();
+          void load().then(sendPending);
         }),
       ),
 
@@ -233,13 +240,7 @@ export const EntriesStore = signalStore(
         return drop('zone', 'zones', id, () => store._api.deleteZone(id));
       },
 
-      /** Sends what waits, then gets the own entries again. */
-      async sendPending(): Promise<number> {
-        if (!store._auth.signedIn()) return 0;
-        const sent = await store._sync.flush();
-        if (sent > 0) await load();
-        return sent;
-      },
+      sendPending,
     };
   }),
 );

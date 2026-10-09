@@ -212,9 +212,13 @@ describe('EntriesComponent', () => {
 
     const banner = screen.getByRole('button', { name: 'Jetzt senden' });
     expect(banner).toHaveTextContent('1 Übertragung ausstehend');
+    // The signed-in page sends the queue once by itself, not only the map does.
+    await vi.waitFor(() => {
+      expect(setup.queue.sent).toBe(1);
+    });
     await userEvent.click(banner);
 
-    expect(setup.queue.sent).toBe(1);
+    expect(setup.queue.sent).toBe(2);
   });
 
   it('tells about a missing connection with the count of the pending transfers', async () => {
