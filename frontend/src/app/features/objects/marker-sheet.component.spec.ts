@@ -75,7 +75,7 @@ describe('MarkerBlattComponent', () => {
     request.flush(MARKER_ENTRY);
 
     await vi.waitFor(() => {
-      expect(setup.toasts.success).toEqual(['Gespeichert.']);
+      expect(setup.toasts.success).toEqual(['Der Marker ist gespeichert.']);
     });
   });
 

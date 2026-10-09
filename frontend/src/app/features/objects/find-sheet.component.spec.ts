@@ -97,7 +97,7 @@ describe('FindSheetComponent', () => {
       setup.refresh();
       expect(screen.getByRole('button', { name: 'Bearbeiten' })).toBeInTheDocument();
     });
-    expect(setup.toasts.success).toEqual(['Gespeichert.']);
+    expect(setup.toasts.success).toEqual(['Der Fund ist gespeichert.']);
   });
 
   it('stays in the form when the change fails', async () => {

@@ -57,6 +57,24 @@ const defaultLoader: TerraLoader = async () => {
   return { terra, adapter };
 };
 
+/** The corner edit in the zone colour, with the white corner handles of the draw step (`ZoneDraw`). */
+export function selectStyles(farbe: `#${string}`) {
+  return {
+    selectedPolygonColor: farbe,
+    selectedPolygonFillOpacity: 0.18,
+    selectedPolygonOutlineColor: farbe,
+    selectedPolygonOutlineWidth: 3,
+    selectionPointColor: '#ffffff',
+    selectionPointWidth: 7,
+    selectionPointOutlineColor: farbe,
+    selectionPointOutlineWidth: 3,
+    midPointColor: farbe,
+    midPointWidth: 4,
+    midPointOutlineColor: '#ffffff',
+    midPointOutlineWidth: 2,
+  } as const;
+}
+
 /** Starts Terra Draw on the map. The step sets the corners, Terra Draw then moves them. */
 export async function startDrawing(
   map: MapLibreMap,
@@ -73,6 +91,7 @@ export async function startDrawing(
         styles: { fillColor: farbe, outlineColor: farbe, outlineWidth: 2, fillOpacity: 0.18 },
       }),
       new terra.TerraDrawSelectMode({
+        styles: selectStyles(farbe),
         flags: {
           polygon: {
             feature: {

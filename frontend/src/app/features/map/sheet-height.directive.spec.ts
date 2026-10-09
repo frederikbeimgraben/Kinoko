@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { render } from '@testing-library/angular';
 import { SheetHeightDirective } from './sheet-height.directive';
 import { MapStore } from './map.store';
+import { MAP_ADAPTER } from '../../map/map.tokens';
 
 @Component({
   imports: [SheetHeightDirective],
@@ -66,6 +67,31 @@ describe('SheetHeightDirective', () => {
     handle.report();
 
     expect(TestBed.inject(MapStore).overlayHeight()).toBe(240);
+  });
+
+  it('misst nach dem Einschieben neu: die Verschiebung meldet der Beobachter nicht', async () => {
+    const handle = observer();
+    stubTop(window.innerHeight - 40, 0);
+    await render(HostComponent);
+    handle.report();
+    stubTop(window.innerHeight - 300, 0);
+
+    document.dispatchEvent(new Event('animationend'));
+
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(300);
+  });
+
+  it('misst bis zum unteren Rand der Karte, nicht bis zum Fensterrand', async () => {
+    const handle = observer();
+    stubTop(window.innerHeight - 300, 0);
+    const container = { getBoundingClientRect: () => ({ bottom: window.innerHeight - 80 }) };
+    await render(HostComponent, {
+      providers: [{ provide: MAP_ADAPTER, useValue: { rawMap: () => ({ getContainer: () => container }) } }],
+    });
+
+    handle.report();
+
+    expect(TestBed.inject(MapStore).overlayHeight()).toBe(220);
   });
 
   it('misst die Leiste selbst, solange im Wirt kein Blatt steht', async () => {

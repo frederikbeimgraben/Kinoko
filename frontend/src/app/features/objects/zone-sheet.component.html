@@ -2,11 +2,11 @@
   <app-object-form
     kind="zone"
     [start]="start()"
-    [area]="zone().areaHa"
+    [area]="area()"
     [busy]="busy()"
     [nameMissingText]="'zone.nameFehlt' | t"
     (submitted)="save($event)"
-    (outlineClick)="editCorners()"
+    (outlineClick)="editCorners($event)"
   />
 } @else {
   <div class="overlay-body objectsheet" appScrollFade>

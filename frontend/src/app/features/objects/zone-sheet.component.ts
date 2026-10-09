@@ -3,10 +3,12 @@ import {
   Component,
   OnDestroy,
   computed,
+  effect,
   inject,
   input,
   output,
   signal,
+  untracked,
 } from '@angular/core';
 import type { Zone } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -28,7 +30,7 @@ import { NO_FILTER, inPolygon } from '../entries/entry-filter';
 import { hectaresText } from '../entries/formats';
 import { ObjectSheetStore } from './object-sheet.store';
 import { colourHex } from '../entries/colors';
-import { asPolygon } from '../add-entry/area';
+import { areaHa, asPolygon } from '../add-entry/area';
 import { ObjectFormComponent, type ObjectValues } from '../add-entry/object-form.component';
 import { ZONE_DRAWER, type DrawSession } from '../add-entry/zone-drawer';
 import { Router } from '@angular/router';
@@ -72,17 +74,27 @@ export class ZoneSheetComponent implements OnDestroy {
   protected readonly editing = this.sheet.editing;
   protected readonly editingCorners = this.sheet.editingCorners;
   private readonly newCorners = signal<readonly Location[] | null>(null);
+  /** The form values while the corners move. The form shows them again after the corner step. */
+  private readonly draft = signal<ObjectValues | null>(null);
   private session: DrawSession | null = null;
 
   protected readonly start = computed<ObjectValues>(() => {
     const zone = this.zone();
-    return {
-      name: zone.name,
-      colour: zone.colour,
-      note: zone.note,
-      visibility: zone.visibility,
-      groupId: zone.groupId,
-    };
+    return (
+      this.draft() ?? {
+        name: zone.name,
+        colour: zone.colour,
+        note: zone.note,
+        visibility: zone.visibility,
+        groupId: zone.groupId,
+      }
+    );
+  });
+
+  /** The area of the form: from the new outline, if there is one. */
+  protected readonly area = computed(() => {
+    const outline = this.sheet.outline();
+    return outline === null ? this.zone().areaHa : areaHa(outline);
   });
 
   /** The centre of the area: the point for a navigation app. */
@@ -108,15 +120,28 @@ export class ZoneSheetComponent implements OnDestroy {
     }),
   );
 
+  constructor() {
+    // A closed form drops its values. The store drops the outline.
+    effect(() => {
+      if (this.editing() || this.editingCorners()) return;
+      untracked(() => {
+        this.draft.set(null);
+      });
+    });
+  }
+
   ngOnDestroy(): void {
     this.stopSession();
+    if (this.editingCorners()) this.sheet.setEditing(false);
   }
 
   protected async save(values: ObjectValues): Promise<void> {
     this.busy.set(true);
     try {
-      if (await this.eintraege.updateZone(this.zone(), values)) {
-        this.toasts.success(this.i18n.translate('objekt.gespeichert'));
+      const outline = this.sheet.outline();
+      const update = outline === null ? values : { ...values, polygon: outline };
+      if (await this.eintraege.updateZone(this.zone(), update)) {
+        this.toasts.success(this.i18n.translate('zone.gespeichert'));
         this.sheet.setEditing(false);
       }
     } finally {
@@ -124,15 +149,15 @@ export class ZoneSheetComponent implements OnDestroy {
     }
   }
 
-  /** Gives the corners to Terra Draw. The finger can then move them. */
-  protected async editCorners(): Promise<void> {
+  /** Gives the corners to Terra Draw, in the colour of the form. The form values wait in `draft`. */
+  protected async editCorners(values: ObjectValues): Promise<void> {
     const map = this.adapter.rawMap();
     if (map === null) return;
-    this.sheet.setEditing(false);
-    this.sheet.setEditingCorners(true);
-    this.session = await this.draw(map, colourHex(this.zone().colour));
-    const ring = this.zone()
-      .polygon.coordinates[0].slice(0, -1)
+    this.draft.set(values);
+    this.sheet.startCorners();
+    this.session = await this.draw(map, colourHex(values.colour));
+    const ring = (this.sheet.outline() ?? this.zone().polygon).coordinates[0]
+      .slice(0, -1)
       .map((point) => [point[0], point[1]] as Location);
     this.session.showRing(ring);
     this.session.edit((next) => {
@@ -140,18 +165,16 @@ export class ZoneSheetComponent implements OnDestroy {
     });
   }
 
-  protected async applyCorners(): Promise<void> {
+  /** Keeps the new outline and goes back to the form, per `MapZoneEdit`. */
+  protected applyCorners(): void {
     const corners = this.newCorners();
-    const polygon = corners === null ? null : asPolygon(corners);
     this.stopSession();
-    if (polygon === null) return;
-    if (await this.eintraege.updateZone(this.zone(), { polygon })) {
-      this.toasts.success(this.i18n.translate('objekt.gespeichert'));
-    }
+    this.sheet.endCorners(corners === null ? null : asPolygon(corners));
   }
 
   protected cancelCorners(): void {
     this.stopSession();
+    this.sheet.endCorners(null);
   }
 
   // The sheet closes before the request: the delete removes the zone from the list at once.
@@ -173,6 +196,5 @@ export class ZoneSheetComponent implements OnDestroy {
     this.session?.stop();
     this.session = null;
     this.newCorners.set(null);
-    this.sheet.setEditingCorners(false);
   }
 }

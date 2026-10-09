@@ -21,7 +21,9 @@ import { MapAdapterDouble } from '../../testing/map-doubles';
 import { speciesBundle, speciesEntry, PENNY_BUN } from '../../testing/species-fixture';
 import { EntriesStore } from '../entries/entries.store';
 import { MapStore } from '../map/map.store';
+import { AddEntryStore } from '../add-entry/add-entry.store';
 import { MapObjectsDirective } from './map-objects.directive';
+import { ObjectSheetStore } from './object-sheet.store';
 
 @Component({
   imports: [MapObjectsDirective],
@@ -175,6 +177,58 @@ describe('MapObjectsDirective', () => {
     await vi.waitFor(() => {
       expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'zone', id: ZONE.id });
     });
+  });
+
+  it('gibt jeden Tipp an den Schritt, solange eine Zone entsteht oder ein Punkt wandert', async () => {
+    const setup = await build();
+    const flow = TestBed.inject(AddEntryStore);
+    flow.startZone();
+
+    setup.map.chosen?.('zonen', ZONE.id);
+    expect(TestBed.inject(MapStore).object()).toBeNull();
+    flow.stop();
+
+    const sheet = TestBed.inject(ObjectSheetStore);
+    sheet.show('marker', MARKER.id);
+    sheet.startRelocating();
+    setup.map.chosen?.('funde', FIND.id);
+    expect(TestBed.inject(MapStore).object()).toEqual({ kind: 'marker', id: MARKER.id });
+  });
+
+  it('legt um den offenen Fund oder Marker den Ring von MapPin', async () => {
+    const setup = await build();
+
+    TestBed.inject(ObjectSheetStore).show('marker', MARKER.id);
+    setup.refresh();
+
+    expect(setup.map.layers.get('marker')?.features[0].properties?.['selected']).toBe(true);
+    expect(setup.map.layers.get('funde')?.features[0].properties?.['selected']).toBe(false);
+  });
+
+  it('zeigt bei einer Zone im Formular den neuen Umriss, beim Ziehen gar keinen', async () => {
+    const setup = await build();
+    const sheet = TestBed.inject(ObjectSheetStore);
+    sheet.show('zone', ZONE.id);
+    sheet.setEditing(true);
+    const outline = {
+      type: 'Polygon' as const,
+      coordinates: [
+        [
+          [9, 48],
+          [9.1, 48],
+          [9.1, 48.1],
+          [9, 48],
+        ],
+      ],
+    };
+
+    sheet.startCorners();
+    setup.refresh();
+    expect(setup.map.layers.get('zonen')?.features).toHaveLength(0);
+
+    sheet.endCorners(outline);
+    setup.refresh();
+    expect(setup.map.layers.get('zonen')?.features[0].geometry).toEqual(outline);
   });
 
   it('öffnet für einen fremden geteilten Fund kein Blatt', async () => {

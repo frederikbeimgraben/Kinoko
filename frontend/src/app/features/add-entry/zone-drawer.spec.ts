@@ -20,7 +20,7 @@ class DrawDouble {
   patch: (() => void) | null = null;
   snapshot: unknown = null;
 
-  constructor() {
+  constructor(readonly options: { modes: { options: unknown }[] }) {
     DrawDouble.last = this;
   }
 
@@ -143,6 +143,19 @@ describe('starteZeichnen', () => {
 
     expect(DrawDouble.last?.started).toBe(1);
     expect(DrawDouble.last?.modi).toEqual(['select']);
+  });
+
+  it('färbt das Ziehen der Eckpunkte in der Zonenfarbe mit weißen Griffen, nicht im Blau von Terra Draw', async () => {
+    await startDrawing(map(), '#c0392b', loader);
+
+    const select = drawDouble().options.modes[3].options as { styles: Record<string, unknown> };
+    expect(select.styles).toMatchObject({
+      selectedPolygonColor: '#c0392b',
+      selectedPolygonOutlineColor: '#c0392b',
+      selectionPointColor: '#ffffff',
+      selectionPointOutlineColor: '#c0392b',
+      midPointColor: '#c0392b',
+    });
   });
 
   it('malt den Ring als eigene Ebenen mit einem Punkt je Ecke', async () => {
