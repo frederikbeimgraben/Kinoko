@@ -26,8 +26,9 @@
   background: transparent;
 }
 
-.search:focus-within {
-  outline: 2px solid var(--outline-strong);
+// The boards show no ring while the user types. A ring shows only after focus from the keyboard.
+.search--keyboard {
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 

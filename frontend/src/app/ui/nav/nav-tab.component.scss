@@ -38,3 +38,13 @@
   color: var(--on-sel);
   background: var(--sel);
 }
+
+// The keyboard ring is on the pill: the pill is the shape of the tab.
+.navtab:focus-visible {
+  outline: none;
+}
+
+.navtab:focus-visible .navtab__pill {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, input, model } from '@angular/core';
-import { RippleDirective } from '../ripple/ripple.directive';
 import { SvgIconComponent } from '../svg-icon/svg-icon.component';
 
 let nextId = 0;
@@ -8,7 +7,7 @@ let nextId = 0;
 @Component({
   selector: 'app-fold-section',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RippleDirective, SvgIconComponent],
+  imports: [SvgIconComponent],
   templateUrl: './fold-section.component.html',
   styleUrl: './fold-section.component.scss',
 })

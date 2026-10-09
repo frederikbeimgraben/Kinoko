@@ -16,7 +16,6 @@ import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { ActionBarComponent } from '../action-bar/action-bar.component';
 import { OverlayHeadComponent } from '../overlay-head/overlay-head.component';
-import { RippleDirective } from '../ripple/ripple.directive';
 import {
   nearestDetent,
   releaseDetent,
@@ -52,7 +51,7 @@ const SCRIM_SLOP = 6;
 @Component({
   selector: 'app-sheet',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [OverlayHeadComponent, RippleDirective, TranslatePipe],
+  imports: [OverlayHeadComponent, TranslatePipe],
   templateUrl: './sheet.component.html',
   styleUrl: './sheet.component.scss',
 })
