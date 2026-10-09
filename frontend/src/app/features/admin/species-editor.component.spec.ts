@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { Router, type NavigationExtras } from '@angular/router';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SpeciesEditorComponent } from './species-editor.component';
 import { SpeciesEditorStore } from './species-editor.store';
@@ -161,6 +162,17 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
 
     expect(screen.getByText('12 Funde · Karte vorhanden')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Löschen' })).toBeDisabled();
+  });
+
+  it('nennt die Art in Englisch mit dem wissenschaftlichen Namen, wie die Artenliste', async () => {
+    await build();
+    const i18n = TestBed.inject(I18nService);
+    i18n.setLocale('en');
+
+    expect(await screen.findByRole('heading', { name: 'Edit Boletus edulis' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Tylopilus felleus/ })).toBeInTheDocument();
+    expect(screen.queryByText('Gallenröhrling')).not.toBeInTheDocument();
+    i18n.setLocale('de');
   });
 
   it('führt von einer Verwechslung auf ihre Unterseite', async () => {

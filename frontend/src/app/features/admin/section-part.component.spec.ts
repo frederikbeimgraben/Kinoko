@@ -1,10 +1,11 @@
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { TestBed } from '@angular/core/testing';
+import { TestBed, type ComponentFixture } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
+import { HistoryService } from '../../core/navigation/history.service';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionPartComponent } from './section-part.component';
@@ -28,6 +29,17 @@ async function build(
   http.expectOne('/api/species/boletus-edulis').flush({ ...SECTION_SPECIES, ...more });
   http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
   return { container, http };
+}
+
+async function buildWithFixture(): Promise<{ fixture: ComponentFixture<SectionPartComponent> }> {
+  TestBed.resetTestingModule();
+  const { fixture } = await render(SectionPartComponent, {
+    providers: [provideRouter(ANY_ROUTE), provideHttpClient(), provideHttpClientTesting(), routeFor('cap')],
+  });
+  const http = TestBed.inject(HttpTestingController);
+  http.expectOne('/api/species/boletus-edulis').flush(SECTION_SPECIES);
+  http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
+  return { fixture };
 }
 
 describe('SectionPartComponent', () => {
@@ -100,6 +112,33 @@ describe('SectionPartComponent', () => {
       '/verwaltung/arten/boletus-edulis/farbe/gills/1',
       '/verwaltung/arten/boletus-edulis/verfaerbung/gills/0',
     ]);
+  });
+
+  it('behält den getippten Text, während eine Unterseite offen ist', async () => {
+    const { fixture } = await buildWithFixture();
+    await screen.findByRole('heading', { name: 'Hut' });
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Kommentar' }), 'Noch offen');
+    await userEvent.click(screen.getByRole('button', { name: /Breite/ }));
+    fixture.destroy();
+    const again = TestBed.createComponent(SectionPartComponent);
+    again.detectChanges();
+
+    const comment = (again.nativeElement as HTMLElement).querySelectorAll('textarea')[1];
+    expect(comment.value).toBe('Noch offen');
+  });
+
+  it('geht zurück auf die Seite davor und verwirft dabei den Entwurf', async () => {
+    await build();
+    await screen.findByRole('heading', { name: 'Hut' });
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back').mockReturnValue();
+
+    await userEvent.type(screen.getByRole('textbox', { name: 'Kommentar' }), 'Weg damit');
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(back).toHaveBeenCalledWith(['/verwaltung/arten', 'boletus-edulis']);
+    expect(TestBed.inject(SpeciesEditorStore).drafts()).toEqual({});
   });
 
   it('nimmt das Teil mit seinen Werten heraus', async () => {

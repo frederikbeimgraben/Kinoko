@@ -17,6 +17,7 @@ import { SectionComponent } from '../../ui/section/section.component';
 import { RowGroupSkeletonComponent } from '../../ui/skeleton/row-group-skeleton.component';
 import { StatRowComponent, type Stat } from '../../ui/stat-row/stat-row.component';
 import { SwitchComponent } from '../../ui/switch/switch.component';
+import { localSpecies } from '../species/species-names';
 import { PartPickerComponent } from './part-picker.component';
 import { SpeciesEditorStore } from './species-editor.store';
 import {
@@ -78,8 +79,14 @@ export class SpeciesEditorComponent {
   protected readonly description = linkedSignal(() => this.species()?.description ?? '');
   protected readonly edibilityNote = linkedSignal(() => this.species()?.edibilityNote ?? '');
 
+  /** The species with its names in the UI language, as the species list shows them. Only for display. */
+  private readonly shown = computed(() => {
+    const one = this.species();
+    return one === null ? null : localSpecies(one, this.i18n.locale());
+  });
+
   protected readonly title = computed(() => {
-    const name = this.species()?.name;
+    const name = this.shown()?.name;
     return name === undefined ? '' : this.i18n.translate('admin.species.editName', { name });
   });
 
@@ -110,7 +117,10 @@ export class SpeciesEditorComponent {
   );
   protected readonly changes = computed(() => this.rows((one) => changeRows(one, this.rowText())));
   protected readonly more = computed(() => this.rows((one) => moreRows(one, this.rowText())));
-  protected readonly lookalikes = computed(() => this.rows(lookalikeRows));
+  protected readonly lookalikes = computed(() => {
+    const one = this.shown();
+    return one === null ? [] : lookalikeRows(one);
+  });
   protected readonly sources = computed(() => this.rows(sourceRows));
 
   /** The person who changed the species last, and the day of the change. */

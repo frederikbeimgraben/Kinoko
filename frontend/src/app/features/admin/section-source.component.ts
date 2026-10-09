@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal } from '@angular/core';
-import { Router } from '@angular/router';
 import type { SourceScope } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { longDate } from '../../core/i18n/dates';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
@@ -39,7 +39,7 @@ const SCOPE_TEXT: Readonly<Record<SourceScope, TranslationKey>> = {
 })
 export class SectionSourceComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
 
   protected readonly slug = injectRouteParam('slug');
@@ -89,7 +89,8 @@ export class SectionSourceComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { I18nService } from '../../core/i18n/i18n.service';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
+import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
@@ -34,7 +35,7 @@ import { withLookalike, withoutLookalike } from './species-lists';
 })
 export class SectionLookalikeComponent {
   private readonly i18n = inject(I18nService);
-  private readonly router = inject(Router);
+  private readonly history = inject(HistoryService);
   private readonly state = inject(SpeciesEditorStore);
   private readonly catalogue = inject(SpeciesStore);
 
@@ -58,12 +59,18 @@ export class SectionLookalikeComponent {
   protected readonly otherNames = computed(() => {
     const slug = this.other();
     const held = this.held();
-    if (held?.slug === slug) return { name: held.name, latin: held.scientificName };
+    // In another language than German, the name is the scientific name: it then shows only once.
+    const named = (name: string, latin: string) => ({ name, latin: latin === name ? '' : latin });
+    if (held?.slug === slug) return named(this.localName(held), held.scientificName);
     const found = this.catalogue.species().find((one) => one.slug === slug);
     return found === undefined
-      ? { name: this.i18n.translate('admin.lookalike.choose'), latin: '' }
-      : { name: found.name, latin: found.scientificName };
+      ? named(this.i18n.translate('admin.lookalike.choose'), '')
+      : named(found.name, found.scientificName);
   });
+
+  private localName(held: { name: string; scientificName: string }): string {
+    return this.i18n.locale() === DEFAULT_LOCALE ? held.name : held.scientificName;
+  }
 
   constructor() {
     this.state.load(this.slug);
@@ -91,7 +98,8 @@ export class SectionLookalikeComponent {
     this.back();
   }
 
+  /** Goes back to the page that opened this editor, for example the part page. */
   protected back(): void {
-    void this.router.navigate(['/verwaltung/arten', this.slug()]);
+    this.history.back(['/verwaltung/arten', this.slug()]);
   }
 }

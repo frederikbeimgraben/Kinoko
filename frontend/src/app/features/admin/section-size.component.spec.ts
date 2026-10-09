@@ -5,6 +5,7 @@ import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/route
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { of } from 'rxjs';
+import { HistoryService } from '../../core/navigation/history.service';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
 import { SectionSizeComponent } from './section-size.component';
@@ -85,6 +86,21 @@ describe('SectionSizeComponent', () => {
     await userEvent.click(screen.getByRole('tab', { name: 'Höhe' }));
 
     expect(screen.getByLabelText('von')).toHaveValue('');
+  });
+
+  it('geht nach dem Übernehmen und mit dem Pfeil auf die Seite zurück, die es geöffnet hat', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Hut · Maß' });
+    const back = vi.spyOn(TestBed.inject(HistoryService), 'back').mockReturnValue();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    http.expectOne('/api/species/boletus-edulis');
+    await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
+
+    expect(back.mock.calls).toEqual([
+      [['/verwaltung/arten', 'boletus-edulis']],
+      [['/verwaltung/arten', 'boletus-edulis']],
+    ]);
   });
 
   it('liest ein Komma als Dezimalzeichen und schreibt Spanne und Einheit an den Vertrag', async () => {
