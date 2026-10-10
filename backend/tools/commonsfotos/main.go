@@ -1,23 +1,6 @@
 // Command commonsfotos finds freely licensed lead photos for the species on
-// Wikimedia Commons and writes the seed file daten/fotos.json.
-//
-// Step 1 queries Commons for each species file and writes the
-// candidates:
-//
-//	go run ./tools/commonsfotos find -arten daten/arten -out candidates.json
-//
-// Step 2 adds the English common names of GBIF to the candidates:
-//
-//	go run ./tools/commonsfotos names -arten daten/arten -candidates candidates.json
-//
-// Step 3 picks one candidate for each species and writes the seed file. A
-// picks file can name the file for a species ({"steinpilz": "File:…jpg"}) or
-// leave a species out ({"steinpilz": ""}). Without an entry the candidate
-// with the highest score wins:
-//
-//	go run ./tools/commonsfotos pick -arten daten/arten -candidates candidates.json \
-//	    -picks picks.json -out daten/fotos.json
-//
+// Wikimedia Commons and writes the seed file daten/fotos.json. It has three steps:
+// find, names and pick. README.md in this folder tells how to run them.
 // The tool sends the User-Agent of the project, waits between requests and
 // waits longer after the answer 429.
 package main
