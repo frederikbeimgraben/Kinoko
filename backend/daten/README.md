@@ -107,3 +107,24 @@ for the style. Use these rules:
 A start of the service writes the description keys of a changed species file
 into the database. It does not change other fields of the species. A file
 without `beschreibung` keeps the description of the database.
+
+## Lead photos
+
+`fotos.json` has a photo for 283 of the 306 species. Each photo was examined
+by eye: a field photo of the fruiting bodies, no drawing, no micrograph. For
+these species Wikimedia Commons had no usable photo, or only a photo of
+another taxon:
+
+aprikosen-gelbfuss, becherfoermiger-saegeblaettling,
+braunschuppiger-wiesenchampignon, ellipsoidsporige-stoppelpilz,
+gelber-hohlfussroehrling, gelbfleckiger-steinpilz,
+glattstieliges-stockschwaemmchen, grossscheidiger-scheidenstreifling,
+haselbrauner-schirmling, nadelholzschwefelporling, olivgrauer-schneckling,
+orangeroter-mairitterling, panzerrasling, rauer-staeubling,
+riesentrichterling, rissiger-frauentaeubling, risspilzartiger-schneckling,
+runzelige-fingerhutverpel, samtiger-filzroehrling,
+seidiger-egerlingsschirmling, uebelriechender-egerling,
+weinbraunverfaerbende-koralle, weisstannenfingerhut.
+
+An admin can add a photo for these species in the app. `docs/operations.md`
+("Seed photos") tells how to make the file again.

@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io/fs"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,7 +15,9 @@ import (
 	"testing"
 	"testing/fstest"
 	"time"
+	"unicode/utf8"
 
+	backend "github.com/frederikbeimgraben/kinoko/backend"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/modules/photos"
@@ -349,5 +352,37 @@ func TestLoadReadsTheSeedFile(t *testing.T) {
 	got := entries["boletus-edulis"]
 	if got.File != "File:A.jpg" || got.Author != "A" || got.Licence != "CC0" || got.CaptionEn != "Penny bun" {
 		t.Fatalf("%+v", got)
+	}
+}
+
+func TestTheSeedFileHoldsOnlyUsableEntries(t *testing.T) {
+	data, err := fs.Sub(backend.Data, "daten")
+	if err != nil {
+		t.Fatal(err)
+	}
+	entries, err := photoseed.Load(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	env := testkit.New(t)
+	sources := map[string]string{}
+	for slug, e := range entries {
+		if _, ok := photoseed.LicenceOf(e.Licence); !ok {
+			t.Errorf("%s: licence %q", slug, e.Licence)
+		}
+		if e.Author == "" || utf8.RuneCountInString(e.Author) > 120 {
+			t.Errorf("%s: author %q", slug, e.Author)
+		}
+		if !strings.HasPrefix(e.Source, "https://commons.wikimedia.org/wiki/File:") || e.Caption == "" || e.CaptionEn == "" {
+			t.Errorf("%s: %+v", slug, e)
+		}
+		if other, ok := sources[e.Source]; ok {
+			t.Errorf("%s and %s share the source %s", slug, other, e.Source)
+		}
+		sources[e.Source] = slug
+		var found bool
+		if err := env.DB.QueryRow("SELECT EXISTS (SELECT 1 FROM species WHERE slug = ?)", slug).Scan(&found); err != nil || !found {
+			t.Errorf("%s: no species with this slug (%v)", slug, err)
+		}
 	}
 }
