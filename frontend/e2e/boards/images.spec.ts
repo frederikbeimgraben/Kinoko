@@ -82,7 +82,7 @@ test('ImageView', async ({ page }) => {
     photoFixture(358, 300),
   );
   await expect(page.getByText('2 von 4')).toBeVisible();
-  await expect(page.getByText('CC BY-SA 4.0', { exact: true })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'CC BY-SA 4.0' })).toBeVisible();
   await expectBoard(page, 'ImageView');
 });
 
