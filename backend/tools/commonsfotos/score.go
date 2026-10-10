@@ -93,10 +93,10 @@ func cleanAuthor(author string) string {
 // badWords mark files that do not show the fruiting bodies in the field.
 var badWords = []string{
 	"microscop", "mikroskop", "micrograph", "spore", "cystid", "zystid", "basidia", "basidium", "hyphae",
-	"drawing", "zeichnung", "illustration", "plate", "tafel", "herbar", "exsiccat", "specimen",
+	"drawing", "zeichnung", "illustration", "plate", "tafel", "herbar", "exsiccat",
 	"stamp", "briefmarke", "painting", "aquarell", "watercolo", "distribution", "verbreitung",
 	" map", "karte", "dried", "getrocknet", "culture", "kultur", "mycel", "x400", "x1000",
-	"400x", "1000x", "logo", "icon", " dish", "cooked", "soup", "recipe", "gericht", "market",
+	"400x", "1000x", "logo", " icon", " dish", "cooked", "soup", "recipe", "gericht", "market",
 	"markt", "molecule", "chemical structure", "sem image", "cross section", "cross-section",
 	"longitudinal section", "querschnitt", "längsschnitt", "book", "museum", " model", "modell",
 	"sculpture", "skulptur", "münze", "basket", "korb", "harvest", "ernte", "edible fungi",
@@ -140,8 +140,10 @@ func score(c candidate, latin []string) (int, []string) {
 	}
 	short, long := min(c.Width, c.Height), max(c.Width, c.Height)
 	switch {
+	case short < 400:
+		note(-300, "too small")
 	case short < 600:
-		note(-300, "small")
+		note(-30, "small")
 	case c.Width*c.Height < 1_000_000:
 		note(-20, "below 1 MP")
 	case c.Width*c.Height >= 2_000_000:
@@ -154,7 +156,8 @@ func score(c candidate, latin []string) (int, []string) {
 	categories := "|" + strings.ToLower(c.Categories) + "|"
 	for i, name := range latin {
 		name = strings.ToLower(name)
-		if strings.Contains(title, name) || strings.Contains(title, strings.ReplaceAll(name, " ", "_")) {
+		if strings.Contains(title, name) || strings.Contains(title, strings.ReplaceAll(name, " ", "_")) ||
+			strings.Contains(title, strings.ReplaceAll(name, " ", ".")) {
 			note(25-5*min(i, 2), "name in title")
 			break
 		}

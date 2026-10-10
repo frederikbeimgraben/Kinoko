@@ -102,3 +102,17 @@ func TestSentenceCase(t *testing.T) {
 		}
 	}
 }
+
+func TestChooseSkipsAUsedFile(t *testing.T) {
+	good := func(title string) candidate {
+		return candidate{Title: title, Author: "A", Licence: licence{Code: "cc0"}, Score: 10}
+	}
+	result := found{Candidates: []candidate{good("File:A.jpg"), good("File:B.jpg")}}
+	chosen, ok := choose(result, map[string]string{}, "art", map[string]bool{"File:A.jpg": true})
+	if !ok || chosen.Title != "File:B.jpg" {
+		t.Fatal(chosen, ok)
+	}
+	if _, ok := choose(result, map[string]string{"art": ""}, "art", map[string]bool{}); ok {
+		t.Fatal("an empty pick must leave the species out")
+	}
+}

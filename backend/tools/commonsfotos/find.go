@@ -153,7 +153,8 @@ func search(ctx context.Context, c *client, s species) (found, error) {
 	}
 	add(quality)
 	names := latinNames(s)
-	if countUsable(quality) >= 3 {
+	rescore(quality, names)
+	if countGood(quality) >= 3 {
 		names = nil
 	}
 	for i, name := range names {
@@ -182,6 +183,17 @@ func search(ctx context.Context, c *client, s species) (found, error) {
 }
 
 func usable(list []candidate) bool { return countUsable(list) > 0 }
+
+// countGood counts the candidates with a score that the pick step accepts.
+func countGood(list []candidate) int {
+	count := 0
+	for _, c := range list {
+		if c.Score >= minScore {
+			count++
+		}
+	}
+	return count
+}
 
 func countUsable(list []candidate) int {
 	count := 0

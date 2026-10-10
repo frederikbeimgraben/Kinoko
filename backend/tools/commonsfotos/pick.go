@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"unicode"
@@ -62,13 +63,23 @@ func runPick(args []string) error {
 	}
 	entries := map[string]entry{}
 	missing := []string{}
-	for _, s := range list {
+	// Each file serves one species only: the seed command knows a photo by its source page.
+	// The species with an entry in the picks file choose first.
+	used := map[string]bool{}
+	ordered := slices.Clone(list)
+	sort.SliceStable(ordered, func(i, j int) bool {
+		_, first := picks[ordered[i].Slug]
+		_, second := picks[ordered[j].Slug]
+		return first && !second
+	})
+	for _, s := range ordered {
 		rescore(results[s.Slug].Candidates, latinNames(s))
-		chosen, ok := choose(results[s.Slug], picks, s.Slug)
+		chosen, ok := choose(results[s.Slug], picks, s.Slug, used)
 		if !ok {
 			missing = append(missing, s.Slug)
 			continue
 		}
+		used[chosen.Title] = true
 		entries[importer.Slugify(s.Latin)] = toEntry(s, results[s.Slug], chosen)
 	}
 	if err := writeJSON(*out, entries); err != nil {
@@ -98,11 +109,11 @@ func readJSON(path string, out any) error {
 	return json.Unmarshal(raw, out)
 }
 
-// choose gives the candidate of the picks file, else the best usable candidate.
-func choose(result found, picks map[string]string, slug string) (candidate, bool) {
+// choose gives the candidate of the picks file, else the best usable candidate that no other species uses.
+func choose(result found, picks map[string]string, slug string, used map[string]bool) (candidate, bool) {
 	title, picked := picks[slug]
 	for _, c := range result.Candidates {
-		if !acceptable(c) {
+		if !acceptable(c) || used[c.Title] {
 			continue
 		}
 		if picked && c.Title == title {
