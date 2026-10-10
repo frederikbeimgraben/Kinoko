@@ -62,8 +62,8 @@ type Options struct {
 	Pause time.Duration
 	// Now gives the time of the new rows. Nil means time.Now.
 	Now func() time.Time
-	// Sleep waits. Nil means time.Sleep. Tests replace it.
-	Sleep func(time.Duration)
+	// Sleep waits and stops early when the context ends. Nil means a wait on a timer. Tests replace it.
+	Sleep func(context.Context, time.Duration) error
 	// Out receives one line for each photo.
 	Out io.Writer
 }
@@ -73,7 +73,10 @@ type Report struct {
 	Added   int
 	Skipped int
 	Lead    int
-	Failed  []string
+	// Failed are the entries whose download or store failed. A new run can add them.
+	Failed []string
+	// Invalid are the entries that a new run cannot add: a bad entry or no species with the slug.
+	Invalid []string
 }
 
 // Load reads the seed file of the data folder.
@@ -127,7 +130,7 @@ func Run(ctx context.Context, handle *sql.DB, entries map[string]Entry, opts Opt
 	for _, slug := range slugs {
 		entry := entries[slug]
 		if err := check(entry); err != nil {
-			report.Failed = append(report.Failed, slug)
+			report.Invalid = append(report.Invalid, slug)
 			_, _ = fmt.Fprintf(opts.Out, "%s: %v\n", slug, err)
 			continue
 		}
@@ -136,12 +139,14 @@ func Run(ctx context.Context, handle *sql.DB, entries map[string]Entry, opts Opt
 			return report, err
 		}
 		if !found {
-			report.Failed = append(report.Failed, slug)
+			report.Invalid = append(report.Invalid, slug)
 			_, _ = fmt.Fprintf(opts.Out, "%s: no species with this slug\n", slug)
 			continue
 		}
+		// Only a seed photo of the same species counts: an upload can name the same source.
 		present, err := db.Scalar[bool](ctx, handle,
-			"SELECT EXISTS (SELECT 1 FROM photo WHERE source = ?)", entry.Source)
+			"SELECT EXISTS (SELECT 1 FROM photo WHERE source = ? AND species_id = ? AND owner_id IS NULL)",
+			entry.Source, species)
 		if err != nil {
 			return report, err
 		}
@@ -150,7 +155,9 @@ func Run(ctx context.Context, handle *sql.DB, entries map[string]Entry, opts Opt
 			continue
 		}
 		if !first {
-			opts.Sleep(opts.Pause)
+			if err := opts.Sleep(ctx, opts.Pause); err != nil {
+				return report, err
+			}
 		}
 		first = false
 		lead, err := add(ctx, handle, species, entry, opts)
@@ -179,7 +186,7 @@ func withDefaults(opts Options) Options {
 		opts.Now = time.Now
 	}
 	if opts.Sleep == nil {
-		opts.Sleep = time.Sleep
+		opts.Sleep = wait
 	}
 	if opts.Out == nil {
 		opts.Out = io.Discard
@@ -251,11 +258,26 @@ func nullable(text string) *string {
 	return &text
 }
 
+// maxDelay is the longest wait after a 429 or 5xx, also when Retry-After asks for more.
+const maxDelay = 5 * time.Minute
+
+// wait sleeps for d or until the context ends.
+func wait(ctx context.Context, d time.Duration) error {
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+	select {
+	case <-timer.C:
+		return nil
+	case <-ctx.Done():
+		return ctx.Err()
+	}
+}
+
 // download reads a file with the User-Agent of the project. After the
 // answers 429 and 5xx it waits as long as Retry-After asks, at least
-// ten seconds, and twice as long after each further failure.
+// ten seconds and at most maxDelay, and twice as long after each further failure.
 func download(ctx context.Context, address string, opts Options) ([]byte, string, error) {
-	wait := 10 * time.Second
+	backoff := 10 * time.Second
 	for try := 1; ; try++ {
 		raw, mediaType, status, retry, err := fetch(ctx, address, opts)
 		if err != nil || status == http.StatusOK {
@@ -264,10 +286,12 @@ func download(ctx context.Context, address string, opts Options) ([]byte, string
 		if (status != http.StatusTooManyRequests && status < 500) || try == maxTries {
 			return nil, "", fmt.Errorf("GET %s: status %d", address, status)
 		}
-		delay := max(retry, wait)
+		delay := min(max(retry, backoff), maxDelay)
 		_, _ = fmt.Fprintf(opts.Out, "status %d, wait %s\n", status, delay)
-		opts.Sleep(delay)
-		wait *= 2
+		if err := opts.Sleep(ctx, delay); err != nil {
+			return nil, "", err
+		}
+		backoff *= 2
 	}
 }
 

@@ -52,13 +52,15 @@ func SyncDescriptions(ctx context.Context, handle *sql.DB, profiles []StemProfil
 			if known && last == file.digest() {
 				continue
 			}
-			if p.Profile.Beschreibung != nil {
-				n, err := syncOne(ctx, tx, p.Profile, last, known, now)
-				if err != nil {
-					return 0, err
-				}
-				changed += int(n)
+			// A file without beschreibung keeps the description and the digest of the last sync.
+			if p.Profile.Beschreibung == nil {
+				continue
 			}
+			n, err := syncOne(ctx, tx, p.Profile, last, known, now)
+			if err != nil {
+				return 0, err
+			}
+			changed += int(n)
 			if err := storeDigest(ctx, tx, key, file.digest()); err != nil {
 				return 0, err
 			}

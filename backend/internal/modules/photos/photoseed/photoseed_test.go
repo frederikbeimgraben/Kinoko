@@ -96,10 +96,11 @@ type recorder struct {
 	sleeps []time.Duration
 }
 
-func (r *recorder) sleep(d time.Duration) {
+func (r *recorder) sleep(_ context.Context, d time.Duration) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	r.sleeps = append(r.sleeps, d)
+	return nil
 }
 
 // logWriter writes the lines of a run into the test log.
@@ -230,6 +231,33 @@ func TestRunSkipsAPhotoWithAKnownSource(t *testing.T) {
 	}
 }
 
+func TestRunIgnoresAnUploadWithTheSameSource(t *testing.T) {
+	env := testkit.New(t)
+	_, host := newServer(t)
+	entries := map[string]photoseed.Entry{"boletus-edulis": entry(host.URL, "Boletus_edulis.jpg")}
+	opts := options(env, host.Client(), &recorder{})
+	if _, err := photoseed.Run(context.Background(), env.DB, entries, opts); err != nil {
+		t.Fatal(err)
+	}
+	// The seed row becomes an upload of a person, as if someone named the same source.
+	if _, err := env.DB.ExecContext(context.Background(), `INSERT INTO user (id, sub, name, created_at)
+		VALUES ('0123456789abcdef0123456789abcdef', 'sub', 'Jemand', '2026-01-01 00:00:00')`); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := env.DB.ExecContext(context.Background(),
+		"UPDATE photo SET owner_id = '0123456789abcdef0123456789abcdef'"); err != nil {
+		t.Fatal(err)
+	}
+
+	report, err := photoseed.Run(context.Background(), env.DB, entries, opts)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if report.Added != 1 || report.Skipped != 0 {
+		t.Fatalf("an upload with the same source blocked the seed photo: %+v", report)
+	}
+}
+
 func TestRunKeepsTheLeadPhotoOfASpecies(t *testing.T) {
 	env := testkit.New(t)
 	_, host := newServer(t)
@@ -305,7 +333,8 @@ func TestRunReportsBadEntriesAndGoesOn(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if report.Added != 1 || strings.Join(report.Failed, ",") != "amanita-pantherina,gibt-es-nicht,suillus-luteus" {
+	if report.Added != 1 || strings.Join(report.Failed, ",") != "suillus-luteus" ||
+		strings.Join(report.Invalid, ",") != "amanita-pantherina,gibt-es-nicht" {
 		t.Fatalf("%+v", report)
 	}
 	if len(photoOf(t, env, "amanita-pantherina")) != 0 || len(photoOf(t, env, "boletus-edulis")) != 1 {

@@ -116,8 +116,12 @@ func seedPhotos(ctx context.Context, handle *sql.DB, settings config.Settings, a
 	if err != nil {
 		return err
 	}
-	fmt.Printf("photos: %d added, %d lead photos, %d present, %d failed\n",
-		report.Added, report.Lead, report.Skipped, len(report.Failed))
+	fmt.Printf("photos: %d added, %d lead photos, %d present, %d failed, %d invalid\n",
+		report.Added, report.Lead, report.Skipped, len(report.Failed), len(report.Invalid))
+	if len(report.Invalid) > 0 {
+		fmt.Printf("warning: a new run cannot add these entries; correct the seed file or the species: %s\n",
+			strings.Join(report.Invalid, ", "))
+	}
 	if len(report.Failed) > 0 {
 		return fmt.Errorf("%d photos failed: %s; run the command again", len(report.Failed),
 			strings.Join(report.Failed, ", "))

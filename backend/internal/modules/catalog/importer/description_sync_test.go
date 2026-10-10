@@ -164,7 +164,20 @@ func TestADescriptionSyncWithoutStoredDigestsFillsOnlyAnEmptyDescription(t *test
 	if got := descriptionOf(t, handle, "boletus-edulis"); got.german == nil || *got.german != "Von Hand." {
 		t.Fatalf("a description of the database changed: %+v", got)
 	}
-	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%#beschreibung'"); n != 4 {
+	if n := count(t, handle, "SELECT count(*) FROM seed_digest WHERE name LIKE 'arten/%#beschreibung'"); n != 2 {
 		t.Fatalf("digests %d", n)
+	}
+}
+
+func TestARemovedAndAddedDescriptionStillSyncs(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, withDescribedButterpilz(smallData(""), "beschreibung = \"Ein Pilz.\""))
+	seed(t, handle, smallData(""))
+	if got := descriptionOf(t, handle, "suillus-luteus"); got.german == nil || *got.german != "Ein Pilz." {
+		t.Fatalf("a file without beschreibung changed the description: %+v", got)
+	}
+	seed(t, handle, withDescribedButterpilz(smallData(""), "beschreibung = \"Ein neuer Pilz.\""))
+	if got := descriptionOf(t, handle, "suillus-luteus"); got.german == nil || *got.german != "Ein neuer Pilz." {
+		t.Fatalf("the description added again did not sync: %+v", got)
 	}
 }

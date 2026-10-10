@@ -97,3 +97,55 @@ func TestAnUpgradeFillsOnlyAnEmptyRingShape(t *testing.T) {
 		t.Fatalf("changed file %q", got)
 	}
 }
+
+func TestAnUpgradeKeepsAForecastThatAnAdminTurnedOff(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, withKarte(smallData("")))
+	exec(t, handle,
+		"INSERT INTO species_forecast (species_id, chain_key, taxa) SELECT id, 'suillus_luteus', '[]' FROM species WHERE slug = 'suillus-luteus'",
+		"UPDATE species SET forecast_enabled = FALSE WHERE slug = 'suillus-luteus'",
+		"DELETE FROM seed_digest")
+	seed(t, handle, withKarte(smallData("")))
+	if forecastOn(t, handle, "suillus-luteus") {
+		t.Fatal("the first sync turned on a forecast of a species with a chain row")
+	}
+}
+
+func TestAnUpgradeKeepsTheForecastOfAnEditedSpecies(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, smallData(""))
+	exec(t, handle,
+		"INSERT INTO user (id, sub, name, created_at) VALUES ('0123456789abcdef0123456789abcdef', 'sub', 'Admin', '2026-01-01 00:00:00')",
+		"UPDATE species SET updated_by_id = '0123456789abcdef0123456789abcdef' WHERE slug = 'suillus-luteus'",
+		"DELETE FROM seed_digest")
+	seed(t, handle, withKarte(smallData("")))
+	if forecastOn(t, handle, "suillus-luteus") {
+		t.Fatal("the first sync changed a species that an admin edited")
+	}
+}
+
+func TestARemovedKarteTurnsTheForecastOff(t *testing.T) {
+	handle := openDB(t)
+	seed(t, handle, withKarte(smallData("")))
+	seed(t, handle, smallData(""))
+	if forecastOn(t, handle, "suillus-luteus") {
+		t.Fatal("the forecast stays without karte")
+	}
+}
+
+func TestAnUnknownRingformKeepsTheRingShape(t *testing.T) {
+	handle := openDB(t)
+	files := smallData("")
+	files["arten/butterpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Butterpilz", "Suillus luteus", `ringform = "haengend"`))}
+	seed(t, handle, files)
+	files["arten/butterpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Butterpilz", "Suillus luteus", `ringform = "spiralig"`))}
+	seed(t, handle, files)
+	if got := ringOf(t, handle, "suillus-luteus"); got != "pendant" {
+		t.Fatalf("an unknown value changed the ring shape: %q", got)
+	}
+	files["arten/butterpilz.toml"] = &fstest.MapFile{Data: []byte(smallProfile("Butterpilz", "Suillus luteus", ""))}
+	seed(t, handle, files)
+	if got := ringOf(t, handle, "suillus-luteus"); got != "" {
+		t.Fatalf("a removed ringform stays: %q", got)
+	}
+}

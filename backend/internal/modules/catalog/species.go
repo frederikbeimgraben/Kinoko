@@ -282,6 +282,10 @@ type forecastWrite struct {
 // setForecast changes updated_at only when the value changes. The bundle
 // tag depends on it.
 func (m *Module) setForecast(r *http.Request) (web.Response, error) {
+	user, _, err := m.deps.Auth.CurrentUser(r)
+	if err != nil {
+		return nil, err
+	}
 	body, err := web.Decode[forecastWrite](r)
 	if err != nil {
 		return nil, err
@@ -293,8 +297,8 @@ func (m *Module) setForecast(r *http.Request) (web.Response, error) {
 			return Species{}, err
 		}
 		if row.ForecastEnabled != body.Enabled {
-			if _, err := tx.ExecContext(ctx, "UPDATE species SET forecast_enabled = ?, updated_at = ? WHERE id = ?",
-				body.Enabled, m.now(), row.ID); err != nil {
+			if _, err := tx.ExecContext(ctx, "UPDATE species SET forecast_enabled = ?, updated_at = ?, updated_by_id = ? WHERE id = ?",
+				body.Enabled, m.now(), user.ID, row.ID); err != nil {
 				return Species{}, err
 			}
 			if row, err = speciesBySlug(ctx, tx, row.Slug); err != nil {

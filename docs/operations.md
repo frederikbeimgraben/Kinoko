@@ -207,13 +207,16 @@ sudo -u pilzeapp env PILZE_DB=/var/lib/pilze-app/pilze.sqlite \
 For each entry the command does these steps:
 
 1. It finds the species with the key of the entry as slug (the latin name as a slug, for example `boletus-edulis`).
-2. If a photo with the same source page (`quelle`) is in the database, it does nothing. Thus you can run the command again, for example after a failure.
+2. If a seed photo (without owner) of the same species with the same source page (`quelle`) is in the database, it does nothing. Thus you can run the command again, for example after a failure. An upload of a person with the same source does not count.
 3. It downloads the file (`bild`, a copy with a width of 1920 pixels, else `url`) with the User-Agent `KinokoBot/0.1`. It waits 2 seconds between two downloads (`--pause`). After the answer 429 it waits as long as `Retry-After` asks, at least 10 seconds.
 4. It makes the sizes of an upload (`PILZE_MAX_PHOTO_BYTES` applies) and writes the photo row: approved, without owner, with the author (`urheber`), the licence (`lizenz`), the source page and the German and English captions.
 5. If the species has no lead photo, the photo becomes the lead photo.
 
-At the end the command writes the counts. If an entry failed, it names the
-species and stops with an error. Run it again to try the failed entries.
+At the end the command writes the counts. An entry that a new run cannot add
+(a bad entry, or no species with the slug) shows as a warning. If a download or
+a write failed, the command names the species and stops with an error. Run it
+again to try these entries. A wait after the answer 429 or 5xx is at most five
+minutes, and Ctrl-C stops the command also during a wait.
 `--file <path>` reads another seed file. Without it, the command reads
 `fotos.json` of `PILZE_DATEN`, else the copy in the binary.
 
