@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilze gibt ihm die Relative Wertigkeit 6."
+beschreibung = "Kleiner, kugel- bis birnenförmiger Stäubling mit bräunlicher Außenhaut voller dicht stehender, zusammenneigender Stacheln mit hellerer Spitze. Er wächst von Juni bis November als Folgezersetzer, meist im Laubwald und gern auf kalkreichem Boden. Sein bestes Merkmal ist das deutliche Netzmuster, das auf der Außenhaut zurückbleibt, wenn die Stacheln abfallen."
+beschreibungEn = "A small, round to pear-shaped puffball with a brownish outer skin full of crowded spines that bend together and have paler tips. It grows from June to November as a saprobe, mostly in broadleaf woods and often on calcareous soil. Its best feature is the clear net pattern that stays on the outer skin when the spines fall off."
+entwurf = true
 synonyme = ["Lycoperdon gemmatum var. echinatum", "Utraria echinata", "Lycoperdon hoylei", "Lycoperdum echinatum sensu"]
 fruchtschicht = { art = "stacheln" }
 hutform = { von = "kugelig" }

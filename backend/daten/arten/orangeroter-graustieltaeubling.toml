@@ -8,6 +8,9 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "tanne", "fichte"]
+beschreibung = "Mittelgroßer Täubling mit gelborangem, dunkelorangerotem, ziegelrotem bis kupferfarbenem Hut, weißlichen bis hellockerfarbenen Lamellen und weißem Stiel. Er wächst von Juni bis November im Nadelwald und in Torfmooren, gern bei Kiefer, Tanne und Fichte, und fehlt im Flachland. Sein bestes Merkmal ist das weiße, feste Fleisch, das sich nach Verletzung erst rötet und später grau färbt, ebenso Stiel und Lamellen."
+beschreibungEn = "A medium-sized brittlegill with a yellow-orange, dark orange-red, brick-red to copper-coloured cap, whitish to light ochre gills and a white stem. It grows from June to November in coniferous woods and peat bogs, often with pine, fir and spruce, and is absent from the lowlands. Its best feature is the white, firm flesh, which turns red at first after damage and later grey, as do the stem and the gills."
+entwurf = true
 fruchtschicht = { art = "lamellen" }
 
 [quelle]

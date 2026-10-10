@@ -27,6 +27,7 @@ type Photo struct {
 	Source       *string
 	TakenOn      *db.Date
 	Caption      *string
+	CaptionEn    string
 	Lat          *float64
 	Lon          *float64
 	Lead         bool
@@ -40,7 +41,7 @@ type Photo struct {
 }
 
 const selectPhoto = `SELECT p.id, p.owner_id, p.find_id, p.species_id, p.width, p.height,
-	p.photographer, p.licence, p.source, p.taken_on, p.caption, p.lat, p.lon, p.lead,
+	p.photographer, p.licence, p.source, p.taken_on, p.caption, p.caption_en, p.lat, p.lon, p.lead,
 	p.state, p.reject_reason, p.reviewed_by_id, p.reviewed_at, p.created_at, p.updated_at,
 	u.name
 	FROM photo p LEFT JOIN user u ON u.id = p.owner_id`
@@ -48,7 +49,7 @@ const selectPhoto = `SELECT p.id, p.owner_id, p.find_id, p.species_id, p.width, 
 func scanPhoto(s db.Scanner) (Photo, error) {
 	var p Photo
 	err := s.Scan(&p.ID, &p.OwnerID, &p.FindID, &p.SpeciesID, &p.Width, &p.Height,
-		&p.Photographer, &p.Licence, &p.Source, &p.TakenOn, &p.Caption, &p.Lat, &p.Lon, &p.Lead,
+		&p.Photographer, &p.Licence, &p.Source, &p.TakenOn, &p.Caption, &p.CaptionEn, &p.Lat, &p.Lon, &p.Lead,
 		&p.State, &p.RejectReason, &p.ReviewedByID, &p.ReviewedAt, &p.CreatedAt, &p.UpdatedAt,
 		&p.OwnerName)
 	return p, err
@@ -66,6 +67,7 @@ type Out struct {
 	OwnerName    string           `json:"ownerName"`
 	Licence      enums.Licence    `json:"licence"`
 	Caption      *string          `json:"caption"`
+	CaptionEn    string           `json:"captionEn"`
 	Source       *string          `json:"source"`
 	TakenOn      *db.Date         `json:"takenOn"`
 	Lat          *float64         `json:"lat"`
@@ -88,7 +90,7 @@ func ToOut(p Photo) Out {
 	return Out{
 		ID: p.ID, OwnerID: p.OwnerID, SpeciesID: p.SpeciesID, FindID: p.FindID,
 		Width: p.Width, Height: p.Height, Photographer: p.Photographer, OwnerName: ownerName,
-		Licence: p.Licence, Caption: p.Caption, Source: p.Source, TakenOn: p.TakenOn,
+		Licence: p.Licence, Caption: p.Caption, CaptionEn: p.CaptionEn, Source: p.Source, TakenOn: p.TakenOn,
 		Lat: p.Lat, Lon: p.Lon, Lead: p.Lead, State: p.State, RejectReason: p.RejectReason,
 		ReviewedByID: p.ReviewedByID, ReviewedAt: p.ReviewedAt,
 		CreatedAt: p.CreatedAt, UpdatedAt: p.UpdatedAt,

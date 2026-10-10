@@ -77,6 +77,8 @@ export class SpeciesEditorComponent {
   protected readonly extraParts = this.state.extraParts;
 
   protected readonly description = linkedSignal(() => this.species()?.description ?? '');
+  /** Empty means no English text: the species page then shows the German text. */
+  protected readonly descriptionEn = linkedSignal(() => this.species()?.descriptionEn ?? '');
   protected readonly edibilityNote = linkedSignal(() => this.species()?.edibilityNote ?? '');
 
   protected readonly title = computed(() => {
@@ -200,7 +202,11 @@ export class SpeciesEditorComponent {
   /** Writes the texts of the page. The subpages write their own fields. */
   protected save(): void {
     const text = (value: string): string | null => (value.trim() === '' ? null : value);
-    this.state.save({ description: text(this.description()), edibilityNote: text(this.edibilityNote()) });
+    this.state.save({
+      description: text(this.description()),
+      descriptionEn: this.descriptionEn().trim(),
+      edibilityNote: text(this.edibilityNote()),
+    });
     this.back();
   }
 

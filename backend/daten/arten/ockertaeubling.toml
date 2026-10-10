@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["pappel"]
 speisewertHinweis = "Sehr minderwertig, 123pilzsuche gibt die Relative Wertigkeit 5. Er schmeckt teils schärflich und etwas bitterlich."
+beschreibung = "Mittelgroßer Täubling mit hellgelbem, gelbockerfarbenem bis olivockerfarbenem, kahlem und mattem Hut, weißen, später schmutzig cremefarbenen Lamellen und weißem, im Alter leicht grauendem Stiel. Er wächst von Juni bis November im Mischwald, überwiegend im Nadelwald, gern auf saurem Boden. Sein bestes Merkmal ist das Fleisch, das sich später grau färbt, zusammen mit dem obstartig würzigen Geruch."
+beschreibungEn = "A medium-sized brittlegill with a light yellow, yellow-ochre to olive-ochre, bare and matt cap, white gills that later become dirty cream, and a white stem that turns slightly grey with age. It grows from June to November in mixed woods, mostly in coniferous woods, often on acid soil. Its best feature is the flesh, which later turns grey, together with the fruity, spicy smell."
+entwurf = true
 weitereNamen = ["Ockergelber Täubling", "Zitronentäubling", "Ockerweißer Täubling"]
 synonyme = ["Russula citrina", "Russula granulosa", "Russula ochroleuca var. granulosa"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

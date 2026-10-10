@@ -10,7 +10,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// Constants of tile_trees in region_map.py.
+// Constants of the tree count.
 const (
 	// TreePixel is the step of the warped tree map in metres.
 	TreePixel = 10
@@ -29,8 +29,8 @@ type TreeClass struct {
 	Name  string
 }
 
-// TreeClasses are the classes of the published map legend, in the order of
-// CLASSES in tree_species.py. Class 0 is ground without forest.
+// TreeClasses are the classes of the published map legend, in ascending
+// value. Class 0 is ground without forest.
 var TreeClasses = []TreeClass{
 	{2, "birch"}, {3, "beech"}, {4, "douglas_fir"}, {5, "oak"}, {6, "alder"},
 	{8, "spruce"}, {9, "pine"}, {10, "larch"}, {14, "fir"},
@@ -63,9 +63,9 @@ type TreeOptions struct {
 	Progress func(done, total int)
 }
 
-// TileTrees counts the classes of the tree map in each cell, as tile_trees: it warps each tile to
+// TileTrees counts the classes of the tree map in each cell: it warps each tile to
 // EPSG:3035 at 10 m (nearest neighbour, nodata 0) and counts each block of step/10 pixels. The source
-// is a local file in any CRS, not the Thuenen WCS. An error in a tile stops the count; Python skips it.
+// is a local file in any CRS, not the Thuenen WCS. An error in a tile stops the count.
 func TileTrees(ctx context.Context, source string, g Grid, opt TreeOptions) (*ClassCounts, error) {
 	if err := g.Check(); err != nil {
 		return nil, err
@@ -100,7 +100,7 @@ func TileTrees(ctx context.Context, source string, g Grid, opt TreeOptions) (*Cl
 	return out, nil
 }
 
-// treeTiles lists the tile boxes, x first, then y, as tile_trees.
+// treeTiles lists the tile boxes, x first, then y.
 func treeTiles(g Grid, tile int) [][4]int {
 	var out [][4]int
 	for tx := g.X0; tx < g.X1; tx += tile {
@@ -111,8 +111,7 @@ func treeTiles(g Grid, tile int) [][4]int {
 	return out
 }
 
-// warpTreeTile warps one tile box of the source onto the 10 m grid, as the
-// gdalwarp call of tile_trees.
+// warpTreeTile warps one tile box of the source onto the 10 m grid.
 func warpTreeTile(src *godal.Dataset, box [4]int) ([]uint8, int, int, error) {
 	px := strconv.Itoa(TreePixel)
 	// Without "-srcnodata 0", GDAL 3.13 turns class 0 of a map without nodata into 1 to keep it
@@ -167,9 +166,9 @@ func TreesGridSchema() []pio.ColumnSpec {
 	return append(specs, pio.ColumnSpec{Name: "cell", Type: pio.String})
 }
 
-// Table gives the trees grid of tile_trees and trees_germany.main: one row
+// Table gives the trees grid: one row
 // per cell, rows first. Each share is the count of the class over the
-// forest count, in float32 as numpy; a cell without forest has 0.
+// forest count, in float32; a cell without forest has 0.
 func (c *ClassCounts) Table() *pio.Table {
 	g := c.Grid
 	n := g.Len()
@@ -213,8 +212,8 @@ func (c *ClassCounts) Table() *pio.Table {
 	return t
 }
 
-// groupSums adds the conifer and the broadleaf shares row by row, as the
-// pandas sum(axis=1) in tile_trees: left to right in float32.
+// groupSums adds the conifer and the broadleaf shares row by row: left to
+// right in float32.
 func groupSums(t *pio.Table, n int) (conifer, broadleaf []float32) {
 	isConifer := map[string]bool{}
 	for _, c := range Conifers {

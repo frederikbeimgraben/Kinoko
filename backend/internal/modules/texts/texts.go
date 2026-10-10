@@ -55,7 +55,7 @@ type Catalogue struct {
 	Entries  []TextEntry `json:"entries"`
 }
 
-// isoformat writes a time as Python isoformat() does for a UTC value.
+// isoformat writes a UTC time in ISO 8601 with "+00:00" and without a zero fraction.
 // The texts endpoint and its revision use this form.
 func isoformat(t db.Time) string {
 	u := t.UTC()

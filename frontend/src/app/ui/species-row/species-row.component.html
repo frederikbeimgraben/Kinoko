@@ -8,13 +8,19 @@
   [attr.aria-current]="active() ? 'true' : null"
   (click)="choose()"
 >
-  <app-private-image
-    #thumb
-    class="row__thumb"
-    [path]="species().image ?? ''"
-    [alt]="species().name"
-    [colour]="species().colour ?? '#7a5230'"
-  />
+  <span class="row__thumb">
+    <app-private-image
+      #thumb
+      [path]="species().image ?? ''"
+      [alt]="species().name"
+      [colour]="species().colour ?? '#7a5230'"
+    />
+    @if (species().forecastLabel; as mark) {
+      <span class="row__forecast" [attr.title]="mark">
+        <app-svg-icon name="map" [size]="12" [label]="mark" />
+      </span>
+    }
+  </span>
   <span class="row__names">
     <span class="row__name">{{ species().name }}</span>
     @if (species().latin !== species().name) {

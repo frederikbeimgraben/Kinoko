@@ -50,6 +50,19 @@ describe('SpeciesRowComponent', () => {
     await noViolations(container);
   });
 
+  it('zeigt bei einer Art mit Vorhersage das Kartenzeichen mit Namen, sonst keines', async () => {
+    const marked = { ...STEINPILZ, forecastLabel: 'Vorhersage auf der Karte' };
+    const { container, rerender } = await render(SpeciesRowComponent, { inputs: { species: marked } });
+
+    expect(screen.getByRole('img', { name: 'Vorhersage auf der Karte' })).toBeInTheDocument();
+    expect(screen.getByRole('button')).toHaveAccessibleName(/Vorhersage auf der Karte/);
+    expect(container.querySelectorAll('app-level-pill')).toHaveLength(1);
+    await noViolations(container);
+
+    await rerender({ inputs: { species: STEINPILZ } });
+    expect(container.querySelector('.row__forecast')).toBeNull();
+  });
+
   it('zeigt unter einem lateinischen Titel den deutschen Namen, aufrecht und mit Sprache', async () => {
     const latin = { ...STEINPILZ, name: 'Boletus edulis', alias: 'Steinpilz' };
     const { container } = await render(SpeciesRowComponent, { inputs: { species: latin } });
@@ -158,7 +171,7 @@ describe('SpeciesRowComponent', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Steinpilz/ }));
 
-    const thumb = container.querySelector<HTMLElement>('.row__thumb');
+    const thumb = container.querySelector<HTMLElement>('.row__thumb app-private-image');
     expect(thumb?.style.getPropertyValue('view-transition-name')).toBe('shared-boletus-edulis');
   });
 

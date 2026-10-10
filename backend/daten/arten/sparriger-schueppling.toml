@@ -6,10 +6,15 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["obstbaum", "fichte"]
+karte = "pholiota_squarrosa"
 speisewertHinweis = "Verursacht gelegentlich Magen-Darm-Beschwerden; vom Verzehr wird abgeraten. Zu erkennen an den abstehenden sparrigen Schuppen auf Hut und Stiel und am rettichartigen Geruch."
+beschreibung = "Schüppling mit strohgelbem, trockenem Hut voller abstehender, sparriger Schüppchen, jung blass olivgelben, später olivbraunen Lamellen und hellbraunem Stiel, der unter der Ringzone rotbraune Schuppen trägt. Er wächst vom Spätsommer bis zum Spätherbst büschelig an Laubholz und Obstbäumen, seltener an Nadelholz wie Fichte, und verursacht Weißfäule. Vom ähnlichen Sparrigen Risspilz unterscheidet ihn vor allem der Standort, denn der Sparrige Risspilz wächst auf dem Boden und nicht an Holz. Der Sparrige Schüppling ist giftig."
+beschreibungEn = "A scalycap with a straw-yellow, dry cap full of protruding, shaggy scales, gills that are pale olive-yellow when young and olive-brown later, and a light brown stem with red-brown scales below the ring zone. It grows in clusters from late summer to late autumn on broadleaf wood and fruit trees, less often on conifer wood such as spruce, and causes white rot. The key difference from the similar Inocybe hystrix is the habitat, because that species grows on the ground and not on wood. The shaggy scalycap is poisonous."
+entwurf = true
 synonyme = ["Pholiota jahnii sensu", "Hypodendrum floccosum", "Fungus squarrosus", "Stropharia squarrosa", "Dryophila muelleri", "Pholiota squarrosa f. annulosa"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 stielmerkmale = ["ring", "beflockt"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

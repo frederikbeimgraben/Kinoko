@@ -8,10 +8,14 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Stark giftig. Zu erkennen an den braunen, spitzen Stacheln auf cremefarbenem Grund, dem hängenden, nicht verschiebbaren Ring und dem stechend gasartigen Geruch."
 haeufigkeit = "haeufig"
+beschreibung = "Schirmling mit fleischbraunem Hut voller brauner, spitzer Stacheln auf cremefarbenem Grund, weißlichen, sehr eng stehenden, freien Lamellen und weißlichem bis bräunlichem Stiel mit hängendem, nicht verschiebbarem Ring und knolliger Basis. Er wächst vom Frühsommer bis zum Herbst in Gärten, an Wegrändern und auf Schutt, gern auf kalkreichem Boden, und ist häufig. Typisch ist der stechende, gasartige Geruch. Vom Parasol unterscheidet ihn vor allem der Ring, denn beim Parasol lässt sich der Ring am Stiel verschieben. Der Spitzschuppige Schirmling ist giftig."
+beschreibungEn = "A dapperling with a flesh-brown cap full of brown, pointed spines on a cream background, whitish, very crowded, free gills and a whitish to brownish stem with a hanging ring that does not move and a bulbous base. It grows from early summer to autumn in gardens, at roadsides and on rubble, often on calcareous soil, and is common. A typical feature is the pungent, gas-like smell. The key difference from the parasol is the ring, because the ring of the parasol can be moved along the stem. The freckled dapperling is poisonous."
+entwurf = true
 weitereNamen = ["Rauer Schirmling", "Kegelschuppiger Schirmling", "Spitzschuppiger Mehlschirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "flach" }
 stielmerkmale = ["ring", "beflockt", "knolle", "wurzelnd"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

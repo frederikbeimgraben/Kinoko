@@ -195,6 +195,8 @@ type stubStages struct {
 	block   bool
 	started chan struct{}
 	brier   map[string]float64
+	// chains keeps the chain of each trained species, by slug.
+	chains map[string]sources.Chain
 }
 
 func (s *stubStages) call(name string) error {
@@ -237,6 +239,14 @@ func (s *stubStages) Occurrences(_ context.Context, _ *runner.Job) error {
 }
 
 func (s *stubStages) Train(_ context.Context, _ *runner.Job, sp runner.Species) (runner.Trained, error) {
+	if sp.Chain != nil {
+		s.mu.Lock()
+		if s.chains == nil {
+			s.chains = map[string]sources.Chain{}
+		}
+		s.chains[sp.Slug] = *sp.Chain
+		s.mu.Unlock()
+	}
 	if err := s.call("train:" + sp.Slug); err != nil {
 		return runner.Trained{}, err
 	}

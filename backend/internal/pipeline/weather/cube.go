@@ -57,7 +57,7 @@ func (c *Cube) At(v string, w, i int) float32 {
 }
 
 // WithForecast returns a cube with n more weeks, counted over the calendar
-// (region_map.py: a week 53 exists only in some years). The new weeks hold NaN.
+// (a week 53 exists only in some years). The new weeks hold NaN.
 func (c *Cube) WithForecast(n int) *Cube {
 	if n <= 0 {
 		return c

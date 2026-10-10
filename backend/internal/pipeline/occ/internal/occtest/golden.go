@@ -1,5 +1,5 @@
-// Package occtest reads the golden occurrence table that testdata/gen_golden.py
-// writes with build_occurrences.py, so the tests of the occ packages share one input.
+// Package occtest reads the golden occurrence table, so the tests of the occ
+// packages share one input.
 package occtest
 
 import (
@@ -40,7 +40,7 @@ func Rows(path string) ([]Row, error) {
 	return rows, json.Unmarshal(raw, &rows)
 }
 
-// Records reads occurrences.json as records with the x and y of pyproj.
+// Records reads occurrences.json as records with the golden x and y.
 func Records(path string) ([]occ.Record, error) {
 	rows, err := Rows(path)
 	if err != nil {

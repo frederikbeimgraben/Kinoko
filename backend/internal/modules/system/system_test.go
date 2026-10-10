@@ -47,7 +47,7 @@ func TestUnknownQueryParameterIsRejected(t *testing.T) {
 	}
 }
 
-// The Python test uses /species. The bracket rule is the same for each path.
+// The test uses /species. The bracket rule is the same for each path.
 func TestABracketParameterPasses(t *testing.T) {
 	env := testkit.New(t)
 	env.Get("/health?colour%5Bcap%5D=%23ffffff", nil).Expect(t, http.StatusOK)

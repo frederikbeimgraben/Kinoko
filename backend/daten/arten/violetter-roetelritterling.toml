@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["herbst", "winter"]
 baeume = []
 speisewertHinweis = "Roh giftig. Er zersetzt rote Blutkörperchen und enthält Blausäure. Immer gut durchgaren oder trocknen, dann zerfällt die Blausäure."
+beschreibung = "Kräftiger Rötelritterling mit lilaviolettem, im Alter bräunlichem, glattem Hut mit lange eingerolltem Rand, lila bis blaulila, nie bräunlichen Lamellen und blass lila, weiß bereiftem Stiel mit oft keulig verdickter Basis. Er wächst vom Herbst bis zum Winteranfang, oft erst nach einem Temperatursturz, auf verrottendem Laub im Misch- und Laubwald, oft zusammen mit Nebelkappen. Vom ähnlichen Bocksdickfuß unterscheiden ihn vor allem die Lamellen, die nie bräunlich werden, denn beim Bocksdickfuß werden sie im Alter zimtbraun, und am Stiel haften rostbraune Sporenpulverreste."
+beschreibungEn = "A stout blewit with a lilac-violet, smooth cap that turns brownish with age and has a margin that stays inrolled for a long time, lilac to blue-lilac gills that never turn brownish and a pale lilac stem with a white bloom and an often club-shaped base. It grows from autumn to early winter, often only after a drop in temperature, on rotting leaves in mixed and broadleaf woods, often together with clouded agarics. The key difference from the similar Cortinarius camphoratus is the gills, which never turn brownish, because in that species they turn cinnamon-brown with age, and rust-brown spore remnants stick to the stem."
+entwurf = true
 weitereNamen = ["Nackter Rötelritterling", "Violetter Röteltrichterling"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }
 hutmerkmale = ["hygrophan"]

@@ -10,6 +10,9 @@ baeume = ["fichte"]
 speisewertHinweis = "Nur junge Fruchtkörper. Im Alter wird er bitter und ist dann ungenießbar; eine Geschmacksprobe klärt das. Gelegentlich kommen Magen-Darm-Beschwerden vor. Gut zum Trocknen als Würzpilz."
 haeufigkeit = "haeufig"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer bis großer Stachelpilz mit grauweißlichem bis hellbraunem Hut voller grober, aufgerichteter, dunkelbrauner Schuppen, weißbraunen, brüchigen Stacheln auf der Unterseite und graubraunem Stiel mit keuliger Basis. Er wächst von Juni bis November vor allem im Nadelwald, gern bei Fichten, ist regional häufig und in Deutschland gefährdet. Vom Gallenstacheling unterscheidet ihn vor allem die Stielbasis, die beim Gallenstacheling bläulich grünlich ist und im Fleisch schwarzblau, dazu hat der Gallenstacheling feinere Schuppen. Der Habichtspilz ist nur bedingt essbar."
+beschreibungEn = "A medium-sized to large tooth fungus with a grey-white to light brown cap full of coarse, raised, dark brown scales, white-brown, brittle spines on the underside and a grey-brown stem with a club-shaped base. It grows from June to November mainly in coniferous woods, often with spruce, is common in some regions and is endangered in Germany. The key difference from Sarcodon scabrosus is the stem base, which in Sarcodon scabrosus is bluish-green and black-blue in the flesh, and Sarcodon scabrosus has finer scales. The shingled hedgehog is only conditionally edible."
+entwurf = true
 weitereNamen = ["Habichtsstacheling", "Rehpilz"]
 fruchtschicht = { art = "stacheln" }
 

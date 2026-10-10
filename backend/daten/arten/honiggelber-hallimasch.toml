@@ -8,6 +8,9 @@ marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als giftig und erst nach besonderer Vorbehandlung essbar. Nur die Hüte, mindestens 20 Minuten abkochen und das Kochwasser weggießen. Nach Frost und bei alten Stücken steigt die Unverträglichkeit. Er ist besser verträglich als der Gemeine Hallimasch, aber auch ihn vertragen nicht alle."
+beschreibung = "Mittelgroßer, meist in großen Büscheln wachsender Blätterpilz mit gelblichem, zitronengelbem bis hellbraunem Hut mit abwischbaren Schüppchen, weißlichen bis hellbraunen, angewachsenen Lamellen und zähem, längsfaserigem Stiel mit dickem, gelblich gesäumtem Ring. Er wächst von Juni bis November überwiegend an Laubbäumen, als Parasit oder Folgezersetzer, und verursacht Weißfäule. Vom Gifthäubling unterscheidet ihn vor allem das weiße Sporenpulver, denn der Gifthäubling hat rostbraunes Sporenpulver und zimtbraune Lamellen. Der Honiggelbe Hallimasch ist nur bedingt essbar."
+beschreibungEn = "A medium-sized mushroom that mostly grows in large clusters, with a yellowish, lemon-yellow to light brown cap with scales that rub off, whitish to light brown, adnate gills and a tough, fibrous stem with a thick ring with a yellowish edge. It grows from June to November mostly on broadleaf trees, as a parasite or as a saprobe, and causes white rot. The key difference from the funeral bell is the white spore print, because the funeral bell has a rust-brown spore print and cinnamon-brown gills. The honey fungus is only conditionally edible."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutform = { von = "kegelig", nach = "flach" }
 hutmerkmale = ["gebuckelt"]

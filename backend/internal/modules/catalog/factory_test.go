@@ -16,7 +16,7 @@ import (
 )
 
 // seedWithoutSpecies is the seed data without the species profiles. The
-// tests make their own catalogue, as the Python tests do.
+// tests make their own catalogue.
 func seedWithoutSpecies(t testing.TB) fs.FS {
 	t.Helper()
 	data, err := fs.Sub(backend.Data, "daten")

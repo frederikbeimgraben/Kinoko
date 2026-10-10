@@ -33,6 +33,7 @@ func (s *speciesExport) build() File {
 	f.Haeufigkeit = s.optionalWord(importer.Frequency, r.Frequency, s.base.Haeufigkeit, "frequency")
 	f.Gefaehrdung = s.optionalWord(importer.RedList, r.RedList, s.base.Gefaehrdung, "red list")
 	f.SpeisewertHinweis, f.SchutzHinweis, f.Beschreibung = r.EdibilityNote, r.ProtectionNote, r.Description
+	f.BeschreibungEn, f.Entwurf = description(r, s.base)
 	f.Karte = nil
 	if r.ForecastEnabled {
 		f.Karte = s.base.Karte
@@ -59,6 +60,7 @@ func (s *speciesExport) build() File {
 			Nach: s.optionalWord(importer.CapShape, r.CapShapeOld, old, "cap shape"),
 		}
 	}
+	f.Ringform = s.optionalWord(importer.RingShape, r.RingShape, s.base.Ringform, "ring shape")
 	s.features(&f)
 	s.trees(&f)
 	f.Geruch = s.sense(s.base.Geruch, r.SmellText, enums.TermKindSmell, importer.SmellName)
@@ -204,4 +206,20 @@ func (s *speciesExport) checkTaxon() {
 	if *s.db.TaxonRank != string(enums.TaxonRankGenus) || *s.db.TaxonSlug != importer.Slugify(fields[0]) {
 		s.warn("taxon %q is not the genus of the latin name; the import takes the genus", *s.db.TaxonSlug)
 	}
+}
+
+// description gives the English description and the draft flag of the file. An empty
+// English text has no key. A species that is not a draft keeps an explicit "entwurf = false".
+func description(r importer.SpeciesRow, base File) (*string, *bool) {
+	var english *string
+	if r.DescriptionEn != "" {
+		english = &r.DescriptionEn
+	}
+	if r.DescriptionDraft {
+		return english, new(true)
+	}
+	if base.Entwurf != nil {
+		return english, new(false)
+	}
+	return english, nil
 }

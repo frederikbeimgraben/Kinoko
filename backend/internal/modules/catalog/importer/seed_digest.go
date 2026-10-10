@@ -29,7 +29,11 @@ func saveDigest(ctx context.Context, q db.Querier, data fs.FS, name string) erro
 	if err != nil || !found {
 		return err
 	}
-	_, err = db.Exec(ctx, q, `INSERT INTO seed_digest (name, digest) VALUES (?, ?)
+	return storeDigest(ctx, q, name, digest)
+}
+
+func storeDigest(ctx context.Context, q db.Querier, name, digest string) error {
+	_, err := db.Exec(ctx, q, `INSERT INTO seed_digest (name, digest) VALUES (?, ?)
 		ON CONFLICT (name) DO UPDATE SET digest = excluded.digest`, name, digest)
 	return err
 }

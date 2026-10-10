@@ -6,6 +6,9 @@ marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "kastanie", "linde", "buche"]
 speisewertHinweis = "Nur jung essbar, im Alter wird er sehr zäh."
+beschreibung = "Großer Porling aus vielen graubraunen, halbierten Einzelhüten, die büschelig oder rosettenartig an einem verzweigten Strunk verwachsen sind, mit weißlichen bis weißbraunen Röhren auf der Unterseite. Er wächst von Juni bis November als Parasit und Folgezersetzer im Wurzelbereich von Eiche und Kastanie, seltener bei Linde oder Buche, und verursacht Weißfäule. Vom Riesenporling unterscheiden ihn vor allem die kleineren Einzelhüte und die Röhren, die auf Druck nicht schwärzen, denn beim Riesenporling schwärzen Poren und Fleisch."
+beschreibungEn = "A large polypore made of many grey-brown, semicircular single caps that grow together in clusters or rosettes on a branched base, with whitish to white-brown tubes on the underside. It grows from June to November as a parasite and saprobe at the roots of oak and sweet chestnut, less often of lime or beech, and causes white rot. The key difference from the giant polypore is the smaller single caps and the tubes that do not turn black when pressed, because the pores and the flesh of the giant polypore turn black."
+entwurf = true
 weitereNamen = ["Maitake", "Spatelhütiger Porling", "Laubporling", "Kamm-Porling Graue Gans", "Gemeiner Klapperschwamm"]
 fruchtschicht = { art = "roehren" }
 

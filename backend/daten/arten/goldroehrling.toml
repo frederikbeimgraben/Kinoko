@@ -7,7 +7,11 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche", "douglasie", "kiefer"]
+karte = "suillus_grevillei"
 speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen und den Schleim vom Hut abziehen. Wie alle Schmierröhrlinge löst er bei manchen Magen-Darm-Beschwerden aus."
+beschreibung = "Mittelgroßer Schmierröhrling mit hellgelbem bis orangerötlichem, schleimig schmierigem Hut, gelben Röhren, die auf Druck rosalila flecken, und gelbem, schmierigem Stiel mit gelblichem Ring. Er wächst von Juni bis November fast nur bei Lärchen, sehr selten bei Douglasie oder Weymouthskiefer. Vom Gelben Hohlfußröhrling unterscheiden ihn vor allem der volle Stiel mit häutigem Ring und der schleimige Hut, denn der Gelbe Hohlfußröhrling hat einen hohlen Stiel und einen filzig schuppigen Hut."
+beschreibungEn = "A medium-sized slippery bolete with a light yellow to orange-reddish, slimy cap, yellow tubes that get pinkish-lilac spots when pressed, and a yellow, slimy stem with a yellowish ring. The larch bolete grows from June to November almost only with larch, very rarely with Douglas fir or Weymouth pine. The key difference from Suillus cavipes var. aereus is the solid stem with a membranous ring and the slimy cap, because Suillus cavipes var. aereus has a hollow stem and a felty-scaly cap."
+entwurf = true
 weitereNamen = ["Goldgelber Lärchenröhrling", "Schöner Röhrling", "Gelber Röhrling"]
 synonyme = ["Boletopsis elegans", "Suillus grevillei forma badius", "Ixocomus elegans forma badius", "Boletinus grevillei", "Suillus elegans", "Boletopsis annulatus"]
 fruchtschicht = { art = "roehren" }

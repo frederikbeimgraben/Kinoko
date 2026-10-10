@@ -16,7 +16,7 @@
   <app-error-state class="panel__failed" [text]="'map.dataFailed' | t" (retry)="view.retry()" />
 } @else if (view.loading()) {
   <app-timeline [weeks]="[]" [loading]="true" [label]="'map.timeline' | t" />
-} @else if (!view.noSpecies()) {
+} @else if (!view.noSpecies() && !view.forecastMissing()) {
   <app-timeline
     [weeks]="view.weeks()"
     [active]="view.activeWeek()"

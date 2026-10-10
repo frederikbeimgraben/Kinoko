@@ -91,6 +91,7 @@ type exportPhoto struct {
 	Photographer string   `json:"photographer"`
 	Licence      string   `json:"licence"`
 	Caption      *string  `json:"caption"`
+	CaptionEn    string   `json:"captionEn"`
 	TakenOn      *db.Date `json:"takenOn"`
 	Lat          *float64 `json:"lat"`
 	Lon          *float64 `json:"lon"`
@@ -153,7 +154,7 @@ func scanExportPhoto(owner db.ID) func(db.Scanner) (exportPhoto, error) {
 	return func(s db.Scanner) (exportPhoto, error) {
 		p := exportPhoto{OwnerID: owner}
 		return p, s.Scan(&p.ID, &p.SpeciesID, &p.FindID, &p.Width, &p.Height, &p.Photographer,
-			&p.Licence, &p.Caption, &p.TakenOn, &p.Lat, &p.Lon, &p.Lead, &p.State, &p.RejectReason,
+			&p.Licence, &p.Caption, &p.CaptionEn, &p.TakenOn, &p.Lat, &p.Lon, &p.Lead, &p.State, &p.RejectReason,
 			&p.ReviewedByID, &p.ReviewedAt, &p.CreatedAt, &p.UpdatedAt)
 	}
 }
@@ -212,7 +213,7 @@ func buildExport(ctx context.Context, q db.Querier, user auth.User) (accountExpo
 		return out, err
 	}
 	out.Photos, err = db.All(ctx, q, scanExportPhoto(user.ID), `SELECT id, species_id, find_id, width, height,
-		photographer, licence, caption, taken_on, lat, lon, lead, state, reject_reason, reviewed_by_id,
+		photographer, licence, caption, caption_en, taken_on, lat, lon, lead, state, reject_reason, reviewed_by_id,
 		reviewed_at, created_at, updated_at
 		FROM photo WHERE owner_id = ?`, user.ID)
 	return out, err

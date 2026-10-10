@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke"]
 speisewertHinweis = "Roh giftig, nur durchgegart essen. Er hat wie alle Scheidenstreiflinge keinen Ring, deshalb ist die Scheide an der Basis stets freizulegen und mit den Knollenblätterpilzen zu vergleichen."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer Wulstling mit gelbem bis orangem Hut mit dunklerer Mitte und stark gerieftem Rand, weißen bis cremefarbenen, freien Lamellen und weiß genattertem Stiel auf hellbraunem Grund ohne Ring, dessen Basis in einer weißen, sackartigen, sehr vergänglichen Scheide steckt. Er wächst von Juni bis November im Laubwald nur bei Birke und ist relativ selten. Vom Rotbraunen Scheidenstreifling unterscheiden ihn vor allem der gelbe bis orange Hut und der deutlich genatterte Stiel, denn der Rotbraune Scheidenstreifling hat einen fuchsig orangebraunen Hut und einen Stiel ohne deutliche Natterung."
+beschreibungEn = "A small to medium-sized amanita with a yellow to orange cap with a darker centre and a strongly grooved margin, white to cream free gills and a stem with a white snakeskin pattern on a light brown ground and no ring, whose base sits in a white, sac-like, very short-lived volva. Amanita contui grows from June to November in broadleaf woods only with birch and is fairly rare. The key difference from the tawny grisette is the yellow to orange cap and the clear snakeskin pattern on the stem, because the tawny grisette has a foxy orange-brown cap and a stem without a clear snakeskin pattern."
+entwurf = true
 synonyme = ["Amanita flavescens", "Amanitopsis flavescens", "Amanitopsis vaginata var. flavescens"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["gerieft"] }

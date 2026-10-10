@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["winter", "fruehling"]
 baeume = ["weide", "pappel", "linde"]
 speisewertHinweis = "Ungiftig, aber ohne Wert für die Küche. 123pilzsuche gibt die Relative Wertigkeit 5."
+beschreibung = "Kleiner bis mittelgroßer, kelch- bis schüsselförmiger Becherling mit zinnoberroter Innenseite, blasser, filzig haariger Außenseite, lange eingerolltem Rand und kurzem, weißlichem Stiel. Er wächst von Dezember bis Mai als Folgezersetzer an Laubholzästen, gern in Auwäldern bei Erle, Weide und Espe, seltener bei Linde, oft auf sandigem, kalkreichem Boden. Vom Scharlachroten Kelchbecherling ist er ohne Mikroskop kaum zu trennen, dieser hat aber eine im unteren Teil ganz weiße, kleiige Außenseite."
+beschreibungEn = "A small to medium-sized, goblet-shaped to bowl-shaped cup fungus with a vermilion inner side, a pale, felty and hairy outer side, a margin that stays inrolled for a long time and a short, whitish stem. It grows from December to May as a saprobe on branches of broadleaf trees, often in riverside woods with alder, willow and aspen, less often with lime, often on sandy, calcareous soil. Without a microscope it is difficult to separate from the ruby elfcup, but the ruby elfcup has an outer side that is fully white and scurfy in its lower part."
+entwurf = true
 weitereNamen = ["Blutroter Kelchbecherling", "Blutroter Prachtbecherling", "Österreichischer Kelchbecherling"]
 synonyme = ["Molliardiomyces coccineus", "Peziza austriaca", "Lachnea austriaca"]
 hutform = { von = "trichterfoermig", nach = "flach" }

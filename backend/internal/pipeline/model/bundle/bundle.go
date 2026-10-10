@@ -1,5 +1,5 @@
 // Package bundle reads and writes a trained species model: bundle.json and one LightGBM text model per horizon.
-// It applies the model as final_model.calibrated does: raw score, isotonic curve, then the ceiling.
+// It applies the model in three steps: raw score, isotonic curve, then the ceiling.
 package bundle
 
 import (
@@ -176,7 +176,7 @@ func (b *Bundle) Close() {
 // HorizonKeys returns the horizons in ascending order.
 func (b *Bundle) HorizonKeys() []int { return slices.Sorted(maps.Keys(b.Horizons)) }
 
-// Top returns the largest ceiling over the horizons: the top of the map scale in region_map.py.
+// Top returns the largest ceiling over the horizons: the top of the map scale.
 func (b *Bundle) Top() float64 {
 	top := math.Inf(-1)
 	for _, hz := range b.Horizons {

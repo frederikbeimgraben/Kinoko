@@ -24,6 +24,7 @@ import { MapAttributionComponent } from '../../ui/map-attribution/map-attributio
 import { ObjectMenuComponent, type ObjectMenuTarget } from '../../ui/object-menu/object-menu.component';
 import { SheetComponent } from '../../ui/sheet/sheet.component';
 import { SkeletonComponent } from '../../ui/skeleton/skeleton.component';
+import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { AddEntryComponent } from '../add-entry/add-entry.component';
 import { AddEntryStore } from '../add-entry/add-entry.store';
 import { EntriesStore } from '../entries/entries.store';
@@ -63,6 +64,7 @@ import { MapView } from './map.view';
     ObjectSheetComponent,
     SheetComponent,
     SkeletonComponent,
+    StateViewComponent,
     TranslatePipe,
   ],
   providers: [...MAP_PROVIDERS, MapSurface, MapOverlayStore],

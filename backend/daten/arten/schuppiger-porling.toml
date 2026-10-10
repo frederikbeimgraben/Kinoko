@@ -6,7 +6,11 @@ wertigkeit = 4
 marktfaehig = true
 jahreszeiten = ["fruehling", "sommer"]
 baeume = []
+karte = "cerioporus_squamosus"
 speisewertHinweis = "Nur jung essbar und dann relativ minderwertig. 123pilze gibt ihm die Relative Wertigkeit 4."
+beschreibung = "Großer Porling mit blassbraunem bis weißlich hellgelbem Hut, der konzentrisch mit braunen Schuppen besetzt ist, weißlichen, eckigen, herablaufenden Poren und dickem, exzentrischem bis seitlichem Stiel mit im Alter schwarzer Basis. Er wächst vom Frühjahr bis zum Sommer an Laubholz, oft büschelig, und verursacht Weißfäule. Vom ähnlichen Sklerotienporling unterscheidet ihn vor allem der Stiel, denn der Sklerotienporling ist kleiner, hat einen bewimperten Hutrand und einen meist zentralen Stiel ohne schwarze Basis."
+beschreibungEn = "A large polypore with a pale brown to whitish light yellow cap with concentric brown scales, whitish, angular pores that run down the stem and a thick, eccentric to lateral stem with a base that turns black with age. It grows from spring to summer on broadleaf wood, often in clusters, and causes white rot. The key difference from the similar Polyporus tuberaster is the stem, because that species is smaller, has a hairy cap margin and a mostly central stem without a black base."
+entwurf = true
 weitereNamen = ["Schuppiger Stielporling", "Schwarzfußporling", "Schuppiger Schwarzfußporling"]
 synonyme = ["Polyporus squamosus", "Bresadolia squamosa", "Polyporus squamosus forma rostkovii", "Polyporus westii", "Polyporellus squamosus forma rostkovii", "Polyporus squamosus forma michelii", "Polyporus retirugus"]
 fruchtschicht = { art = "poren" }

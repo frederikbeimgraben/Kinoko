@@ -18,8 +18,8 @@ func fetcher(f *fakeGBIF, dir string, s *sleeps) *gbif.Fetcher {
 	return &gbif.Fetcher{HTTP: f.server.Client(), BaseURL: f.server.URL, Dir: dir, Sleep: s.sleep}
 }
 
-// Golden: gbif_fetch.hash_observer and gbif_fetch.slim (as the json.dumps line that fetch_chunk writes).
-func TestSlimAndHashMatchPython(t *testing.T) {
+// Golden: the observer hashes and the slim records as JSON lines.
+func TestSlimAndHashMatchGolden(t *testing.T) {
 	raw, err := os.ReadFile("../testdata/observers.json")
 	if err != nil {
 		t.Fatal(err)

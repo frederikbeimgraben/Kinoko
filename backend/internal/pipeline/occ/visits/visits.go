@@ -1,5 +1,5 @@
-// Package visits reduces the occurrence records to visits, as
-// visit_model.build_visits and build_occurrences.visit_gate. A visit is one
+// Package visits reduces the occurrence records to visits and applies the
+// visit gate of the app finds. A visit is one
 // observer, on one day, inside one square kilometre.
 package visits
 
@@ -14,7 +14,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ"
 )
 
-// Constants of visit_model.py.
+// Constants of the visit table.
 const (
 	MinSpecies     = 2     // --min-species
 	MinYear        = 2015  // --min-year
@@ -23,7 +23,7 @@ const (
 	KmM            = 1000  // the edge of the visit square in metres
 )
 
-// Detection and Season are DETECTION and SEASON of visit_model.py, the first feature blocks.
+// Detection and Season are the first feature blocks.
 var (
 	Detection = []string{"n_records", "n_species"}
 	Season    = []string{"iso_week", "week_sin", "week_cos"}

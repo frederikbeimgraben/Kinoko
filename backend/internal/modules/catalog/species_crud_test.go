@@ -375,3 +375,70 @@ func TestReplaceSpeciesKeepsPeakWeekAndItsMonth(t *testing.T) {
 	env.Put("/species/"+porcini.Slug, writePayload(map[string]any{"periodPeakWeek": 54}), &editor).
 		Expect(t, http.StatusUnprocessableEntity)
 }
+
+func TestProfileGivesTheEnglishDescriptionAndTheDraftFlag(t *testing.T) {
+	env := newEnv(t)
+	makeSpecies(t, env, "boletus-edulis", "Steinpilz", "Boletus edulis", nil, extra{
+		"description": "Ein Pilz.", "description_en": "A mushroom.", "description_draft": true,
+	})
+	makeSpecies(t, env, "boletus-badius", "Maronenröhrling", "Boletus badius", nil, nil)
+	body := profileOf(t, env, "boletus-edulis")
+	if body["description"] != "Ein Pilz." || body["descriptionEn"] != "A mushroom." || body["descriptionDraft"] != true {
+		t.Fatal(body)
+	}
+	bare := profileOf(t, env, "boletus-badius")
+	if bare["description"] != nil || bare["descriptionEn"] != "" || bare["descriptionDraft"] != false {
+		t.Fatal(bare)
+	}
+}
+
+func TestWriteSpeciesStoresTheEnglishDescriptionAndKeepsItWithoutTheField(t *testing.T) {
+	env := newEnv(t)
+	created := env.Post("/species", writePayload(map[string]any{"description": "Ein Pilz."}), &editor).
+		Expect(t, http.StatusCreated).Map(t)
+	if created["descriptionEn"] != "" || created["descriptionDraft"] != false {
+		t.Fatal(created)
+	}
+	slug, _ := created["slug"].(string)
+	written := env.Put("/species/"+slug, writePayload(map[string]any{"descriptionEn": "A mushroom."}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if written["descriptionEn"] != "A mushroom." {
+		t.Fatal(written)
+	}
+	kept := env.Put("/species/"+slug, writePayload(nil), &editor).Expect(t, http.StatusOK).Map(t)
+	if kept["descriptionEn"] != "A mushroom." {
+		t.Fatal(kept)
+	}
+	cleared := env.Put("/species/"+slug, writePayload(map[string]any{"descriptionEn": ""}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if cleared["descriptionEn"] != "" {
+		t.Fatal(cleared)
+	}
+}
+
+func TestWriteSpeciesKeepsTheDraftFlag(t *testing.T) {
+	env := newEnv(t)
+	makeSpecies(t, env, "boletus-edulis", "Steinpilz", "Boletus edulis", nil, extra{"description_draft": true})
+	body := env.Put("/species/boletus-edulis", writePayload(map[string]any{"description": "Neu."}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if body["descriptionDraft"] != true {
+		t.Fatal(body)
+	}
+}
+
+func TestReplaceSpeciesKeepsRingShape(t *testing.T) {
+	env := newEnv(t)
+	fly := makeSpecies(t, env, "amanita-muscaria", "Fliegenpilz", "Amanita muscaria", nil, nil)
+	body := env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": "pendant"}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if body["ringShape"] != "pendant" || profileOf(t, env, fly.Slug)["ringShape"] != "pendant" {
+		t.Fatal(body["ringShape"])
+	}
+	cleared := env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": nil}), &editor).
+		Expect(t, http.StatusOK).Map(t)
+	if cleared["ringShape"] != nil {
+		t.Fatal(cleared["ringShape"])
+	}
+	env.Put("/species/"+fly.Slug, writePayload(map[string]any{"ringShape": "spiral"}), &editor).
+		Expect(t, http.StatusUnprocessableEntity)
+}

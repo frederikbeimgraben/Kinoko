@@ -8,7 +8,14 @@ export interface MeasurementRow {
   readonly unit: string;
 }
 
-/** A card for the measures of one body part. It never shows other parts. */
+/** A row of the card with a text value, for example the shape of the ring. */
+export interface FactRow {
+  readonly label: string;
+  readonly value: string;
+}
+
+/** A card for the measures of one body part. It never shows other parts.
+ * Text rows such as the ring shape come before the measures. */
 @Component({
   selector: 'app-measurement-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -19,4 +26,5 @@ export interface MeasurementRow {
 export class MeasurementGroupComponent {
   readonly part = input.required<string>();
   readonly measurements = input.required<readonly MeasurementRow[]>();
+  readonly facts = input<readonly FactRow[]>([]);
 }

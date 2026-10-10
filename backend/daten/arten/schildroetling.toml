@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = ["obstbaum"]
 speisewertHinweis = "Roh sehr giftig, mindestens fünf bis zehn Minuten garen. Rötlinge sind schwer zu bestimmen und mit tödlich giftigen Arten zu verwechseln; nur für Kenner."
 haeufigkeit = "selten"
+beschreibung = "Rötling mit graubraunem, radial eingewachsen faserigem Hut mit stumpfem Buckel, weißlichen bis blassgrauen, später rosa Lamellen und weißlichem, längsgerieftem Stiel. Er wächst vom Frühjahr bis zum Frühsommer büschelig bei Rosengewächsen wie Obstbäumen, in Parks, Gärten, auf Obstwiesen und an Waldrändern, und ist regional selten. Vom ähnlichen Schlehenrötling unterscheidet ihn vor allem das Fleisch, denn beim Schlehenrötling verfärbt es sich bei Verletzung braunrot, und Insektenfraßgänge laufen orangebraun an. Rötlinge sind schwer zu bestimmen, und zu ihnen gehören giftige Arten wie der Riesenrötling."
+beschreibungEn = "A pinkgill with a grey-brown, radially fibrous cap with a blunt umbo, whitish to pale grey gills that turn pink later and a whitish, grooved stem. It grows from spring to early summer in clusters with members of the rose family such as fruit trees, in parks, gardens, orchard meadows and at forest edges, and is rare in some regions. The key difference from the similar Entoloma sepium is the flesh, because in that species it turns brown-red when damaged, and insect tunnels turn orange-brown. Pinkgills are difficult to identify, and the group includes poisonous species such as the livid pinkgill."
+entwurf = true
 weitereNamen = ["Geflammter Rötling"]
 synonyme = ["Agaricus clypeatus", "Rhodophyllus clypeatus", "Hyporrhodius clypeatus", "Entoloma clypeatum f. hybridum", "Rhodophyllus aprilis f. hybridus", "Entoloma clypeatum f. xanthophyllum", "Rhodophyllus clypeatus var. hybridus", "Rhodophyllus clypeatus var. niveus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }

@@ -16,14 +16,7 @@ import {
   type GroupKey,
   type Selection,
 } from './facets';
-import {
-  CAP_SHAPE_TEXT,
-  EDIBILITY_TEXT,
-  GROUP_TEXT,
-  HYMENIUM_TEXT,
-  MONTH_TEXT,
-  PROTECTION_TEXT,
-} from './labels';
+import { CAP_SHAPE_TEXT, EDIBILITY_TEXT, HYMENIUM_TEXT, MONTH_TEXT, PROTECTION_TEXT } from './labels';
 
 /** A selectable value of a filter group. */
 export interface Choice {
@@ -38,7 +31,7 @@ const FIXED: Partial<Record<GroupKey, readonly { value: string; text: Translatio
   hymenium: HYMENIUM_TYPES.map((value) => ({ value, text: HYMENIUM_TEXT[value] })),
   capShape: CAP_SHAPES.map((value) => ({ value, text: CAP_SHAPE_TEXT[value] })),
   protection: PROTECTIONS.map((value) => ({ value, text: PROTECTION_TEXT[value] })),
-  forecast: [{ value: FORECAST_VALUE, text: GROUP_TEXT.forecast }],
+  forecast: [{ value: FORECAST_VALUE, text: 'filter.forecast.on' }],
   period: MONTH_TEXT.map((text, at) => ({ value: String(at + 1), text })),
 };
 

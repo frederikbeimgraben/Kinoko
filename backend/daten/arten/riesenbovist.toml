@@ -7,7 +7,11 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["fruehling", "sommer"]
 baeume = []
+karte = "calvatia_gigantea"
 speisewertHinweis = "Nur jung, solange das Innere rein weiß ist. Jeden kugeligen Fund durchschneiden und auf Lamellenansätze prüfen, junge Knollenblätterpilze sehen ähnlich aus."
+beschreibung = "Sehr großer, kugelförmiger Stäubling ohne Stiel, jung weiß und später bräunend, mit glatter, lederartiger Haut und dicken, wurzelartigen Myzelsträngen an der Basis. Er wächst von März bis August als Folgezersetzer auf Wiesen, in Parks und an Waldrändern. Vom jungen, noch geschlossenen Weißen Knollenblätterpilz unterscheidet ihn vor allem der Längsschnitt, denn der Riesenbovist ist innen gleichmäßig weiß, während der Knollenblätterpilz im Schnitt schon Hut, Lamellen und Stiel zeigt."
+beschreibungEn = "A very large, round puffball without a stem that is white when young and later turns brown, with a smooth, leathery skin and thick, root-like mycelium strands at the base. It grows from March to August as a saprobe on meadows, in parks and at forest edges. The key difference from the young, still closed white form of the death cap is a cut along the length, because the giant puffball is evenly white inside, while the white death cap already shows a cap, gills and a stem in the cut."
+entwurf = true
 synonyme = ["Langermannia gigantea", "Lycoperdon giganteum", "Clavatia maxima", "Lasiosphaera gigantea", "Bovista gigantea"]
 hutform = { von = "kugelig" }
 

@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["buche"]
+beschreibung = "Kleiner, gestielter Porling mit graugelbem, hellgelbem bis ockergelbem, mattem Hut mit scharfem Rand, feinen, hellgelblichen bis cremegelben, am Stiel herablaufenden Poren und meist seitlich angesetztem, bräunlichem Stiel mit dunkler bis schwärzlicher Basis. Er wächst von März bis November als Folgezersetzer an Laubholz, gern an Buche. Der Löwengelbe Porling ist ungenießbar."
+beschreibungEn = "A small polypore with a stem, a grey-yellow, light yellow to ochre-yellow, matt cap with a sharp margin, fine, light yellowish to cream-yellow pores that run down the stem, and a mostly lateral, brownish stem with a dark to blackish base. It grows from March to November as a saprobe on broadleaf wood, often beech. This species is inedible."
+entwurf = true
 synonyme = ["Polyporus leptocephalus", "(polyporus varius", "Boletus leptocephalus"]
 fruchtschicht = { art = "poren" }
 hutrand = { von = ["scharf"] }

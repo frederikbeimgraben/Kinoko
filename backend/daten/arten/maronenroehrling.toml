@@ -7,7 +7,11 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "imleria_badia"
 speisewertHinweis = "Roh unverträglich, er enthält Xerocomsäure. Mindestens 15 bis 20 Minuten garen. Er nimmt Cäsium 137 stärker auf als die meisten Arten; für Kinder und Schwangere sind größere Mengen nicht zu empfehlen."
+beschreibung = "Mittelgroßer Röhrling mit dunkel- bis hellbraunem oder olivbraunem, feinsamtigem, feucht schmierigem Hut, gelblichen bis grüngelben Röhren, die auf Druck blaugrün anlaufen, und bräunlichem, längsfaserigem Stiel ohne Netz. Er wächst in ganz Deutschland von Juni bis November in Misch- und Nadelwäldern, gern auf saurem Boden. Vom Gallenröhrling unterscheiden ihn vor allem die gelben, auf Druck blauenden Röhren und der Stiel ohne Netz, denn der Gallenröhrling hat rosa Röhren und ein braunes Netz am Stiel."
+beschreibungEn = "A medium-sized bolete with a dark to light brown or olive-brown, finely velvety cap that is slimy when wet, yellowish to greenish-yellow tubes that turn blue-green when pressed, and a brownish, fibrous stem without a net. It grows throughout Germany from June to November in mixed and coniferous woods, often on acid soil. The key difference from the bitter bolete is the yellow tubes that turn blue when pressed and the stem without a net, because the bitter bolete has pink tubes and a brown net on the stem."
+entwurf = true
 weitereNamen = ["Braunkappen", "Braunkuppen", "Braune", "Bräunling", "Marone"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["faserig", "knolle"]

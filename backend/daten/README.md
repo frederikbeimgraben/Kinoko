@@ -23,6 +23,7 @@ files into a new database.
 | `taxonomie.json` | The genus, family, order, class and division of each species. |
 | `saison.json` | The season table: visits and finds for each calendar week. |
 | `texte.json` | The texts of the user interface, in German and in English. |
+| `fotos.json` | One lead photo for each species: the file on Wikimedia Commons, the author, the licence, the source page and a caption in German and in English. The file holds no image. `kinoko seed-photos` downloads the images. |
 
 ## Sources and licences
 
@@ -41,6 +42,18 @@ terms of the source before you publish or share the data.
 | Season table (`saison.json`) | The pipeline calculates it from GBIF occurrence records. `docs/model/data-sources.md` gives the licences of the GBIF datasets (CC BY 4.0 and CC BY-NC 4.0). | Per dataset |
 | Glossary (`glossar.json`) | Kinoko glossary, written for this project | Not stated |
 | Texts (`texte.json`) | Written for this project | Licence of the repository |
+| Lead photos (`fotos.json`) | Wikimedia Commons, https://commons.wikimedia.org/. English captions: the English names of GBIF from the UK Species Inventory and the IUCN Red List | Per photo: CC0, public domain, CC BY or CC BY-SA. Each entry gives the author and the licence. Show both with the photo |
+
+## Known data problems
+
+The work on the descriptions found these problems in the species files. Check
+them first in an expert review:
+
+- `rotgelber-stoppelpilz.toml` has the features, the source and the other names of the Semmelstoppelpilz. Only its description describes *Hydnum rufescens*.
+- The file of the lookalike of the Käppchenmorchel gives a feature of the Fingerhutverpel.
+- `roetender-birkenpilz.toml` and `vielverfaerbender-birkenpilz.toml` disagree on how the flesh changes colour.
+- `tigerritterling.toml` has `speisewert = "toedlichGiftig"`. Usually the species counts as poisonous, but not deadly.
+- `ringloser-butterpilz.toml` names spruce as a host tree.
 
 ## Correct the data
 
@@ -53,3 +66,76 @@ this procedure:
 4. Commit the new seed files.
 
 `docs/operations.md` ("Export the catalogue") describes the command.
+
+## Glossary
+
+`glossar.json` is a draft. No mycologist has reviewed it. The format has no
+field for the review state, thus this note marks all entries as a draft.
+
+- An expert must examine each term, each German definition and each English
+  definition before the project shows the glossary as verified.
+- Each entry has `term`, `termEn`, `definition` and `definitionEn`.
+- Write each definition in 1 to 3 plain sentences. Do not define a term with
+  the same term.
+- Keep the entries in alphabetical order of `term`.
+- The seed adds a new term and updates a term that no person changed. It does
+  not remove a term from the database. Thus, do not rename a term in the
+  file: the old term stays in the database.
+
+## Species descriptions
+
+A species file can have a short description. The species page shows it under
+the names, in the language of the interface. Without an English text, the page
+shows the German text.
+
+| Key | Content |
+|---|---|
+| `beschreibung` | The German description. |
+| `beschreibungEn` | The English description, with the same content as the German one. |
+| `entwurf` | `true` when nobody has reviewed the description. The page then shows the hint "Entwurf, nicht geprüft" ("Draft, not reviewed"). Remove the key after the review. |
+
+`steinpilz.toml`, `butterpilz.toml` and `pantherpilz.toml` are the reference
+for the style. Use these rules:
+
+- Write 2 to 4 plain sentences in German. Then write the English text with the
+  same content. Do not add or remove facts in one language.
+- Sentence 1: what the species looks like at a glance. Give the cap, the
+  hymenium (tubes or gills) and the stem.
+- Sentence 2: where and when it grows in Germany. Give the habitat, the host
+  trees and the months or seasons.
+- Sentence 3: the one feature that separates the species from its main
+  lookalike. Name the lookalike.
+- Use the data of the same file (`merkmale`, `vorkommen`, `zeit`, `zeitraum`,
+  `verwechslungen`) and established mycological knowledge. Do not contradict
+  the file.
+- Never contradict `speisewert`. A short sentence can state the edibility
+  class, for example "Der Pantherpilz ist tödlich giftig."
+- Do not give cooking advice, eating advice or tasting advice.
+- In English, write common names in lower case ("bitter bolete"), as in a
+  sentence.
+- Set `entwurf = true` on each new or changed description.
+
+A start of the service writes the description keys of a changed species file
+into the database. It does not change other fields of the species. A file
+without `beschreibung` keeps the description of the database.
+
+## Lead photos
+
+`fotos.json` has a photo for 283 of the 306 species. Each photo was examined
+by eye: a field photo of the fruiting bodies, no drawing, no micrograph. For
+these species Wikimedia Commons had no usable photo, or only a photo of
+another taxon:
+
+aprikosen-gelbfuss, becherfoermiger-saegeblaettling,
+braunschuppiger-wiesenchampignon, ellipsoidsporige-stoppelpilz,
+gelber-hohlfussroehrling, gelbfleckiger-steinpilz,
+glattstieliges-stockschwaemmchen, grossscheidiger-scheidenstreifling,
+haselbrauner-schirmling, nadelholzschwefelporling, olivgrauer-schneckling,
+orangeroter-mairitterling, panzerrasling, rauer-staeubling,
+riesentrichterling, rissiger-frauentaeubling, risspilzartiger-schneckling,
+runzelige-fingerhutverpel, samtiger-filzroehrling,
+seidiger-egerlingsschirmling, uebelriechender-egerling,
+weinbraunverfaerbende-koralle, weisstannenfingerhut.
+
+An admin can add a photo for these species in the app. `docs/operations.md`
+("Seed photos") tells how to make the file again.

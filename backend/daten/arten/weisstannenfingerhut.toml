@@ -9,6 +9,9 @@ baeume = ["tanne", "kiefer", "fichte"]
 speisewertHinweis = "Zu klein und zu selten für die Küche. In Deutschland stark gefährdet."
 haeufigkeit = "selten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Winziger, becher- bis fingerhutförmiger Pilz mit außen brauner bis haselnussbrauner, später graurötlicher, rau gekörnter Oberfläche und weißlicher Innenseite mit rosa Hauch. Er wächst vom Winter bis zum Frühjahr gesellig an Nadelholz, vor allem an Ästen der Weißtanne, ist selten und in Deutschland stark gefährdet. Er gilt als ungenießbar."
+beschreibungEn = "A tiny, cup-shaped to thimble-shaped fungus with a brown to hazel-brown outer surface that later turns grey-reddish and is rough and granular, and a whitish inner surface with a pink tinge. It grows from winter to spring in groups on conifer wood, mainly on branches of silver fir, is rare and is highly endangered in Germany. It is classed as inedible."
+entwurf = true
 weitereNamen = ["Nadelholzfingerhut"]
 synonyme = ["Aleurodiscus digitali", "Peziza digitalis"]
 hutform = { von = "trichterfoermig" }

@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { Router } from '@angular/router';
-import { photoPath, type Photo } from '../../../core/api/models';
+import { photoCaption, photoPath, type Photo } from '../../../core/api/models';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { LevelPillComponent } from '../../../ui/level-pill/level-pill.component';
 import { PrivateImageComponent } from '../../../ui/private-image/private-image.component';
@@ -27,6 +28,7 @@ export class SpeciesPhotosComponent {
   private readonly images = inject(ImagesStore);
   private readonly species = inject(SpeciesStore);
   private readonly router = inject(Router);
+  private readonly i18n = inject(I18nService);
 
   readonly slug = input.required<string>();
 
@@ -45,6 +47,6 @@ export class SpeciesPhotosComponent {
   }
 
   private altOf(one: Photo): string {
-    return one.caption ?? this.species.nameOf(this.slug()) ?? one.photographer;
+    return photoCaption(one, this.i18n.locale()) ?? this.species.nameOf(this.slug()) ?? one.photographer;
   }
 }

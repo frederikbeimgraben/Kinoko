@@ -8,9 +8,13 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur Fruchtkörper mit rosa Lamellen nehmen; sind die Lamellen braun, ist der Pilz alt. Tödlich giftige Knollenblätterpilze haben nie rosa Lamellen. Läuft die Stielbasis gelb an oder riecht der Pilz nach Karbol oder Tinte, bleibt er stehen."
+beschreibung = "Champignon mit weißem, im Alter graubraunem, feinschuppigem Hut, rosa bis fleischrosa, später dunkelbraunen, freien Lamellen und weißem, brüchigem Stiel ohne Knolle mit einfachem, meist verkümmertem Ring. Er wächst vom Frühsommer bis zum Spätherbst in Gärten, auf Wiesen und Weiden, oft in Hexenringen. Vom ähnlichen Karbolegerling unterscheidet ihn vor allem die Stielbasis, denn beim Karbolegerling läuft sie im Schnitt gelb an, und er riecht nach Karbol oder Tinte. Weiße Knollenblätterpilze haben dagegen immer weiße Lamellen und eine Knolle in einer Scheide."
+beschreibungEn = "A mushroom with a white, finely scaly cap that turns grey-brown with age, free gills that are pink to flesh-pink and later dark brown, and a white, brittle stem without a bulb and with a simple, mostly reduced ring. It grows from early summer to late autumn in gardens, meadows and pastures, often in fairy rings. The key difference from the similar yellow stainer is the stem base, because in the yellow stainer it turns yellow when cut, and the yellow stainer smells of carbolic or ink. White death caps, in contrast, always have white gills and a bulb in a volva."
+entwurf = true
 weitereNamen = ["Maichampignon", "Feldegerling", "Wiesenegerling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["bruechig", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

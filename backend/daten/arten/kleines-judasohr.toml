@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["herbst", "winter"]
 baeume = ["pappel", "weide"]
+beschreibung = "Sehr kleiner, stielloser, becher- bis schalenförmiger Pilz mit weißlich haarig filziger Oberseite, eingerolltem Rand und fleischbrauner bis ockerbrauner, aderig gefalteter Unterseite. Er wächst von September bis Februar als Folgezersetzer an Laubholzästen in Au- und Bruchwäldern, gern an Zitterpappel und Weide. Vom Gezonten Ohrlappenpilz unterscheidet ihn vor allem die Größe, denn der Gezonte Ohrlappenpilz wird viel größer, sitzt dachziegelartig übereinander und ist auf der Oberseite bunt gezont. Das Kleine Judasohr ist ungenießbar."
+beschreibungEn = "A very small, stemless, cup-shaped to bowl-shaped fungus with a whitish, hairy and felty upper side, an inrolled margin and a flesh-brown to ochre-brown, veined and folded underside. It grows from September to February as a saprobe on branches of broadleaf trees in riverside and swamp woods, often on aspen and willow. The key difference from the tripe fungus is the size, because the tripe fungus becomes much larger, grows in overlapping tiers and has coloured zones on the upper side. This species is inedible."
+entwurf = true
 weitereNamen = ["Pappel-Becherrindenschwamm", "Judas-Öhrchen"]
 synonyme = ["Auriculariopsis ampala", "Cyphella ampla", "Auriculariopsis flocculenta", "Stereum pubescens"]
 hutform = { von = "trichterfoermig" }

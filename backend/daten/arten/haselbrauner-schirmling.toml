@@ -7,10 +7,14 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Tödlich giftig, wie alle kleinen Schirmlinge verdächtig. Keine Kostprobe: schon das Kosten kann Organe schädigen."
+beschreibung = "Kleiner Schirmling mit hell- bis rotbraunem Hut mit dunkelbraun bis rotbraun gezonten Schüppchen, weißlichen, später gelblichen, freien Lamellen und blass rosa, meist hohlem Stiel mit wollig faseriger Zone unter dem Ring und braun genatterter Gürtelzone an der Basis. Er wächst von Juni bis November als Folgezersetzer im Mischwald, überwiegend im Nadelwald und vereinzelt im Laubwald. Wie alle kleinen Schirmlinge mit geschupptem Hut ist er schwer von seinen ebenfalls giftigen Verwandten zu trennen. Der Haselbraune Schirmling ist tödlich giftig."
+beschreibungEn = "A small dapperling with a light to red-brown cap with dark brown to red-brown scales in zones, whitish free gills that later become yellowish and a pale pink, mostly hollow stem with a woolly, fibrous zone below the ring and a band with a brown snakeskin pattern at the base. It grows from June to November as a saprobe in mixed woods, mostly in coniferous woods and occasionally in broadleaf woods. Like all small dapperlings with a scaly cap, it is difficult to separate from its relatives, which are also poisonous. This species is deadly poisonous."
+entwurf = true
 weitereNamen = ["Rosabrauner Schirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gezont"]
 stielmerkmale = ["hohl", "ring", "faserig", "genattert"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

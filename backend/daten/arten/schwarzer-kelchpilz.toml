@@ -8,6 +8,9 @@ jahreszeiten = ["winter", "fruehling"]
 baeume = []
 speisewertHinweis = "Ohne Speisewert, das Fleisch ist lederartig zäh. Sehr selten."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kelch- bis pokalförmiger Schlauchpilz mit fast schwarzer Innenseite, graubrauner bis schwarzbrauner, feinfilziger Außenseite mit gekerbtem Rand und braunem bis schwarzem Stiel. Er wächst vom Winter bis zum Frühling in der frostfreien Zeit auf Erde an Wurzeln von Gebüsch und an faulenden Holzresten, gern an feuchten Stellen, und ist sehr selten. Er gilt als ungenießbar, weil sein Fleisch lederartig zäh ist."
+beschreibungEn = "An urn-shaped to goblet-shaped cup fungus with an almost black inner surface, a grey-brown to black-brown, finely felty outer surface with a notched margin and a brown to black stem. It grows from winter to spring in frost-free periods on soil at the roots of shrubs and on rotting wood debris, often in moist places, and is very rare. It is classed as inedible because its flesh is tough like leather."
+entwurf = true
 weitereNamen = ["Schwarzer Tulpenkelch", "Schwarzer Tulpenpilz", "Urnenpilz", "Devil´s Urn"]
 synonyme = ["Sarcoscypha craterium", "Geopyxis craterium"]
 hutform = { von = "trichterfoermig" }

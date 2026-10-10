@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "In Japan gab es mehrere Todesfälle, vor allem bei älteren Menschen mit Nierenschaden und Dialyse. Die Symptome ähneln einem Schlaganfall, dazu Fieber und Krampfanfälle. Vorsicht bei allen ungestielten weißen Seitlingen an Nadelholz."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer, weißer, im Alter gilbender Seitling mit muschel- bis zungenförmigem, stiellos angewachsenem Hut, oft dachziegelartig übereinander, und weißen, sehr gedrängten Lamellen. Er wächst von Juni bis November als Folgezersetzer an Totholzästen von Nadelbäumen und ist selten. Vom Berindeten Seitling unterscheidet ihn vor allem der fehlende Stiel, denn der Berindete Seitling hat einen Stiel mit flüchtigem Ring, einen grauen bis hellbraunen Hut mit dunklen Schüppchen und wächst meist an Laubholz. Der Ohrförmige Seitling ist tödlich giftig."
+beschreibungEn = "A small to medium-sized, white oyster mushroom that turns yellowish with age, with a shell-shaped to tongue-shaped cap that is attached without a stem, often in overlapping tiers, and white, very crowded gills. It grows from June to November as a saprobe on dead branches of conifers and is rare. The key difference from the veiled oyster is the missing stem, because the veiled oyster has a stem with a ring that soon disappears, a grey to light brown cap with dark scales and grows mostly on broadleaf wood. The angel's wings is deadly poisonous."
+entwurf = true
 weitereNamen = ["Ohrförmiger Weißseitling", "Engelsflügel"]
 synonyme = ["Phyllotus porrigens", "Nothopanus porrigens", "Agaricus porrigens", "Pleuropus porrigens", "Pleurotus porrigens", "Pleurotellus porrigens", "Geopetalum porrigens", "Dendrosarcus porrigens", "Calathinus porrigens", "Pleurotus albolanatus", "Agaricus porrigens var. dimidiatus", "Agaricus porrigens var. infundibuliformis"]
 fruchtschicht = { art = "lamellen", stand = "eng" }

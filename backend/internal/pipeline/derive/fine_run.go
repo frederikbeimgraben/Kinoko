@@ -31,8 +31,7 @@ type FineInputs struct {
 	Soil    map[string]string // SoilGrids stem, e.g. "phh2o_0-5cm", to file
 }
 
-// FineOptions steers RenderFine. Zero values take the defaults of
-// fine_layers.py: box Germany, zoom cap 13, 16 tiles per block, haveZoom 10.
+// FineOptions steers RenderFine. Zero values take the defaults: box Germany, zoom cap 13, 16 tiles per block, haveZoom 10.
 type FineOptions struct {
 	Box        [4]float64
 	Layers     []string
@@ -85,7 +84,7 @@ func (in FineInputs) path(l FineLayer) string {
 }
 
 // RenderFine renders the fine layers into out/layers_kacheln/<name> and
-// writes their entries to out/layers.json, as fine_layers.main. work holds
+// writes their entries to out/layers.json. work holds
 // the weight tiles. It gives the layers that it rendered.
 func RenderFine(ctx context.Context, in FineInputs, out, work string, opt FineOptions) ([]FineLayer, error) {
 	opt = opt.withDefaults()

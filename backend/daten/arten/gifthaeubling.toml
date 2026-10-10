@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Tödlich giftig, 100 bis 150 Gramm sind absolut tödlich und schon eine Kostprobe kann schwere Organschäden verursachen. Vom Stockschwämmchen trennt ihn der weiß-silbrig überfaserte Stiel ohne braune Schüppchen und der muffige Geruch nach faulendem Holz. Zur Bestimmung ist immer der Stiel nötig."
+beschreibung = "Kleiner Lamellenpilz mit hellbraunem bis dunkelbraunem, hygrophanem, meist gebuckeltem Hut, gelbbraunen bis zimtbraunen, gedrängten Lamellen und braunem, weiß-silbrig überfasertem Stiel mit dünnem, vergänglichem Ring. Er wächst von Februar bis November einzeln bis gesellig an Baumstümpfen und vergrabenem Holz, meist an Nadelholz, aber auch an Laubholz, oft zusammen mit dem Stockschwämmchen. Vom Stockschwämmchen unterscheiden ihn vor allem der weiß-silbrig überfaserte Stiel ohne braune Schüppchen und der muffige Geruch nach faulendem Holz. Der Gifthäubling ist tödlich giftig."
+beschreibungEn = "A small gilled mushroom with a light to dark brown, hygrophanous cap that mostly has an umbo, yellow-brown to cinnamon-brown, crowded gills and a brown stem with white-silvery fibres and a thin, short-lived ring. The funeral bell grows from February to November, singly or in groups, on tree stumps and buried wood, mostly on conifers but also on broadleaf wood, often together with the sheathed woodtuft. The key difference from the sheathed woodtuft is the stem with white-silvery fibres and no brown scales, and the musty smell of rotting wood. The funeral bell is deadly poisonous."
+entwurf = true
 weitereNamen = ["Nadelholzhäubling"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutmerkmale = ["hygrophan", "gebuckelt"]

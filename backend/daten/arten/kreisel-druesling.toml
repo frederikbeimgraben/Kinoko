@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = ["weide"]
 haeufigkeit = "sehrSelten"
+beschreibung = "Gallertartiger, haselnuss- bis kastanienbrauner Pilz, der jung kopfig gestielt und scheibenförmig ist und später kreisel- bis leicht becherförmig wird, mit scharfem, wie abgeschnittenem Rand und körnig-warziger Unterseite. Er wächst das ganze Jahr über, bevorzugt bei feuchtem Wetter im Frühjahr oder Spätherbst, als Folgezersetzer an Totholz von Laubbäumen, größtenteils an Weiden, und ist sehr selten. Vom Judasohr unterscheidet ihn vor allem die Form, denn der Kreisel-Drüsling ist fast nie ohrförmig, wächst einzeln und hat weiches, schwabbeliges Fleisch."
+beschreibungEn = "A jelly-like, hazel-brown to chestnut-brown fungus that is disc-shaped with a short head-like stem when young and later becomes top-shaped to slightly cup-shaped, with a sharp margin that looks cut off and a granular, warty underside. It grows all year round, mainly in wet weather in spring or late autumn, as a saprobe on dead wood of broadleaf trees, mostly willow, and is very rare. The key difference from the jelly ear is the shape, because this species is almost never ear-shaped, grows singly and has soft, wobbly flesh."
+entwurf = true
 weitereNamen = ["Weidendrüsling"]
 synonyme = ["Tremella r ecisa", "Peziza gelatinosa"]
 hutform = { von = "gewoelbt", nach = "flach" }

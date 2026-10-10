@@ -29,6 +29,12 @@
         [value]="description()"
         (valueChange)="description.set($event)"
       />
+      <app-form-field
+        [label]="'admin.species.descriptionEn' | t"
+        [multiline]="true"
+        [value]="descriptionEn()"
+        (valueChange)="descriptionEn.set($event)"
+      />
     </app-section>
 
     <app-section [label]="'admin.species.section.features' | t">

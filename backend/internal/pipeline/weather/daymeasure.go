@@ -3,7 +3,7 @@ package weather
 import "math"
 
 // DayMeasure maps the daily cell means of one year file, [day][cell] with
-// nCells cells, to a day measure of the same shape (day_measures.py).
+// nCells cells, to a day measure of the same shape.
 type DayMeasure func(daily []float32, nCells int) []float32
 
 // ThresholdDays marks each day above (or below) th with 1 and each other day

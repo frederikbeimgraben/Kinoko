@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche"]
 speisewertHinweis = "Jung sammeln, im Alter wird er bitter. Er ist überwiegend selten und kommt jährlich an derselben Stelle wieder, deshalb den Standort schonen."
+beschreibung = "Großer, büscheliger Porling aus vielen kleinen, gesprenkelt cremefarbenen bis haselnussbraunen Hütchen, die mit mittigen Stielen einem gemeinsamen Strunk entspringen, und mit cremefarbenen, herablaufenden Poren. Er wächst von Juni bis November am Fuß von Laubbäumen, meist an Eiche, seltener an Buche, und kommt jährlich an derselben Stelle wieder. Von der Krausen Glucke unterscheiden ihn vor allem die vielen kleinen, gestielten Hütchen, denn die Krause Glucke ist blattartig gekräuselt und wächst an Kiefer."
+beschreibungEn = "A large, clustered polypore made of many small, speckled cream to hazel-brown caps on central stems that rise from a common base, with cream, decurrent pores. The umbrella polypore grows from June to November at the base of broadleaf trees, mostly oak, less often beech, and comes back at the same place every year. The key difference from the wood cauliflower is the many small, stalked caps, because the wood cauliflower is curled like leaves and grows with pine."
+entwurf = true
 weitereNamen = ["Ästiger Porling", "Ästiger Büschelporling"]
 synonyme = ["Dendropolyporus umbellatus"]
 fruchtschicht = { art = "poren" }

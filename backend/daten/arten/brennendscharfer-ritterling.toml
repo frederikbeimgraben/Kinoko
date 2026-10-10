@@ -9,6 +9,9 @@ baeume = []
 speisewertHinweis = "Er schmeckt extrem scharf und pfeffrig und riecht erdig nach Rettich und verbranntem Gras. Der graue, radialfaserig einreißende Hut mit dem spitzen Buckel trennt ihn von milden Ritterlingen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Ritterling mit aschgrauem bis graubraunem, seidig radialfaserigem Hut mit spitzem Buckel, der radial einreißt, weißlichen, ausgebuchtet angewachsenen Lamellen und weißem Stiel. Er wächst von Juni bis November im Nadelwald, vereinzelt bei Laubholz, auf saurem Boden und ist sehr selten und in Deutschland gefährdet. Vom Schärflichen Ritterling unterscheidet ihn vor allem der spitze Buckel, denn der Schärfliche Ritterling hat einen Hut mit feineren Fasern und ohne spitzen Buckel. Der Brennendscharfe Ritterling ist giftig."
+beschreibungEn = "A medium-sized knight with an ash-grey to grey-brown, silky, radially fibrous cap with a pointed umbo that splits radially, whitish gills with a notch at the stem, and a white stem. The ashen knight grows from June to November in coniferous woods, sometimes with broadleaf trees, on acid soil, and is very rare and endangered in Germany. The key difference from Tricholoma sciodes is the pointed umbo, because Tricholoma sciodes has a cap with finer fibres and no pointed umbo. The ashen knight is poisonous."
+entwurf = true
 synonyme = ["Gyrophila virgata", "Agaricus virgatus", "Agaricus fumosus subsp. virgatus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutmerkmale = ["gebuckelt"]

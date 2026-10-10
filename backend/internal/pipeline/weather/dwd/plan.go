@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-// FirstYear is the first year of the weather record (extract_grids.py --start).
+// FirstYear is the first year of the weather record.
 const FirstYear = 2014
 
 // Request names the years to fetch. A year in Refresh is checked again with a

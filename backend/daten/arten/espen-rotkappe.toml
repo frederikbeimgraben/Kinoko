@@ -9,6 +9,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["pappel"]
 speisewertHinweis = "Fleisch wird beim Kochen schwarz. In Deutschland gefährdet."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kräftiger Röhrling mit braunrotem bis orangebraunem, feinfilzigem Hut, dessen Huthaut im Alter am Rand übersteht, weißlichen bis grauweißen Röhren und weißlichem Stiel mit jung weißlichen, später orangebraunen Schüppchen. Die Espen-Rotkappe wächst bei Espen (Zitterpappeln), vor allem von Sommer bis Herbst, und steht in Deutschland auf der Roten Liste. Von der Birken-Rotkappe unterscheiden sie vor allem die orangebraunen Stielschuppen, denn die Birken-Rotkappe hat schwärzliche Schuppen und wächst bei Birke."
+beschreibungEn = "A stout bolete with a brownish-red to orange-brown, finely felty cap whose skin overhangs the margin with age, whitish to grey-white tubes and a whitish stem with scales that are whitish when young and orange-brown later. Leccinum aurantiacum grows with aspen, mainly from summer to autumn, and is on the Red List in Germany. The key difference from the orange birch bolete is the orange-brown stem scales, because the orange birch bolete has blackish scales and grows with birch."
+entwurf = true
 weitereNamen = ["Espenrotkappe", "Weißstielige Rotkappe", "Rothäubchen", "Pappelrotkappe", "Rothaut-Röhrling"]
 synonyme = ["Leccinum quercinum", "Leccinum rufum", "Leccinum albostipitatum", "Leccinum populinum"]
 fruchtschicht = { art = "roehren" }

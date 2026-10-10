@@ -10,6 +10,9 @@ baeume = []
 speisewertHinweis = "Gut zum Trocknen und als Mischpilz. Beim Putzen den hohlen Stiel prüfen, dort sitzen oft Schnecken und Insekten. Alte, nicht mehr brauchbare Stücke verfärben sich schwärzlich."
 schutzHinweis = "Die Verordnung führt die Pfifferlinge als Gattung Cantharellus. Der Trompetenpfifferling steht heute meist als Craterellus tubaeformis und wird hier mit ihnen geschützt."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner Leistling mit gelbbraunem, welligem Hut, der in der Mitte gefurcht ist, graugelben, gegabelten, herablaufenden Leisten und schlankem, gelblichem bis gelbbraunem, hohlem Stiel. Er wächst vom Sommer bis zum Spätherbst im Laub- und Nadelwald, gern bei Heidelbeeren, und ist regional sehr häufig. Vom tödlich giftigen Spitzgebuckelten Raukopf, der oft zwischen ihm wächst, unterscheiden ihn vor allem die Leisten, denn der Raukopf hat echte, zimtbraune Lamellen und einen rotbraunen, spitz gebuckelten Hut."
+beschreibungEn = "A small chanterelle relative with a yellow-brown, wavy cap that is furrowed in the centre, grey-yellow, forked ridges that run down the stem and a slender, yellowish to yellow-brown, hollow stem. It grows from summer to late autumn in broadleaf and coniferous woods, often near bilberries, and is very common in some regions. The key difference from the deadly poisonous Cortinarius rubellus, which often grows among it, is the ridges, because that webcap has true, cinnamon-brown gills and a red-brown cap with a pointed umbo."
+entwurf = true
 weitereNamen = ["Durchbohrter Leistling", "Hohlstieliger Leistling"]
 fruchtschicht = { art = "leisten" }
 hutrand = { von = ["wellig"] }

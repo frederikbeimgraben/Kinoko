@@ -11,8 +11,8 @@ import (
 	"testing"
 )
 
-// golden is testdata/golden.json and testdata/golden_model.txt. gen_golden.py in ../testdata writes them:
-// lightgbm.train(PARAMS, lightgbm.Dataset(frame, label=y)), then Booster.predict, feature_importance and model_to_string.
+// golden is the golden files testdata/golden.json and testdata/golden_model.txt: a LightGBM model trained
+// with the base settings, its predictions, its feature importance and its model text.
 type golden struct {
 	Params       Params     `json:"params"`
 	Rounds       int        `json:"rounds"`
@@ -96,7 +96,7 @@ func trainGo(t *testing.T, g golden) *Booster {
 	return b
 }
 
-func TestLoadPythonModelPredictsAsPython(t *testing.T) {
+func TestLoadModelPredictsAsGolden(t *testing.T) {
 	g := loadGolden(t)
 	b, err := Load(g.model)
 	if err != nil {
@@ -129,7 +129,7 @@ func TestLoadPythonModelPredictsAsPython(t *testing.T) {
 	assertClose(t, "gain", gain, g.Gain, 1e-9*max(1, g.Gain[0]))
 }
 
-func TestTrainMatchesPython(t *testing.T) {
+func TestTrainMatchesGolden(t *testing.T) {
 	g := loadGolden(t)
 	b := trainGo(t, g)
 	defer b.Close()
@@ -149,7 +149,7 @@ func TestTrainMatchesPython(t *testing.T) {
 		t.Fatal(err)
 	}
 	if trees(text) != trees(g.model) {
-		t.Log("the tree section of the Go model text differs from Python's")
+		t.Log("the tree section of the model text differs from the golden model text")
 	}
 }
 

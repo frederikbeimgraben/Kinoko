@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Der Geschmack wird nach kurzer Zeit brennend scharf und pfefferig. Das macht ihn ungenießbar."
 haeufigkeit = "haeufig"
+beschreibung = "Kleiner bis mittelgroßer Rübling mit braunem bis gelblichem, oft gebuckeltem Hut, entfernt stehenden, bräunlichen bis gelblichen Lamellen und dünnem, faserigem Stiel mit weißlichem Myzelfilz an der Basis. Er wächst von Mai bis November im Mischwald auf Blatt- und Nadelstreu und ist häufig. Kennzeichnend ist die filzige, weißlich behaarte Stielbasis."
+beschreibungEn = "A small to medium-sized toughshank with a brown to yellowish, often umbonate cap, widely spaced, brownish to yellowish gills and a thin, fibrous stem with whitish mycelial felt at the base. The wood woollyfoot grows from May to November in mixed woods on leaf and needle litter and is common. A key feature is the felty, whitish hairy stem base."
+entwurf = true
 weitereNamen = ["Brennender Blasssporrübling"]
 synonyme = ["Collybia peronata", "Marasmius peronatus", "Chamaeceras urens"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "weit" }

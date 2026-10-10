@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["weide"]
 haeufigkeit = "selten"
+beschreibung = "Kleiner Schüppling mit kastanienbraunem bis gelbockerfarbenem, feucht schmierigem Hut mit rötlich ockerfarbener Mitte, hell cremegelben, später zimtbraunen Lamellen und hell cremefarbenem, zur Basis rötlich braunem, faserig schuppigem Stiel. Er wächst von Juni bis November oft büschelig an sumpfigen, moosig feuchten Stellen, gern im Auwald bei Weiden, in Gräsern und an vergrabenem Holz, und ist selten. Vom Gifthäubling unterscheiden ihn vor allem der fehlende Mehlgeruch und der Stiel ohne weiße Überfaserung, denn der Gifthäubling riecht mehlartig und ist unter dem Ring weiß überfasert."
+beschreibungEn = "A small scalycap with a chestnut-brown to yellow-ochre cap that is slimy when wet and has a reddish-ochre centre, gills that are light cream-yellow first and cinnamon-brown later, and a light cream, fibrous-scaly stem that turns reddish-brown towards the base. It grows from June to November, often in clusters, in marshy, mossy, damp places, often in floodplain woods with willows, in grass and on buried wood, and is rare. The key difference from the funeral bell is the absence of a mealy smell and the stem without white fibres, because the funeral bell smells of meal and is covered with white fibres below the ring."
+entwurf = true
 weitereNamen = ["Feuchtstellen Schüppling", "Weidenschüppling", "Weißbehangener Schüppling", "Feuchtstellenschüppling"]
 synonyme = ["Pholiota graminis", "Pholiota inaurata", "Hypholoma graminis", "Flammula graminis", "Flammula muricella", "Dryophila muricella var. graminis"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }

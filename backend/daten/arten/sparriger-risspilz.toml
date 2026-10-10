@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Tödlich giftig; wie alle Risspilze mindestens verdächtig. Zu erkennen an den braunen, dornartigen Schuppen auf Hut und Stiel, dem fransigen Hutrand und dem moderig-spermatischen Geruch."
+beschreibung = "Kleiner Risspilz mit braunen, dornartigen, spitzen Schuppen auf beige-ockerfarbenem Grund, fransigem Hutrand, hellgrauen bis graubraunen Lamellen und ebenso geschupptem Stiel. Er wächst vom Sommer bis zum Herbst im Mischwald, gern auf kalkreichem Boden. Vom ähnlichen Sparrigen Schüppling unterscheidet ihn vor allem der Standort, denn der Sparrige Schüppling wächst büschelig an Holz und hat olivgelbe bis olivbraune Lamellen. Der Sparrige Risspilz ist tödlich giftig."
+beschreibungEn = "A small fibrecap with brown, thorn-like, pointed scales on a beige-ochre background, a fringed cap margin, light grey to grey-brown gills and a stem with the same scales. It grows from summer to autumn in mixed woods, often on calcareous soil. The key difference from the similar shaggy scalycap is the habitat, because the shaggy scalycap grows in clusters on wood and has olive-yellow to olive-brown gills. Inocybe hystrix is deadly poisonous."
+entwurf = true
 weitereNamen = ["Sparrigschuppiger Risspilz"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutrand = { von = ["ueberstehend", "fransig"] }

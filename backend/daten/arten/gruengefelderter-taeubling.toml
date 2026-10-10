@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche", "hainbuche"]
 speisewertHinweis = "Vor dem Einsammeln jeden Fruchtkörper mit der ganzen Stielbasis ausgraben: ein Täubling hat keine Scheide und keinen Ring."
+beschreibung = "Mittelgroßer bis großer Täubling mit grünem bis spangrünem Hut, dessen Haut felderig auf weißlichem Grund aufreißt, weißen bis cremefarbenen, ausgebuchtet angewachsenen Lamellen und weißem, zylindrischem Stiel. Er wächst von Juni bis November meist im Laubwald, gern bei Buche, Eiche und Hainbuche. Vom tödlich giftigen Grünen Knollenblätterpilz unterscheidet ihn vor allem der Stiel ohne Ring und ohne Scheide, außerdem hat der Knollenblätterpilz einen gleichmäßig olivgrünen Hut ohne Felder."
+beschreibungEn = "A medium-sized to large brittlegill with a green to verdigris cap whose skin cracks into patches on a whitish background, white to cream, notched gills and a white, cylindrical stem. It grows from June to November mostly in broadleaf woods, often with beech, oak and hornbeam. The key difference from the deadly poisonous death cap is the stem without a ring and without a volva, and the death cap has an evenly olive-green cap without patches."
+entwurf = true
 weitereNamen = ["Feldriger Täubling", "Grünschuppiger Täubling"]
 synonyme = ["Agaricus virescens", "Russula virescens var. albidocitrina", "Russula virescens f. erythrocephala", "Russula viridirubrolimbata", "Russula erythrocephala"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }

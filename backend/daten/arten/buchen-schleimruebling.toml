@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche"]
 karte = "schleimruebling"
 speisewertHinweis = "Essbar, aber ohne Wert. Die Huthaut lässt sich gummiartig abziehen."
+beschreibung = "Kleiner bis mittelgroßer, weißer Lamellenpilz mit stark schleimigem Hut, weißen Lamellen und dünnem Stiel mit häutigem weißem Ring, dessen Rand im Alter schwarzbraun wird. Er wächst von Juni bis November einzeln bis büschelig an Totholz von Laubbäumen, meist an Buche, selten an Eiche. Vom Weißen Dachpilz unterscheiden ihn vor allem der häutige Ring am Stiel und die Lamellen, die nicht rosa werden, denn der Weiße Dachpilz hat keinen Ring und seine Lamellen werden fleischrot."
+beschreibungEn = "A small to medium-sized, white gilled mushroom with a very slimy cap, white gills and a thin stem with a membranous white ring whose edge turns blackish-brown with age. The porcelain fungus grows from June to November, singly or in clusters, on dead wood of broadleaf trees, mostly beech, rarely oak. The key difference from Pluteus pellitus is the membranous ring on the stem and the gills, which do not turn pink, because Pluteus pellitus has no ring and its gills turn flesh-pink."
+entwurf = true
 weitereNamen = ["Buchen-Schleimrübling", "Buchenschleimrübling"]
 synonyme = ["Oudemansiella mucida", "Agaricus mucidus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

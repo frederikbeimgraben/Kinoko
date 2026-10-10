@@ -12,7 +12,7 @@ type Scorer func(label []int8, p []float64) float64
 // FitPredict trains on the training rows of a fold and returns a score for each test row, in the order of fold.Test.
 type FitPredict func(fold Fold) ([]float64, error)
 
-// Evaluate is evaluate of final_model.py: the mean AUC and mean AP over the folds.
+// Evaluate gives the mean AUC and mean AP over the folds.
 // A fold whose test part has one class only is left out. With no fold left, both means are NaN, as np.mean.
 func Evaluate(label []int8, folds []Fold, fit FitPredict, auc, ap Scorer) (meanAUC, meanAP float64, err error) {
 	var aucs, aps []float64
@@ -46,7 +46,7 @@ func sumInt8(v []int8) int {
 	return total
 }
 
-// Ceiling is the cap of fit_calibrated: the mean label of the top max(30, int(0.02*n)) calibration rows by raw score.
+// Ceiling is the cap of the calibrated model: the mean label of the top max(30, int(0.02*n)) calibration rows by raw score.
 // Ties of raw are ordered by descending index: the reverse of a stable ascending argsort.
 // numpy's default argsort is not stable and depends on the CPU, so no port can copy its tie order.
 func Ceiling(raw []float64, label []int8) float64 {
@@ -74,7 +74,7 @@ func Brier(label []int8, p []float64) float64 {
 	return Mean(sq)
 }
 
-// OOFScores are the out-of-fold scores that final_model.py prints for each horizon.
+// OOFScores are the out-of-fold scores of one horizon.
 type OOFScores struct {
 	Rows            int
 	BrierRaw        float64

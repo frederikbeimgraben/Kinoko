@@ -34,8 +34,7 @@ type ExtractConfig struct {
 	Jobs          []Job          // Jobs when nil
 }
 
-// Extract writes the weekly checkpoint of each job, as extract_grids.py does
-// without --cells-from. A checkpoint that exists is kept when RefreshFrom is nil.
+// Extract writes the weekly checkpoint of each job. A checkpoint that exists is kept when RefreshFrom is nil.
 // One worker holds about one year of daily cell means and its output rows.
 func Extract(ctx context.Context, cfg ExtractConfig, log Logger) error {
 	if log == nil {
@@ -137,7 +136,7 @@ func cellNames(cells []geo.CellKey) []string {
 }
 
 // YearFile returns the file of year in dir (pattern *_<year>_*.nc) with the newest
-// version, or "". extract_grids.py takes the last name in text order; for one version per year that is the same file.
+// version, or "".
 func YearFile(dir string, year int) string {
 	found, _ := filepath.Glob(filepath.Join(dir, fmt.Sprintf("*_%d_*.nc", year)))
 	if len(found) == 0 {

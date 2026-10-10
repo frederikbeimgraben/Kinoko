@@ -23,6 +23,8 @@ type speciesRow struct {
 	Frequency        *enums.Frequency
 	RedList          *enums.RedListStatus
 	Description      *string
+	DescriptionEn    string
+	DescriptionDraft bool
 	EdibilityNote    *string
 	Protection       enums.Protection
 	ProtectionNote   *string
@@ -38,6 +40,7 @@ type speciesRow struct {
 	GillEdge         *enums.GillEdge
 	CapShapeYoung    *enums.CapShape
 	CapShapeOld      *enums.CapShape
+	RingShape        *enums.RingShape
 	UpdatedAt        db.Time
 	UpdatedByID      *db.ID
 }
@@ -46,7 +49,7 @@ const speciesCols = `id, slug, name, latin_name, taxon_id, group_key, edibility,
 	forecast_enabled, frequency, red_list, description, edibility_note, protection, protection_note,
 	period_start_month, period_end_month, period_peak_month, smell_text, taste_text, hymenium_type,
 	gill_attachment, gill_spacing, gill_edge, cap_shape_young, cap_shape_old, updated_at, updated_by_id,
-	period_peak_week`
+	period_peak_week, description_en, description_draft, ring_shape`
 
 func scanSpecies(s db.Scanner) (speciesRow, error) {
 	var r speciesRow
@@ -54,7 +57,8 @@ func scanSpecies(s db.Scanner) (speciesRow, error) {
 		&r.Marketable, &r.ForecastEnabled, &r.Frequency, &r.RedList, &r.Description, &r.EdibilityNote,
 		&r.Protection, &r.ProtectionNote, &r.PeriodStartMonth, &r.PeriodEndMonth, &r.PeriodPeakMonth,
 		&r.SmellText, &r.TasteText, &r.HymeniumType, &r.GillAttachment, &r.GillSpacing, &r.GillEdge,
-		&r.CapShapeYoung, &r.CapShapeOld, &r.UpdatedAt, &r.UpdatedByID, &r.PeriodPeakWeek)
+		&r.CapShapeYoung, &r.CapShapeOld, &r.UpdatedAt, &r.UpdatedByID, &r.PeriodPeakWeek,
+		&r.DescriptionEn, &r.DescriptionDraft, &r.RingShape)
 	return r, err
 }
 

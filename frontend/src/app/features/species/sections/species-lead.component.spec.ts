@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { noViolations } from '../../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../../testing/catalogue-double';
+import { I18nService } from '../../../core/i18n/i18n.service';
 import { photo } from '../../../testing/photos-fixture';
 import { ANY_ROUTE } from '../../../testing/routes';
 import type { Photo } from '../../../core/api/models';
@@ -52,8 +53,25 @@ describe('SpeciesLeadComponent', () => {
     const container = await build(photo({ id: 'bild-eins', caption: 'Junges Exemplar' }));
 
     expect(screen.getByRole('img', { name: 'Junges Exemplar' })).toBeInTheDocument();
-    expect(screen.getByText('Foto: Marie Weber · CC BY-SA 4.0')).toBeInTheDocument();
+    expect(container.querySelector('.credit')?.textContent.replace(/\s+/g, ' ').trim()).toBe(
+      'Foto: Marie Weber · CC BY-SA 4.0',
+    );
+    expect(screen.getByRole('link', { name: 'CC BY-SA 4.0' })).toHaveAttribute(
+      'href',
+      'https://creativecommons.org/licenses/by-sa/4.0/',
+    );
     await noViolations(container);
+  });
+
+  it('nimmt in Englisch die englische Bildunterschrift', async () => {
+    await build(photo({ id: 'bild-eins', caption: 'Junges Exemplar', captionEn: 'Young specimen' }));
+    const i18n = TestBed.inject(I18nService);
+    // The English catalogue loads as a module, and the module loader needs the real URL.
+    vi.unstubAllGlobals();
+    i18n.setLocale('en');
+
+    expect(await screen.findByRole('img', { name: 'Young specimen' })).toBeInTheDocument();
+    i18n.setLocale('de');
   });
 
   it('nimmt ohne Bildunterschrift den Namen der Art', async () => {

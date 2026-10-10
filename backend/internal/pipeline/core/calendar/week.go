@@ -37,7 +37,7 @@ func (w Week) Valid() bool {
 	return w.Week >= 1 && w.Week <= 53 && WeekOf(w.Monday()) == w
 }
 
-// ID returns year*53 + week, as build_dataset.week_number. Use it as a join key only.
+// ID returns year*53 + week. Use it as a join key only.
 // It is not a distance: a year with 52 weeks leaves a gap. Use Distance for that.
 func (w Week) ID() int { return w.Year*53 + w.Week }
 

@@ -38,7 +38,7 @@ func (t PriorTable) index() map[string]int {
 }
 
 // Lookup returns a function that gives rate and n of a key.
-// A key without visits gives NaN and 0, as the left merge and fillna(0) in region_map.py.
+// A key without visits gives NaN and 0.
 func (t PriorTable) Lookup() func(key string) (rate, n float64) {
 	index := t.index()
 	return func(key string) (float64, float64) {

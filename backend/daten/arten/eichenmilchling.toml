@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche"]
 speisewertHinweis = "Der Geruch nach Blattwanzen bleibt beim Garen erhalten. Als Speisepilz taugt er wenig."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer Milchling mit rotbraunem bis haselnussbraunem, oft dunkler gezontem Hut mit eingedrückter Mitte, hellbräunlichen Lamellen, weißer bis hell gelblicher Milch und festem, vollem, rotbraunem Stiel. Er wächst von Juni bis November nur bei Eichen und ist sehr häufig. Vom Rotbraunen Milchling unterscheiden ihn vor allem der Standort bei Eiche und der Geruch nach Blattwanzen, den der Rotbraune Milchling nicht hat."
+beschreibungEn = "A medium-sized milkcap with a red-brown to hazel-brown cap, often with darker zones and a depressed centre, light brownish gills, white to pale yellowish milk and a firm, solid, red-brown stem. The oakbug milkcap grows from June to November only with oak and is very common. The key difference from the rufous milkcap is the oak habitat and the smell of shield bugs, which the rufous milkcap does not have."
+entwurf = true
 synonyme = ["Lactarius quieta", "Agaricus quietus", "Lactifluus quietus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutmerkmale = ["gezont", "vertieft"]

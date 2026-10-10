@@ -87,3 +87,51 @@ test('nimmt eine Entscheidung auch auf dem Server zurück', async ({ page }) => 
   await expectOpen(page, '2', '2 offene Funde');
   await expect(page.getByText('Am Wegrand')).toBeVisible();
 });
+
+/** Opens the confirmation of "Alle annehmen" and confirms it. */
+async function acceptAll(page: Page): Promise<void> {
+  await page.getByRole('button', { name: 'Alle annehmen' }).click();
+  await page.locator('.confirm__panel').getByRole('button', { name: 'Alle annehmen' }).click();
+}
+
+test('nimmt nach der Bestätigung jeden Fund der Liste an', async ({ page }) => {
+  const decided: string[] = [];
+  await start(page);
+  await page.route('**/api/finds/*/review', async (route) => {
+    decided.push(`${new URL(route.request().url()).pathname} ${route.request().postData() ?? ''}`);
+    await route.fulfill({ status: 200, contentType: 'application/json', body: 'null' });
+  });
+
+  await acceptAll(page);
+
+  await expect
+    .poll(() => [...decided].sort())
+    .toEqual([
+      '/api/finds/fund-eins/review {"decision":"accepted"}',
+      '/api/finds/fund-zwei/review {"decision":"accepted"}',
+    ]);
+  await expect(page.getByText('Keine Funde offen')).toBeVisible();
+  await expect(page.getByText('2 Funde angenommen')).toBeVisible();
+});
+
+test('lässt einen Fund mit Fehler offen und meldet ihn in einem Toast', async ({ page }) => {
+  await start(page);
+  await page.route('**/api/finds/*/review', async (route) => {
+    const failed = route.request().url().includes('fund-zwei');
+    await route.fulfill(
+      failed
+        ? {
+            status: 500,
+            contentType: 'application/problem+json',
+            body: JSON.stringify({ type: 'about:blank', title: 'Fehler', status: 500 }),
+          }
+        : { status: 200, contentType: 'application/json', body: 'null' },
+    );
+  });
+
+  await acceptAll(page);
+
+  await expect(page.getByText('Nicht angenommen: 1 von 2. Diese Funde bleiben offen.')).toBeVisible();
+  await expectOpen(page, '1', '1 offener Fund');
+  await expect(page.getByRole('button', { name: 'Alle annehmen' })).toHaveCount(0);
+});

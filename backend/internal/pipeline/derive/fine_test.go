@@ -13,7 +13,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/tiles"
 )
 
-// goldenLayers are the layers that gen_golden.py renders with fine_layers.main.
+// goldenLayers are the layers of the golden fine layer run.
 var goldenLayers = []string{"wald", "fichte", "nadelholz", "hoehe", "hangneigung", "nordexposition",
 	"boden_ph", "boden_sand", "boden_kohlenstoff"}
 
@@ -30,9 +30,8 @@ func soilInputs(t *testing.T) map[string]string {
 	return out
 }
 
-// TestRenderFineGolden compares the tiles and layers.json with
-// fine_layers.main: golden maps/. The WCS fetch of the Python run is a cut
-// of the same tree map. A tile byte may differ by 1 on 0.1 % of the points.
+// TestRenderFineGolden compares the tiles and layers.json with the golden
+// maps/. The golden tree source is a cut of the same tree map. A tile byte may differ by 1 on 0.1 % of the points.
 func TestRenderFineGolden(t *testing.T) {
 	if testing.Short() {
 		t.Skip("the fine layers take a while")

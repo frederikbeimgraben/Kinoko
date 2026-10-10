@@ -9,3 +9,10 @@
   line-height: var(--image-credit-line, normal);
   color: var(--color-text-muted);
 }
+
+// The links keep the quiet colour of the line. The underline marks them.
+.credit__link {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}

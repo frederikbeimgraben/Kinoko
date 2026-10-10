@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "fichte", "birke", "buche"]
 speisewertHinweis = "Ungeniessbar durch die extreme Schaerfe, die erst nach etwa einer Minute einsetzt. Bei empfindlichen Personen kann er Lippenblaeschen ausloesen, deshalb nur sehr vorsichtig kosten."
+beschreibung = "Milchling mit rotbraunem bis ziegelrotbraunem Hut mit kleinem Buckel, der später trichterförmig wird, cremefarbenen, später ockerlich fleischrötlichen Lamellen, weißer Milch und rotbraunem, im Alter hohlem Stiel. Er wächst vom Sommer bis zum Spätherbst im Mischwald, bevorzugt bei Kiefern und Fichten, seltener bei Birke und Buche, gern an moosigen Stellen. Vom ähnlichen Maggipilz unterscheidet ihn vor allem der Geruch, denn der Maggipilz riecht stark nach Maggi oder Liebstöckel, der Rotbraune Milchling dagegen harzig."
+beschreibungEn = "A milkcap with a red-brown to brick-red-brown cap with a small umbo that later becomes funnel-shaped, cream gills that turn ochre flesh-pink later, white milk and a red-brown stem that becomes hollow with age. It grows from summer to late autumn in mixed woods, mostly with pine and spruce, less often with birch and beech, often in mossy places. The key difference from the similar fenugreek milkcap is the smell, because the fenugreek milkcap smells strongly of stock cubes or lovage, while the rufous milkcap smells resinous."
+entwurf = true
 weitereNamen = ["Paprikapilz", "Braunroter Milchling"]
 synonyme = ["Lactarius mollis", "Lactifluus rufus"]
 fruchtschicht = { art = "lamellen", schneide = "glatt" }

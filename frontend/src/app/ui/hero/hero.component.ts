@@ -12,6 +12,8 @@ export interface HeroPhoto {
   readonly path: string;
   readonly photographer: string;
   readonly licence: Licence;
+  /** The source of the photo. A web address becomes a link in the credit. */
+  readonly source?: string | null;
 }
 
 /** The large image of the species page and the image view: photo, arrows and credit. */

@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Giftig. Der bitterliche Geschmack, die jung zitronengelben Lamellen und das gelbbraune Sporenpulver trennen ihn von essbaren Holzbewohnern."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner Flämmling mit zimtbraunem bis rotbraunem, trocken verblassendem Hut, jung zitronengelben, später rostbraunen Lamellen und hellbraunem bis dunkelbraunem, längsfaserigem Stiel. Er wächst vom Sommer bis zum Herbst an Totholz, Baumstümpfen und vergrabenem Holz und ist sehr selten. Vom tödlich giftigen Gifthäubling unterscheiden ihn vor allem die jung zitronengelben Lamellen und der Stiel ohne Ringzone, denn der Gifthäubling hat einen ockerbraunen, hygrophanen Hut und eine weißliche Ringzone am Stiel. Der Rotbraune Flämmling ist giftig."
+beschreibungEn = "A small rustgill with a cinnamon-brown to red-brown cap that fades when dry, gills that are lemon-yellow when young and rust-brown later, and a light brown to dark brown, fibrous stem. It grows from summer to autumn on dead wood, tree stumps and buried wood and is very rare. The key difference from the deadly poisonous funeral bell is the lemon-yellow young gills and the stem without a ring zone, because the funeral bell has an ochre-brown, hygrophanous cap and a whitish ring zone on the stem. Gymnopilus picreus is poisonous."
+entwurf = true
 weitereNamen = ["Dunkelstieliger Flämmling"]
 synonyme = ["Fulvidula picrea", "Gymnopilus satur"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }

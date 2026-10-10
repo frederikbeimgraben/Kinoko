@@ -7,7 +7,11 @@ marktfaehigSchweiz = false
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "birke"]
+karte = "amanita_fulva"
 speisewertHinweis = "Roh unverträglich. Nur für Sammler, die den Pantherpilz sicher trennen: jeden Fruchtkörper mit ganzer Stielbasis ausgraben und die Scheide prüfen."
+beschreibung = "Kleiner bis mittelgroßer Wulstling mit fuchsigem bis rotbraunem Hut mit dunklerer Mitte und stark gerieftem Rand, weißen, fast freien Lamellen und schlankem, weißem bis hell rötlich bräunlichem Stiel ohne Ring, dessen Basis in einer rotbraun gefleckten Scheide steckt. Er wächst von Juni bis November im Mischwald, meist im Nadelwald, gern bei Fichte und Birke auf moorigen Böden. Vom Pantherpilz unterscheiden ihn vor allem der fehlende Ring und die häutige Scheide an der Stielbasis, denn der Pantherpilz hat weiße Flocken auf dem Hut, einen Ring und eine gerandete Knolle."
+beschreibungEn = "A small to medium-sized amanita with a foxy to red-brown cap with a darker centre and a strongly grooved margin, white, almost free gills and a slender, white to light reddish-brownish stem without a ring, whose base sits in a red-brown spotted sac. The tawny grisette grows from June to November in mixed woods, mostly in coniferous woods, often with spruce and birch on boggy soil. The key difference from the panther cap is the absence of a ring and the sac-like volva at the stem base, because the panther cap has white flakes on the cap, a ring and a bulb with a rim."
+entwurf = true
 weitereNamen = ["Fuchsiger Scheidenstreifling", "Rotbrauner Streifling", "Gelbbräunlicher Scheidenstreifling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["gerieft"] }

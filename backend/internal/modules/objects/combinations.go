@@ -30,7 +30,7 @@ var combinations = kind[combinationRow]{
 	meta: func(c combinationRow) owned { return c.owned },
 }
 
-// factor is one factor of a combination, with the fields in the order of the Python schema.
+// factor is one factor of a combination, with the fields in the order of the API schema.
 type factor struct {
 	Source    string          `json:"source"`
 	Condition enums.Condition `json:"condition"`
@@ -61,8 +61,8 @@ func optFloat(f *laxFloat) *float64 {
 	return fn.Ptr(float64(*f))
 }
 
-// storedFactors writes the factors as Python json.dumps does, with its
-// default separators and with ensure_ascii.
+// storedFactors writes the factors as JSON with ", " and ": " as separators
+// and with each non-ASCII character as a \u escape.
 func storedFactors(factors []factor) string {
 	return string(pyjson.Marshal(fn.Map(factors, func(f factor) *pyjson.Obj {
 		return pyjson.O("source", f.Source, "condition", string(f.Condition), "low", f.Low, "high", f.High, "active", f.Active)

@@ -11,7 +11,7 @@ import (
 )
 
 // Schema is the column set of occurrences.parquet that WriteOccurrences writes.
-// It is the part of the Python table that the later steps read; the other
+// It holds the columns that the later steps read; the other
 // GBIF columns (datasetKey, license, taxonomy) are not kept.
 var Schema = []pio.ColumnSpec{
 	{Name: "gbifID", Type: pio.String},
@@ -33,7 +33,7 @@ var Schema = []pio.ColumnSpec{
 	{Name: "cell", Type: pio.String},
 }
 
-// readColumns are the columns that ReadOccurrences needs. A Python file has them too.
+// readColumns are the columns that ReadOccurrences needs.
 var readColumns = []string{"gbifID", "species", "decimalLatitude", "decimalLongitude",
 	"coordinateUncertaintyInMeters", "recordedByHash", "date", "x", "y", "cell"}
 
@@ -88,8 +88,8 @@ func WriteOccurrences(path string, rs []Record) error {
 	return pio.WriteParquet(path, t, Schema)
 }
 
-// ReadOccurrences reads an occurrences.parquet of WriteOccurrences or of build_occurrences.py.
-// A file without a basis column holds GBIF rows only, as visit_model.build_visits assumes.
+// ReadOccurrences reads an occurrences.parquet, for example one of WriteOccurrences.
+// A file without a basis column holds GBIF rows only.
 func ReadOccurrences(path string) ([]Record, error) {
 	info, err := pio.Inspect(path)
 	if err != nil {

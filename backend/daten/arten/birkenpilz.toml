@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke"]
 karte = "birkenpilz"
 speisewertHinweis = "Jung sammeln. Im Alter wird das Fleisch schwammig."
+beschreibung = "Mittelgroßer Röhrling mit grau-, gelb- bis rotbraunem, bei Nässe schmierigem Hut, weißlichen, später grauen Röhren und schmutzig weißem Stiel mit weißen bis schwarzbraunen Schuppen. Er wächst von Juni bis November nur bei Birken. Vom Hainbuchenröhrling unterscheidet ihn vor allem das Fleisch, das im Anschnitt nicht rötet, denn beim Hainbuchenröhrling wird es erst rötlich und dann grauviolett bis schwarzlila; dessen Huthaut ist außerdem wie gehämmert runzelig."
+beschreibungEn = "A medium-sized bolete with a grey-brown, yellow-brown to red-brown cap that is slimy when wet, whitish tubes that turn grey, and a dirty white stem with white to blackish-brown scales. It grows from June to November only with birch. The key difference from the hazel bolete is the flesh, which does not turn red when cut, because the flesh of the hazel bolete turns reddish first and then grey-violet to black-lilac; its cap skin is also wrinkled as if hammered."
+entwurf = true
 weitereNamen = ["Gemeiner Birkenpilz", "Langhaxen", "Graugrüner Birkenpilz"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig", nach = "flach" }

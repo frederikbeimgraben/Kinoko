@@ -7,6 +7,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke", "buche", "eiche"]
+beschreibung = "Täubling mit sehr vielfarbigem, olivgrauem, graulila, purpurviolettem bis blaugrünem Hut mit gerieftem Rand, weißen, später cremefarbenen, sehr brüchigen Lamellen und weißem Stiel. Er wächst vom Sommer bis zum Spätherbst im Laubwald, gern bei Birke, Buche und Eiche. Typisch ist das weiße Fleisch, das sich unter der Huthaut und an Schneckenfraßstellen rosaviolett verfärbt."
+beschreibungEn = "A brittlegill with a very variable, olive-grey, grey-lilac, purple-violet to blue-green cap with a grooved margin, white gills that turn cream later and are very brittle, and a white stem. It grows from summer to late autumn in broadleaf woods, often with birch, beech and oak. A typical feature is the white flesh, which turns pink-violet under the cap skin and where slugs have eaten it."
+entwurf = true
 weitereNamen = ["Grauvioletter Reif-Täubling"]
 synonyme = ["Russula palumbina"]
 fruchtschicht = { art = "lamellen", stand = "eng", schneide = "glatt" }

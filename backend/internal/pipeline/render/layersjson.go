@@ -18,7 +18,7 @@ const LayersFile = "layers.json"
 
 // decodeOrdered reads JSON as json.loads does: objects keep their key order
 // (*pyjson.Obj), a number with a point or an exponent is a float64, other
-// numbers are int64. Writing the result with pyjson gives the same text as Python.
+// numbers are int64. Writing the result with pyjson gives the same text again.
 func decodeOrdered(data []byte) (any, error) {
 	dec := json.NewDecoder(bytes.NewReader(data))
 	dec.UseNumber()

@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke"]
 speisewertHinweis = "Raufussroehrlinge sind besonders geschuetzt, diese Art ist zudem extrem selten. Nur kleine Mengen fuer den Eigenbedarf oder den Fund stehen lassen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Raufußröhrling mit graubraunem bis rötlichbraunem, filzigem Hut, weißlichen, später grauen Röhren und schmutzig weißem, bauchigem Stiel mit weißen bis schwarzbraunen Schuppen. Er wächst vom Sommer bis zum Spätherbst bei Birken und ist extrem selten. Typisch ist das Fleisch, das im Anschnitt rosa bis korallenrot wird. Vom ähnlichen Vielverfärbenden Birkenpilz unterscheidet ihn vor allem die Stielbasis, denn beim Vielverfärbenden Birkenpilz wird sie bei Verletzung blaugrün."
+beschreibungEn = "A rough-stemmed bolete with a grey-brown to reddish-brown, felty cap, whitish tubes that turn grey later and a dirty white, swollen stem with white to black-brown scales. It grows from summer to late autumn with birch and is extremely rare. A typical feature is the flesh, which turns pink to coral-red when cut. The key difference from the similar Leccinum variicolor is the stem base, because in that species it turns blue-green when damaged."
+entwurf = true
 synonyme = ["Leccinum scabrum var. oxydabile", "Krombholzia oxydabilis", "Krombholzia scabra f. oxydabilis", "Boletus scaber var. oxydabilis", "Boletus scaber f. oxydabilis"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "gewoelbt" }

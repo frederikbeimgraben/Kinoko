@@ -48,6 +48,7 @@ type Arrival struct {
 	SpeciesID    *db.ID
 	FindID       *db.ID
 	Caption      *string
+	CaptionEn    string
 	Source       *string
 	TakenOn      *db.Date
 }
@@ -138,14 +139,13 @@ func readError(err error) error {
 	return badBody()
 }
 
-// badBody is the answer of the Python service to a body it cannot parse: status
+// badBody is the answer to a body that the service cannot parse: status
 // 400 without a code of its own.
 func badBody() error {
 	return problem.New("internal", http.StatusBadRequest, "There was an error parsing the body")
 }
 
-// check validates the form as the Python service does, in the order of its
-// fields. An empty text value counts as a missing value.
+// check validates the form in the order of its fields. An empty text value counts as a missing value.
 func check(f form) (Arrival, error) {
 	errs := []problem.FieldError{}
 	fail := func(field, code string) { errs = append(errs, problem.FieldError{Field: field, Code: code}) }
@@ -199,6 +199,9 @@ func check(f form) (Arrival, error) {
 		return &v
 	}
 	out.Caption = optionalText("caption")
+	if v := optionalText("captionEn"); v != nil {
+		out.CaptionEn = *v
+	}
 	out.Source = optionalText("source")
 	if v, ok := value("takenOn"); ok {
 		day, err := parseDay(v)
@@ -342,23 +345,23 @@ func (m *Module) insert(ctx context.Context, tx *sql.Tx, user auth.User, a Arriv
 	id := db.NewID()
 	now := db.At(m.deps.Now())
 	if _, err := tx.ExecContext(ctx, `INSERT INTO photo (id, owner_id, find_id, species_id, width,
-		height, photographer, licence, source, taken_on, caption, lat, lon, lead, state,
+		height, photographer, licence, source, taken_on, caption, caption_en, lat, lon, lead, state,
 		reject_reason, reviewed_by_id, reviewed_at, created_at, updated_at)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, NULL, NULL, NULL, ?, ?)`,
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, NULL, NULL, NULL, ?, ?)`,
 		id, user.ID, findID, speciesID, rendered.Width, rendered.Height, a.Photographer,
-		string(a.Licence), a.Source, a.TakenOn, a.Caption, lat, lon, string(state), now, now); err != nil {
+		string(a.Licence), a.Source, a.TakenOn, a.Caption, a.CaptionEn, lat, lon, string(state), now, now); err != nil {
 		return db.ID{}, err
 	}
 	return id, WriteFiles(m.deps.Settings.Photos, id, rendered)
 }
 
 // replace puts a new image into a rejected photo and submits it again.
-// The source stays, as in the Python service.
+// The source stays.
 func (m *Module) replace(ctx context.Context, tx *sql.Tx, id db.ID, a Arrival, rendered Rendered) error {
 	if _, err := tx.ExecContext(ctx, `UPDATE photo SET width = ?, height = ?, photographer = ?,
-		licence = ?, caption = ?, taken_on = ?, state = 'submitted', reject_reason = NULL,
+		licence = ?, caption = ?, caption_en = ?, taken_on = ?, state = 'submitted', reject_reason = NULL,
 		reviewed_by_id = NULL, reviewed_at = NULL, updated_at = ? WHERE id = ?`,
-		rendered.Width, rendered.Height, a.Photographer, string(a.Licence), a.Caption, a.TakenOn,
+		rendered.Width, rendered.Height, a.Photographer, string(a.Licence), a.Caption, a.CaptionEn, a.TakenOn,
 		db.At(m.deps.Now()), id); err != nil {
 		return err
 	}

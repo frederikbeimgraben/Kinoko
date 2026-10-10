@@ -9,6 +9,9 @@ baeume = ["buche"]
 speisewertHinweis = "Sie löst Magen-Darm-Beschwerden mit Durchfall aus, meist 30 bis 90 Minuten nach dem Essen. Korallen sind schwer zu trennen; von der Rosaspitzigen Koralle ist sie kaum sicher zu unterscheiden."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Korallenpilz mit reich verzweigten, milchkaffeebraunen, hellgelblichen bis rosa Ästen, lilarötlich bis fleischrötlich getönten Endästchen und kurzem, weißlichem Strunk. Sie wächst von Juni bis November im Laub- und Mischwald, gern bei Buche auf kalkreichem Boden, und ist selten und in Deutschland gefährdet. Von der Breitblättrigen Glucke unterscheidet sie vor allem die korallenartige Verzweigung mit rötlichen Astspitzen, denn die Glucke besteht aus hirnartig breit gekräuselten Lappen. Die Bauchwehkoralle ist giftig."
+beschreibungEn = "A coral fungus with richly branched, milky-coffee-brown, pale yellowish to pink branches, lilac-reddish to flesh-reddish tips and a short, whitish base. It grows from June to November in broadleaf and mixed woods, often with beech on calcareous soil, and is rare and endangered in Germany. The key difference from Sparassis brevipes is the coral-like branching with reddish tips, because Sparassis brevipes consists of broad, brain-like curled lobes. Ramaria mairei is poisonous."
+entwurf = true
 weitereNamen = ["Blasse Koralle", "Bauchweh-Ziegenbart", "Rosaliche Koralle"]
 synonyme = ["Ramaria pallida", "Ramaria roseola", "Clavaria pallida"]
 

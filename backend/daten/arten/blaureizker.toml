@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Sehr selten und in der Schweiz stark gefährdet. Wenn überhaupt, nur wenige Fruchtkörper nehmen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer Milchling mit orangem, graurosa bis ziegelfarbenem, blaugrün gezontem Hut, der jung genabelt und später trichterförmig ist, orangeockerfarbenen, herablaufenden Lamellen und orangefarbener Milch. Er wächst von Juni bis November bei Kiefern auf saurem Boden und ist sehr selten. Vom Spangrünen Kiefernreizker unterscheidet ihn vor allem die Milch, die erst nach etwa 20 Minuten weinrötlich bis grünlich wird, denn beim Spangrünen Kiefernreizker färbt sich die orangerote Milch bald weinrot bis dunkelrot."
+beschreibungEn = "A medium-sized milkcap with an orange, grey-pink to brick-coloured cap with blue-green zones, which is umbilicate when young and funnel-shaped later, orange-ochre decurrent gills and orange milk. It grows from June to November with pine on acid soil and is very rare. The key difference from Lactarius semisanguifluus is the milk, which turns wine-reddish to greenish only after about 20 minutes, because the orange-red milk of Lactarius semisanguifluus soon turns wine-red to dark red."
+entwurf = true
 weitereNamen = ["Blaureizker", "Blaumilch-Kiefernreizker", "Brauner Kiefern-Blutreizker"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutform = { von = "gewoelbt", nach = "trichterfoermig" }

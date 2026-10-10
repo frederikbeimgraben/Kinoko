@@ -40,8 +40,8 @@ func (a dd) div(n float64) dd {
 // cosLimit is the largest argument for the series. Latitudes stay below it.
 const cosLimit = 4.0
 
-// Cos gives the cosine rounded to the nearest float64, as the C library of
-// the Python service uses. math.Cos can differ in the last bit.
+// Cos gives the cosine rounded to the nearest float64. math.Cos can differ
+// in the last bit.
 func Cos(x float64) float64 {
 	if math.IsNaN(x) || math.Abs(x) > cosLimit {
 		return math.Cos(x)

@@ -10,6 +10,9 @@ jahreszeiten = ["fruehling"]
 baeume = []
 speisewertHinweis = "Roh giftig. Vor dem Essen durchgaren. Morcheln sind besonders geschützt, deshalb nur wenig für den Eigenbedarf nehmen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Große Morchel mit hellbraunem, graugelbem bis grüngelbem, wabenartigem Hut mit schmalen Rippen und auffällig dickem, klumpigem, weißlichem, längs gefurchtem Stiel; Hut und Stiel sind hohl. Sie wächst von März bis Mai in Auwäldern, Parks und Gärten, an Waldrändern, auf Waldwiesen und in Rindenmulch, ist sehr standorttreu und sehr selten. Von der Gemeinen Morchel unterscheidet sie vor allem der dicke Stiel, neben dem der Hut klein wirkt, denn die Gemeine Morchel hat einen deutlich dünneren Stiel und einen rundlicheren, dunkleren Hut."
+beschreibungEn = "A large morel with a light brown, grey-yellow to greenish-yellow, honeycomb-like cap with narrow ridges and a strikingly thick, lumpy, whitish stem with long furrows; cap and stem are hollow. It grows from March to May in floodplain woods, parks and gardens, at forest edges, in woodland meadows and in bark mulch, comes back at the same places and is very rare. The key difference from Morchella vulgaris is the thick stem, which makes the cap look small, because Morchella vulgaris has a much thinner stem and a rounder, darker cap."
+entwurf = true
 weitereNamen = ["Dickfüßige Speisemorchel"]
 stielmerkmale = ["hohl", "gerieft"]
 

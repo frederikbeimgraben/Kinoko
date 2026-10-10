@@ -12,7 +12,7 @@ import (
 )
 
 // ID is the key of a row. The database keeps it as 32 hex digits without
-// dashes, as the Python service does. JSON shows it as a UUID with dashes.
+// dashes. JSON shows it as a UUID with dashes.
 type ID uuid.UUID
 
 // NewID makes a random key.
@@ -82,7 +82,7 @@ const (
 )
 
 // Time is a point in time in UTC. The database keeps it as text without a
-// zone, as the Python service does. JSON shows it as ISO 8601 with "Z".
+// zone. JSON shows it as ISO 8601 with "Z".
 type Time struct{ time.Time }
 
 // Now gives the current time in UTC, to the microsecond.

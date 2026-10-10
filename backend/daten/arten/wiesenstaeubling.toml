@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur solange das Innere rein weiß ist. Sobald das Fleisch gilbt oder olivbraun wird, ist er nicht mehr brauchbar."
+beschreibung = "Kleiner, weißer, kugel- bis birnenförmiger Stäubling mit feinkörniger bis feinstacheliger Oberfläche, der im Alter braun wird, sich am Scheitel öffnet und als Becher zurückbleibt. Er wächst von April bis zum Spätherbst auf Rasenflächen, Wiesen und Viehweiden. Typisch ist eine deutliche Trennhaut im Inneren, die die Sporenmasse von der wabigen Basis trennt. Vom tödlich giftigen Weißen Knollenblätterpilz im Eistadium unterscheidet ihn vor allem das Innere, denn im Längsschnitt des Knollenblätterpilzes zeigen sich schon Hut, Lamellen und Stiel."
+beschreibungEn = "A small, white, round to pear-shaped puffball with a finely granular to finely spiny surface, which turns brown with age, opens at the top and remains as a cup. It grows from April to late autumn on lawns, meadows and pastures. A typical feature is a distinct membrane inside, which separates the spore mass from the spongy base. The key difference from the deadly poisonous white form of the death cap in the egg stage is the interior, because a lengthwise cut through the death cap already shows a cap, gills and a stem."
+entwurf = true
 weitereNamen = ["Wiesenstäubling", "Niedergedrückter Stäubling", "Münzstäubling"]
 synonyme = ["Lycoperdon pratense"]
 hutform = { von = "kugelig", nach = "trichterfoermig" }

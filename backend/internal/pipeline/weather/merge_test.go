@@ -11,14 +11,14 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// mergedGolden is testdata/merged.json: merge_weekly.main on the checkpoints in
-// testdata/py_weekly, which extract_grids.main wrote (testdata/gen_golden.py).
+// mergedGolden is the golden file testdata/merged.json: the merged table of the
+// checkpoints in testdata/py_weekly.
 type mergedGolden struct {
 	Columns []string `json:"columns"`
 	Rows    [][]any  `json:"rows"`
 }
 
-func TestLoadCubeAndWriteMergedMatchPython(t *testing.T) {
+func TestLoadCubeAndWriteMergedMatchGolden(t *testing.T) {
 	var g mergedGolden
 	readJSON(t, "testdata/merged.json", &g)
 	cube, err := LoadCube("testdata/py_weekly", nil)
@@ -70,7 +70,7 @@ func TestLoadCubeAndWriteMergedMatchPython(t *testing.T) {
 func TestLoadCubeIsOuterJoin(t *testing.T) {
 	dir := t.TempDir()
 	copyTree(t, "testdata/py_weekly", dir)
-	// The soil stand lacks 2021 and one cell, as after a failed soil fetch (bug 3).
+	// The soil stand lacks 2021 and one cell, as after a failed soil fetch (finding 3).
 	partial, err := readCheckpoint(CheckpointPath(dir, "paws_spruce"), "paws_spruce",
 		func(w calendar.Week) bool { return w.Year == 2020 })
 	if err != nil {

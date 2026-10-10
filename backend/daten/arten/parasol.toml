@@ -9,10 +9,14 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 karte = "parasol"
 speisewertHinweis = "Nicht roh essen. Ungenügend gegart löst er Magen-Darm-Beschwerden aus, deshalb gut durchgaren. Riesenschirmlinge vom Komposthaufen oder aus dem Garten stehen lassen, dort wächst der Gift-Riesenschirmling."
+beschreibung = "Großer Schirmling mit hellbraunem Hut voller gezonter, weicher, wolliger Schüppchen, weißen, freien Lamellen und hohem, schlankem Stiel mit dunkelbrauner Natterung und wolligem, doppelrandigem, verschiebbarem Ring. Er wächst von Juni bis November in Mischwäldern, an Waldrändern, auf Waldwegen und in Heiden. Vom Safranschirmling unterscheidet ihn vor allem der genatterte Stiel, denn der Safranschirmling hat einen Stiel ohne Natterung mit gerandeter Knolle und Fleisch, das bei Verletzung rötlich anläuft."
+beschreibungEn = "A large parasol with a light brown cap full of soft, woolly scales in zones, white free gills and a tall, slender stem with a dark brown snakeskin pattern and a woolly, double-edged, movable ring. It grows from June to November in mixed woods, at forest edges, on forest paths and on heaths. The key difference from the shaggy parasol is the snakeskin pattern on the stem, because the shaggy parasol has a stem without this pattern, a bulb with a rim and flesh that turns reddish when it is damaged."
+entwurf = true
 weitereNamen = ["Riesenschirmling", "Riesenschirmpilz", "Paukenschläger", "Paukenschleger", "Gemeiner Riesenschirmling", "Gugermukken", "Schulmeisterpilz", "Eulchen"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gezont"]
 stielmerkmale = ["genattert", "faserig", "ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

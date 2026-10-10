@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur solange die innere Fruchtschicht rein weiß ist. In der Schweiz nicht marktfähig."
+beschreibung = "Großer Stäubling mit kugeligem Kopfteil auf einem langen, bauchig zylindrischen Stielteil, ausgewachsen stößel- bis birnenförmig, mit jung weißer, spitzwarziger und später ockerfarbener, glatter Außenhaut. Er wächst von Juni bis November im Mischwald, auf Wiesen und Weiden und in Hecken. Innen ist er jung weiß, dann gelb und zuletzt purpurbraun, nur der sterile Stielteil bleibt ocker bis ockerbraun."
+beschreibungEn = "A large puffball with a round head on a long, bulging cylindrical stem part; mature fruit bodies are pestle- to pear-shaped, with an outer skin that is white with pointed warts when young and ochre and smooth later. It grows from June to November in mixed woods, in meadows and pastures and in hedges. Inside it is white when young, then yellow and finally purple-brown, while the sterile stem part stays ochre to ochre-brown."
+entwurf = true
 weitereNamen = ["Beutel Großstäubling", "Beutelbovist"]
 synonyme = ["Calvatia excipuliformis", "Calvatia excipuliformis forma elata", "Handkea excipuliformis", "Calvatia saccata", "Lycoperdon polymorphum var. excipuliforme"]
 hutform = { von = "kugelig", nach = "birnenfoermig" }

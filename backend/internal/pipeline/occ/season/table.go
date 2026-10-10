@@ -18,9 +18,9 @@ func (s *Series) add(week int) {
 // PyJSON gives the series as a JSON list.
 func (s Series) PyJSON() any { return s[:] }
 
-// Table is saisontabelle: the visits per week and the visits with a find per
+// Table gives the season table: the visits per week and the visits with a find per
 // week and species, for the years before stand.Year and for stand.Year apart.
-// latin sets the species and their order; pass LatinNames() for the Python list.
+// latin sets the species and their order; pass LatinNames() for the list of Arten.
 func Table(entries []Entry, latin []string, stand calendar.Week) (*pyjson.Obj, error) {
 	if len(entries) == 0 {
 		return nil, ErrNoVisits

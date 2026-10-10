@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Tödlich giftig, wie alle Risspilze mindestens verdächtig. Kennzeichen sind der wollig-filzige braune Hut mit fransig überstehendem Rand, der erdig-spermatische Geruch und das tabakbraune Sporenpulver."
+beschreibung = "Kleiner Risspilz mit braunem bis orangebraunem, wollig filzigem Hut mit fransig überstehendem Rand, hellgrauen bis graubraunen, alt rostbraunen Lamellen mit weißlich bewimperten Schneiden und wollig braunschuppigem Stiel. Er wächst vom Sommer bis zum Herbst im Mischwald, gern im feuchten Nadelwald auf verrottetem Holz. Vom ebenfalls tödlich giftigen Sparrigen Risspilz unterscheidet ihn vor allem der Hut, denn der Sparrige Risspilz hat dornartige, spitze Schuppen statt eines wollig filzigen Huts. Der Wollige Risspilz ist tödlich giftig."
+beschreibungEn = "A small fibrecap with a brown to orange-brown, woolly-felty cap with a fringed, overhanging margin, light grey to grey-brown gills that turn rust-brown with age and have whitish, finely fringed edges, and a woolly, brown-scaly stem. It grows from summer to autumn in mixed woods, often in moist coniferous woods on rotten wood. The key difference from Inocybe hystrix, which is also deadly poisonous, is the cap, because that species has thorn-like, pointed scales instead of a woolly-felty cap. Inocybe lanuginosa is deadly poisonous."
+entwurf = true
 synonyme = ["Astrosporina lanuginosa", "Agaricus lanuginosus", "Inocybe lanuginosa var. lanuginosa"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", schneide = "bewimpert" }
 hutrand = { von = ["fransig", "ueberstehend"] }

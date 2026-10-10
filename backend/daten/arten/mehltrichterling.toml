@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter"]
 baeume = ["fichte"]
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner Trichterling mit dunkelgrauem bis graubraunem, hellgrau bereiftem, genabeltem Hut, der beim Trocknen ausblasst, grauen bis dunkelgrauen, eng stehenden, herablaufenden Lamellen und dunkelgrauem bis graubraunem, knorpelig zähem Stiel mit wurzelnder Basis. Er wächst von Oktober bis Februar meist im Nadelwald, gern im sauren Fichtenwald, und ist sehr häufig. Sein bestes Merkmal ist der ranzig mehlartige Geruch zusammen mit den grauen Lamellen. Der Mehltrichterling ist ungenießbar."
+beschreibungEn = "A small funnel with a dark grey to grey-brown, light grey bloomed, navel-shaped cap that fades when it dries, grey to dark grey, crowded, decurrent gills and a dark grey to grey-brown, cartilaginous and tough stem with a rooting base. It grows from October to February mostly in coniferous woods, often in acid spruce woods, and is very common. Its best feature is the rancid, mealy smell together with the grey gills. This species is inedible."
+entwurf = true
 weitereNamen = ["Grauer Mehltrichterling"]
 synonyme = ["Clitocybe ditopus", "Pseudolyophyllum ditopus", "Clitocybe odorula", "Clitocybe murinifolia", "Clitocybe brunnescens", "Agaricus ditopus", "Clitocybe ditopa var. odorula", "Clitocybe longispora"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng" }

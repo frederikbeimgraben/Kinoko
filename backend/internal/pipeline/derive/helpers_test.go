@@ -10,7 +10,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// goldenGrid is testdata/golden/grid.json of gen_golden.py.
+// goldenGrid is the golden file testdata/golden/grid.json.
 type goldenGrid struct {
 	Crop       [4]int     `json:"crop"`
 	TreeTile   int        `json:"treeTile"`

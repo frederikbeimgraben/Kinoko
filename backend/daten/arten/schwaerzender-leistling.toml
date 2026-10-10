@@ -10,6 +10,9 @@ baeume = ["eiche", "buche"]
 speisewertHinweis = "Als Pfifferling besonders geschützt, sehr selten und in Deutschland gefährdet. Stehen lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Pfifferling mit eidottergelbem bis braungelbem Hut mit einem Hauch Violett und trichterförmiger Mitte, dicken, gegabelten, stark herablaufenden Leisten und leuchtend gelbem Stiel. Er wächst vom Frühsommer bis zum Herbst im Laubwald bei Eiche und Buche, gern auf Lehmboden, ist sehr selten und in Deutschland gefährdet. Typisch ist das Fleisch, das bei Verletzung und im Alter schwärzt. Vom ähnlichen Flämmigen Saftling unterscheiden ihn vor allem die dicken Leisten, denn der Flämmige Saftling ist kleiner, hat einen orangeroten Hut und wachsartige Lamellen und wächst auf Wiesen."
+beschreibungEn = "A chanterelle with an egg-yolk-yellow to brownish-yellow cap with a hint of violet and a funnel-shaped centre, thick, forked ridges that run far down the stem and a bright yellow stem. It grows from early summer to autumn in broadleaf woods with oak and beech, often on loamy soil, is very rare and is endangered in Germany. A typical feature is the flesh, which turns black when damaged and with age. The key difference from the similar Hygrocybe turunda is the thick ridges, because that species is smaller, has an orange-red cap and waxy gills and grows in meadows."
+entwurf = true
 weitereNamen = ["Gelbvioletter Pfifferling", "Schwärzender Pfifferling"]
 fruchtschicht = { art = "leisten" }
 hutmerkmale = ["vertieft"]

@@ -2,8 +2,9 @@ import { signal } from '@angular/core';
 import { HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
-import { render, screen } from '@testing-library/angular';
+import { render, screen, waitFor } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { noViolations } from '../../testing/axe';
@@ -12,6 +13,7 @@ import { catalogueProviders, catalogueReady } from '../../testing/catalogue-doub
 import { stubIntersectionObserver } from '../../testing/observer-stub';
 import { ANY_ROUTE } from '../../testing/routes';
 import { speciesBundle, speciesEntry } from '../../testing/species-fixture';
+import { MapStore } from '../map/map.store';
 import { SpeciesPageComponent } from './species-page.component';
 
 const STONE = speciesEntry({
@@ -38,10 +40,17 @@ const STONE = speciesEntry({
   ],
 });
 
-async function build(slug = 'boletus-edulis', wide = false): Promise<Element> {
+const REFERENCE_ONLY = speciesEntry({
+  slug: 'hydnum-repandum',
+  name: 'Semmelstoppelpilz',
+  scientificName: 'Hydnum repandum',
+  forecastEnabled: false,
+});
+
+async function build(slug = 'boletus-edulis', wide = false, stone = STONE): Promise<Element> {
   const { container } = await render(SpeciesPageComponent, {
     providers: [
-      ...catalogueProviders(speciesBundle([STONE])),
+      ...catalogueProviders(speciesBundle([stone, REFERENCE_ONLY])),
       ...authStubProviders(new AuthStub()),
       provideRouter(ANY_ROUTE),
       { provide: ViewportService, useValue: { wide: signal(wide) } },
@@ -69,6 +78,53 @@ describe('SpeciesPageComponent', () => {
     await noViolations(container);
   });
 
+  describe('description', () => {
+    const DESCRIBED = speciesEntry({
+      ...STONE,
+      description: 'Kräftiger Röhrling.',
+      descriptionEn: 'A stout bolete.',
+      descriptionDraft: true,
+    });
+
+    afterEach(() => {
+      TestBed.inject(I18nService).setLocale('de');
+    });
+
+    it('shows the German description with the draft hint', async () => {
+      const container = await build('boletus-edulis', false, DESCRIBED);
+
+      expect(screen.getByText('Kräftiger Röhrling.')).toBeInTheDocument();
+      expect(screen.queryByText('A stout bolete.')).not.toBeInTheDocument();
+      expect(screen.getByText('Entwurf, nicht geprüft')).toBeInTheDocument();
+      await noViolations(container);
+    });
+
+    it('shows the English description in English', async () => {
+      await build('boletus-edulis', false, DESCRIBED);
+      TestBed.inject(I18nService).setLocale('en');
+
+      expect(await screen.findByText('A stout bolete.')).not.toHaveAttribute('lang');
+      expect(screen.queryByText('Kräftiger Röhrling.')).not.toBeInTheDocument();
+      expect(screen.getByText('Draft, not reviewed')).toBeInTheDocument();
+    });
+
+    it('shows the German description in English without an English text, and no hint without a draft', async () => {
+      await build('boletus-edulis', false, { ...DESCRIBED, descriptionEn: '', descriptionDraft: false });
+      TestBed.inject(I18nService).setLocale('en');
+
+      await waitFor(() => {
+        expect(screen.getByText('Kräftiger Röhrling.')).toHaveAttribute('lang', 'de');
+      });
+      expect(screen.queryByText('Draft, not reviewed')).not.toBeInTheDocument();
+    });
+
+    it('shows no description and no hint without a text', async () => {
+      await build('boletus-edulis', false, { ...DESCRIBED, description: null, descriptionEn: '' });
+
+      expect(screen.queryByText('Entwurf, nicht geprüft')).not.toBeInTheDocument();
+    });
+  });
+
   it('makes the hero lower without a photo, per SpeciesPageNoPhoto', async () => {
     const container = await build();
 
@@ -89,12 +145,34 @@ describe('SpeciesPageComponent', () => {
       'app-species-colours',
       'app-species-reactions',
       'app-species-time',
+      'app-species-forecast',
       'app-species-senses',
       'app-species-hymenium',
       'app-species-lookalikes',
       'app-species-photos',
       'app-species-sources',
     ]);
+  });
+
+  it('links a species with a forecast to its map', async () => {
+    await build();
+    const navigate = vi.spyOn(TestBed.inject(Router), 'navigateByUrl').mockResolvedValue(true);
+
+    expect(screen.queryByText('Keine Vorhersage')).toBeNull();
+    await userEvent.click(screen.getByRole('button', { name: /Auf der Karte anzeigen/ }));
+
+    expect(TestBed.inject(MapStore).species()).toBe('boletus-edulis');
+    expect(TestBed.inject(MapStore).view()).toBe('forecast');
+    expect(navigate).toHaveBeenCalledWith('/karte');
+  });
+
+  it('shows a note and no map link for a species without a forecast', async () => {
+    const container = await build('hydnum-repandum');
+
+    expect(screen.getByText('Keine Vorhersage')).toBeInTheDocument();
+    expect(screen.getByText(/Der Eintrag dient zum Nachschlagen/)).toBeInTheDocument();
+    expect(screen.queryByRole('button', { name: /Auf der Karte anzeigen/ })).toBeNull();
+    await noViolations(container);
   });
 
   it('shows the reactions from the profile in the section "Verfärbung"', async () => {

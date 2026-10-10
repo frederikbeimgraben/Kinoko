@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Roh giftig, also keine Kostversuche. Selten, in der Schweiz auf der Roten Liste."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Scheidenstreifling mit braunem bis olivbraunem, im Alter grauem Hut ohne Hüllreste und mit stark gerieftem Rand, weißen bis cremegelben, sehr dicht stehenden Lamellen und ringlosem, braun genattertem Stiel in einer sehr großen, lappigen Scheide. Er wächst von Juni bis November im Mischwald, meist bei Laubbäumen und gern an Waldrändern, und ist selten. Vom Pantherpilz unterscheidet ihn vor allem der fehlende Ring am Stiel, denn der Pantherpilz hat einen Ring, einen nur schwach gerieften Hutrand und eine Knolle mit weißen Gürteln."
+beschreibungEn = "A medium-sized grisette with a brown to olive-brown cap that becomes grey with age, has no veil remnants and has a strongly striate margin, white to cream-yellow, very crowded gills and a ringless stem with a brown snakeskin pattern in a very large, lobed volva. It grows from June to November in mixed woods, mostly with broadleaf trees and often at forest edges, and is rare. The key difference from the panther cap is the missing ring on the stem, because the panther cap has a ring, a cap margin that is only slightly striate and a bulb with white belts."
+entwurf = true
 weitereNamen = ["Grossscheidiger Streifling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutform = { von = "eifoermig", nach = "flach" }

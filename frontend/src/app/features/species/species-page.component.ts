@@ -16,6 +16,7 @@ import { StateViewComponent } from '../../ui/state-view/state-view.component';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import { DEFAULT_LOCALE } from '../../core/i18n/translations';
 import { ViewportService } from '../../core/layout/viewport.service';
 import { SpeciesColoursComponent } from './sections/species-colours.component';
 import { SpeciesFeaturesComponent } from './sections/species-features.component';
@@ -29,6 +30,7 @@ import { SpeciesPhotosComponent } from './sections/species-photos.component';
 import { SpeciesSourcesComponent } from './sections/species-sources.component';
 import { SpeciesTaxonomyComponent } from './sections/species-taxonomy.component';
 import { SpeciesTimeComponent } from './sections/species-time.component';
+import { SpeciesForecastComponent } from './sections/species-forecast.component';
 import { SpeciesTraitsComponent } from './sections/species-traits.component';
 import { CompareEntryComponent } from './compare/compare-entry.component';
 import { compareQuery } from './compare/comparison.store';
@@ -61,6 +63,7 @@ const HERO_DESKTOP = 210;
     SpeciesColoursComponent,
     SpeciesDeskComponent,
     SpeciesFeaturesComponent,
+    SpeciesForecastComponent,
     SpeciesHymeniumComponent,
     SpeciesLeadComponent,
     SpeciesLookalikesComponent,
@@ -100,6 +103,16 @@ export class SpeciesPageComponent {
       .filter((one) => one.kind === 'common' && one.name !== this.species()?.name)
       .map((one) => one.name);
     return names.length === 0 ? '' : this.i18n.translate('species.otherNames', { names: names.join(', ') });
+  });
+  /** The description in the language of the interface. Without an English text, the German text shows with its language. */
+  protected readonly description = computed(() => {
+    const one = this.species();
+    const english = this.i18n.locale() === DEFAULT_LOCALE ? '' : (one?.descriptionEn ?? '');
+    if (english !== '') return { text: english, lang: null };
+    const german = one?.description ?? '';
+    return german === ''
+      ? null
+      : { text: german, lang: this.i18n.locale() === DEFAULT_LOCALE ? null : DEFAULT_LOCALE };
   });
   protected readonly heroHeight = computed(() => {
     if (this.wide()) return HERO_DESKTOP;

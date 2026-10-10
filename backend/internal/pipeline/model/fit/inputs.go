@@ -1,4 +1,4 @@
-// Package fit trains the model of one species, as visit_model.py --quick and final_model.py do together.
+// Package fit trains the model of one species.
 // It builds the visit table, ranks and prunes the features, tunes the settings with blocked folds,
 // calibrates out of fold and returns a bundle.Bundle and a Report.
 package fit
@@ -52,7 +52,7 @@ type TreeScales struct {
 	Values  map[string][]float32
 }
 
-// treeDrop are the columns that visit_model.py drops before the join.
+// treeDrop are the columns of the trees grid that the join drops.
 var treeDrop = []string{"x", "y", "cell_x", "cell_y"}
 
 // ReadTreeScales reads tree_scales.parquet. A float64 column becomes float32, as the file stores float32.
@@ -111,16 +111,16 @@ func (t TreeScales) lookup() map[string]int {
 }
 
 // Inputs are the data of one training run. Records is the whole occurrence table; TrainSpecies applies
-// the training filter of visit_model.py (MinYear, MaxUncertainty) to the visits and the activity alike.
+// the training filter (MinYear, MaxUncertainty) to the visits and the activity alike.
 type Inputs struct {
 	Records    []occ.Record
 	Weather    WeatherSource
 	TreeScales TreeScales
 }
 
-// Config names the species and sets the run. The zero values take the defaults of visit_model.py and final_model.py.
+// Config names the species and sets the run. The zero values take the defaults.
 type Config struct {
-	Label   string   // the chain name, final_model.py --name
+	Label   string   // the chain name of the species
 	Slug    string   // the catalogue slug; the finds layer and the bundle use it
 	Species []string // the target taxa
 	// Horizons are the horizons to train. Nil means horizons.Horizons.

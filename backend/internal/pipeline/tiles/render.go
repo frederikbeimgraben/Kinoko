@@ -29,7 +29,7 @@ func (g Grid) Size() (w, h int) {
 }
 
 // RenderField cuts every band of src into its own pyramid from zoom down to
-// base, as pyramid.render_field. One warp hits the finest level; band i is
+// base. One warp hits the finest level; band i is
 // coded relative to tops[i].
 func RenderField(w Warper, src Source, tops []float64, zoom, base int, wgsBox [4]float64) ([]Pyramid, error) {
 	g := GridOf(wgsBox, zoom)
@@ -76,7 +76,7 @@ func RenderFieldTo(w Warper, src Source, roots []string, tops []float64, zoom, b
 }
 
 // BlockGrid returns the blocks of blockTiles×blockTiles tiles that cover a
-// box in degrees, as pyramid.block_grid: x first, then y.
+// box in degrees: x first, then y.
 func BlockGrid(wgsBox [4]float64, zoom, blockTiles int) [][2]int {
 	g := GridOf(wgsBox, zoom)
 	var out [][2]int
@@ -88,7 +88,7 @@ func BlockGrid(wgsBox [4]float64, zoom, blockTiles int) [][2]int {
 	return out
 }
 
-// BlockBox returns the EPSG:3857 extent of one block, as pyramid.block_box.
+// BlockBox returns the EPSG:3857 extent of one block.
 func BlockBox(bx, by, zoom, blockTiles int) [4]float64 {
 	return geo.TileBox(bx*blockTiles, by*blockTiles, (bx+1)*blockTiles-1, (by+1)*blockTiles-1, zoom)
 }

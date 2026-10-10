@@ -65,7 +65,7 @@ func Train(ds *Dataset, params string, rounds int) (*Booster, error) {
 	return b, nil
 }
 
-// Load reads a booster from the text of Booster.Text or Python's model_to_string.
+// Load reads a booster from the LightGBM model text, for example the text of Booster.Text.
 func Load(modelText string) (*Booster, error) {
 	text, free := cString(modelText)
 	defer free()
@@ -183,7 +183,7 @@ func (b *Booster) GainImportance() ([]float64, error) {
 	return out, err
 }
 
-// Text returns the model as text, with all iterations and split importance, as Python's model_to_string.
+// Text returns the model as LightGBM model text, with all iterations and split importance.
 func (b *Booster) Text() (string, error) {
 	var text string
 	err := b.with(func(h C.BoosterHandle) error {

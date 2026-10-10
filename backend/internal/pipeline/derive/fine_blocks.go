@@ -167,9 +167,9 @@ func allOf[T any](items []T, ok func(T) bool) bool {
 	return !slices.ContainsFunc(items, func(t T) bool { return !ok(t) })
 }
 
-// cutLayer warps the field of one layer onto the tile grid of the block and writes its tiles, as
-// warp_block and cut_block. It gives the tiles with data. It warps one band per call: with
-// UNIFIED_SRC_NODATA=NO the values are those of Python, and one float field fits the 1 GB limit.
+// cutLayer warps the field of one layer onto the tile grid of the block and writes its tiles.
+// It gives the tiles with data. It warps one band per call: with UNIFIED_SRC_NODATA=NO each band
+// keeps its own nodata, and one float field fits the 1 GB limit.
 func cutLayer(b *blockFields, l FineLayer, store tiles.DirStore, merc [4]float64, side, zoom, tx0, ty0 int) ([]geo.TileID, error) {
 	src := tiles.Raster{Bands: [][]float32{b.field(l)}, NX: b.nx, NY: b.ny, GeoTransform: b.gt, EPSG: b.epsg}
 	warped, err := tiles.NewGDALWarper().Warp(src, tiles.TileGridSwitches(merc, side, side))

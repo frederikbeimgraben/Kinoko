@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 haeufigkeit = "selten"
+beschreibung = "Kleiner Tintling mit graubraunem bis blass ockerbräunlichem, zuerst eiförmigem, dann glockig spitzkegeligem Hut mit weißlichen Velumflocken, freien, jung weißen, später schwarzen Lamellen und weißem Stiel mit verdickter Basis, oft mit einer Volva. Er wächst von Juni bis November auf Holzlagerplätzen, an Wald- und Wegrändern, auf gedüngtem Boden und auf Holzspänen und ist selten. Vom Faltentintling unterscheiden ihn vor allem die weißlichen Flocken auf dem Hut und die Volva an der Stielbasis, denn der Faltentintling hat einen gerieften, faltigen Hut und eine Ringwulst statt einer Volva."
+beschreibungEn = "A small inkcap with a grey-brown to pale ochre-brownish cap that is egg-shaped first and then bell-shaped to pointed conical, with whitish veil flakes, free gills that are white when young and black later, and a white stem with a swollen base, often with a volva. Coprinellus flocculosus grows from June to November on timber yards, at forest edges and path sides, on fertilised soil and on wood chips, and is rare. The key difference from the common inkcap is the whitish flakes on the cap and the volva at the stem base, because the common inkcap has a grooved, pleated cap and a ring bulge instead of a volva."
+entwurf = true
 weitereNamen = ["Grosssporiger Flockentintling"]
 synonyme = ["Coprinus rostrupianus", "Coprinus flocculosus"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

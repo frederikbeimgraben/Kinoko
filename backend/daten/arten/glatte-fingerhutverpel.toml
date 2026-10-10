@@ -10,6 +10,9 @@ baeume = []
 speisewertHinweis = "Roh giftig, nur gut durchgegart. Die Angaben zur Essbarkeit gehen auseinander, deshalb besser stehen lassen. In der Schweiz potenziell gefährdet, in Deutschland in unbekanntem Ausmaß gefährdet."
 haeufigkeit = "selten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleine, fingerhutförmige Verpel mit hellbraunem bis rotbraunem, gerunzeltem Käppchen mit Querrillen und weißlichem bis hellbräunlichem, feinkörnigem, hohlem Stiel. Sie wächst im April und Mai in Auen und Flussauen und ist selten. Von der Böhmischen Verpel unterscheidet sie vor allem das Käppchen, das nur gerunzelt und quergerillt ist, denn die Böhmische Verpel hat ein labyrinthartiges Käppchen mit hochgestellten Längsrillen."
+beschreibungEn = "A small, thimble-shaped fungus with a light brown to red-brown, wrinkled cap with cross grooves and a whitish to light brownish, finely granular, hollow stem. The smooth thimble-cap grows in April and May in floodplains and river meadows and is rare. The key difference from the wrinkled thimble-cap is the cap, which is only wrinkled with cross grooves, because the wrinkled thimble-cap has a maze-like cap with raised long ridges."
+entwurf = true
 weitereNamen = ["Glatte Fingerhutverpel", "Glockenverpel", "Fingerhutmorchel"]
 synonyme = ["Verpa digit aliformis", "Monka conica"]
 hutform = { von = "eifoermig" }

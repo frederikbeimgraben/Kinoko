@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "tanne", "laerche", "birke", "buche", "hasel"]
 speisewertHinweis = "Roh giftig, also keine Kostversuche. Er kann so grün aussehen wie der Grüne Knollenblätterpilz. Scheidenstreiflinge haben aber keinen Ring und einen stark gerieften Hutrand."
+beschreibung = "Mittelgroßer Scheidenstreifling mit graubraunem bis olivgrünem, oft mit grauen Hüllresten bedecktem Hut mit stark gerieftem Rand, weißen, freien Lamellen und ringlosem, genattertem Stiel in einer grauweißen, später grauen Scheide. Er wächst von Juni bis November im Mischwald, meist bei Fichte, Tanne und Lärche, seltener bei Birke, Buche und Hasel, gern auf saurem Boden mit Heidelbeeren. Vom Pantherpilz und vom Grünen Knollenblätterpilz unterscheidet ihn vor allem der fehlende Ring am Stiel, dazu der stark geriefte Hutrand."
+beschreibungEn = "A medium-sized grisette with a grey-brown to olive-green cap, often covered with grey veil remnants and with a strongly striate margin, white free gills and a ringless stem with a snakeskin pattern in a grey-white, later grey volva. It grows from June to November in mixed woods, mostly with spruce, fir and larch, less often with birch, beech and hazel, often on acid soil with bilberry. The key difference from the panther cap and the death cap is the missing ring on the stem, together with the strongly striate cap margin."
+entwurf = true
 weitereNamen = ["Grüngelber Scheidenstreifling", "Grüner Streifling", "Grünbrauner Streifling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutform = { von = "flach" }

@@ -12,8 +12,7 @@ import (
 
 var registerGDAL = sync.OnceFunc(godal.RegisterAll)
 
-// quiet lets GDAL warnings pass, as the command-line tools of the Python
-// chain do. A failure stays an error.
+// quiet lets GDAL warnings pass. A failure stays an error.
 var quiet = godal.ErrLogger(func(ec godal.ErrorCategory, _ int, msg string) error {
 	if ec > godal.CE_Warning {
 		return errors.New(msg)
@@ -31,8 +30,8 @@ func openRaster(path string) (*godal.Dataset, error) {
 	return ds, nil
 }
 
-// warpMem runs gdalwarp into a MEM dataset. The switches are those of the
-// Python command without "-q", "-overwrite" and the file names.
+// warpMem runs gdalwarp into a MEM dataset. The switches have no "-q",
+// "-overwrite" and file names.
 func warpMem(src *godal.Dataset, switches []string) (*godal.Dataset, error) {
 	out, err := src.Warp("", switches, godal.Memory, quiet)
 	if err != nil {

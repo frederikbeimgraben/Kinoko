@@ -14,6 +14,8 @@ const WORDS: Record<string, string> = {
   'species.field.tubes': 'Röhren',
   'species.field.stem': 'Stiel',
   'species.field.flesh': 'Fleisch',
+  'species.field.ring': 'Ring',
+  'enum.ring_shape.pendant': 'hängend',
   'species.section.period': 'Zeitraum',
   'species.section.hymenium': 'Fruchtschicht',
   'species.section.senses': 'Geruch und Geschmack',
@@ -51,6 +53,19 @@ describe('spanText', () => {
 });
 
 describe('featureRows', () => {
+  it('nennt beim Ring zuerst die Form', () => {
+    const rows = featureRows(
+      entry({
+        ringShape: 'pendant',
+        colours: [{ part: 'ring', mode: 'single', colours: [{ name: 'weiß', hex: '#f4efe2' }] }],
+      }),
+      [],
+      text(),
+    );
+
+    expect(rows).toEqual([{ key: 'ring', title: 'Ring', value: 'hängend, weiß' }]);
+  });
+
   it('setzt Maß und Farben eines Teils zusammen', () => {
     const rows = featureRows(
       entry({

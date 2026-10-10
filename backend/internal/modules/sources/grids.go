@@ -10,13 +10,13 @@ import (
 )
 
 // treeClasses are the share columns of the trees grid: the eleven classes
-// of the Thuenen map, then the conifer and broadleaf sums (tree_species.py).
+// of the Thuenen map, then the conifer and broadleaf sums.
 var treeClasses = []string{
 	"birch", "beech", "douglas_fir", "oak", "alder", "spruce", "pine", "larch", "fir",
 	"deciduous_long_lived", "deciduous_short_lived", "conifer", "broadleaf",
 }
 
-// scaleSuffixes are the radii of tree_scales.py.
+// scaleSuffixes are the radii of the tree scales grid.
 var scaleSuffixes = []string{"500m", "1km", "2km", "5km"}
 
 const (

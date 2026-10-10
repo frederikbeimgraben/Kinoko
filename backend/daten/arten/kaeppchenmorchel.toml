@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["winter", "fruehling"]
 baeume = ["pappel"]
 speisewertHinweis = "Roh giftig wie alle Morcheln. Gut durchgaren, sonst drohen Magen-Darm-Vergiftungen. Dazu kommt das Morchella-Syndrom mit Trunkenheitsgefühl, Zittern und Schwindel. Besonders geschützt, nur für den Eigenbedarf sammeln."
+beschreibung = "Kleine Morchel mit hell- bis dunkelbraunem, wabenartigem, meist zugespitztem Käppchen und weißlichem bis gelbbraunem, hohlem Stiel mit körnigen weißen Schüppchen. Sie wächst von Februar bis Juni, in kälteren Lagen nicht vor April, in Misch- und Auwäldern, gern bei Pappeln und Espen, auch im Rindenmulch und oft zusammen mit Spitzmorcheln. Von der Spitzmorchel unterscheidet sie vor allem das Käppchen, das nur zu etwa einem Drittel mit dem Stiel verwachsen ist, während der Rest des Randes frei absteht. Die Käppchenmorchel ist in Deutschland besonders geschützt."
+beschreibungEn = "A small morel with a light to dark brown, honeycomb-like, mostly pointed cap and a whitish to yellow-brown, hollow stem with granular white scales. It grows from February to June, in colder areas not before April, in mixed and riverside woods, often with poplar and aspen, also in bark mulch and often together with black morels. The key difference from the black morel is the cap, which is attached to the stem only for about one third of its length, while the rest of the margin hangs free. The semifree morel is specially protected in Germany."
+entwurf = true
 weitereNamen = ["Halbfreie Morchel", "Glockenmorchel", "Mützenmorchel"]
 stielmerkmale = ["gerieft", "hohl", "beflockt"]
 

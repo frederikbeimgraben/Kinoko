@@ -7,11 +7,15 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "buche", "birke", "eiche"]
 speisewertHinweis = "Absolut tödlich, schon 20 Gramm genügen. Zu erkennen am rein weißen spitzkegeligen Hut ohne Riefung, am weiß genatterten Stiel mit häutigem Ring und an der zwiebelknolligen Basis in eierschalenartiger weißer Scheide. Keine Kostversuche wegen der Leberschädigung."
+beschreibung = "Mittelgroßer, rein weißer Wulstling mit spitzkegelig gebuckeltem, ungerieftem Hut, weißen, freien Lamellen und weißem, flockig genattertem Stiel mit häutigem, vergänglichem Ring und zwiebelknolliger Basis in einer eierschalenartigen weißen Scheide. Er wächst von Juni bis November überwiegend im Nadelwald bei Fichten, selten im Laubwald bei Buche, Birke und Eiche, auf saurem Boden. Vom Weißen Knollenblätterpilz unterscheidet ihn vor allem der kegelig gebuckelte Hut, dessen Haut sich mit Kalilauge gelb färbt. Der Kegelhütige Knollenblätterpilz ist tödlich giftig."
+beschreibungEn = "A medium-sized, pure white amanita with a cap that has a pointed, conical umbo and no striation, white free gills and a white stem with a flaky snakeskin pattern, a membranous ring that soon disappears and a bulbous base in an eggshell-like white volva. It grows from June to November mostly in coniferous woods with spruce, rarely in broadleaf woods with beech, birch and oak, on acid soil. The key difference from the white form of the death cap is the conical, umbonate cap, whose skin turns yellow with potassium hydroxide. The destroying angel is deadly poisonous."
+entwurf = true
 weitereNamen = ["Spitzhütiger Knollenblätterpilz", "Kegeliger Wulstling", "Weisser Knolli"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutform = { von = "halbkugelig", nach = "flach" }
 hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["faserig", "genattert", "beflockt", "hohl", "voll", "knolle", "scheide", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

@@ -12,9 +12,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/model/train"
 )
 
-// golden is testdata/golden.json.gz. gen_golden.py writes it with the Python functions in its "source":
-// visit_model.main --quick --save-prepared (the table), final_model.feature_list, design and prior_columns
-// (the design matrix), final_model.main (the printed tables, the pickled bundle) and final_model.write_finds.
+// golden is the golden file testdata/golden.json.gz: the prepared visit table, the feature list and the
+// design matrix, the feature and settings tables of each horizon, the bundle and the finds layer.
 type golden struct {
 	Keys   []string `json:"keys"`
 	Label  []int8   `json:"label"`
@@ -59,7 +58,7 @@ func loadGolden(t *testing.T) golden {
 	return g
 }
 
-func TestTableAndDesignMatchPython(t *testing.T) {
+func TestTableAndDesignMatchGolden(t *testing.T) {
 	in, taxa := loadInputs(t)
 	g := loadGolden(t)
 	tab, stats, err := BuildTable(context.Background(), in, testConfig(taxa))
@@ -86,7 +85,7 @@ func TestTableAndDesignMatchPython(t *testing.T) {
 		}
 		wx := nullable(want.X)
 		for k := range x {
-			// The float32 weather rolling columns of Go stay within float32 rounding of pandas' float64.
+			// The float32 weather rolling columns stay within float32 rounding of the float64 golden values.
 			if !near(x[k], wx[k], 1e-6) {
 				t.Fatalf("h%s: row %d column %s = %v, want %v", h, k/len(features), features[k%len(features)], x[k], wx[k])
 			}
@@ -94,7 +93,7 @@ func TestTableAndDesignMatchPython(t *testing.T) {
 	}
 }
 
-func TestTrainSpeciesMatchesPython(t *testing.T) {
+func TestTrainSpeciesMatchesGolden(t *testing.T) {
 	in, taxa := loadInputs(t)
 	g := loadGolden(t)
 	cfg := testConfig(taxa)
@@ -107,7 +106,7 @@ func TestTrainSpeciesMatchesPython(t *testing.T) {
 	defer b.Close()
 	finds, err := os.ReadFile(filepath.Join(cfg.FindsDir, "testus-chain.json"))
 	if err != nil || string(finds) != g.Finds {
-		t.Errorf("finds layer differs from write_finds: %v", err)
+		t.Errorf("finds layer differs from the golden file: %v", err)
 	}
 	if b.Visits != g.Visits || b.Positives != g.Positives || b.Slug != "testus-chain" {
 		t.Errorf("bundle counts %d/%d, want %d/%d", b.Visits, b.Positives, g.Visits, g.Positives)
@@ -144,7 +143,7 @@ func samePrior(t *testing.T, name string, got bundle.PriorTable, want struct {
 	}
 }
 
-// sameScores compares the scores with the 4 decimals that final_model.py prints.
+// sameScores compares the scores with the 4 decimals of the golden tables.
 func sameScores(t *testing.T, hr HorizonReport, cands [][5]float64, settings [][5]any) {
 	t.Helper()
 	if len(hr.Candidates) != len(cands) || len(hr.Settings) != len(settings) {
@@ -181,7 +180,7 @@ func samePredictions(t *testing.T, b *bundle.Bundle, h int, want []float64) {
 	}
 	p, err := lgbm.Predict(hz.Booster, x, tab.N, len(hz.Features), 1)
 	if err != nil || !nearAll(p, want, 1e-9) {
-		t.Errorf("h%d: the final model predicts differently from Python: %v", h, err)
+		t.Errorf("h%d: the final model predicts differently from the golden file: %v", h, err)
 	}
 }
 

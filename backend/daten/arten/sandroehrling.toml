@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Guter Speisepilz, in der Schweiz aber nicht marktfaehig."
+beschreibung = "Röhrling der Gattung Suillus mit gelbockerem bis olivockerem, körnig filzigem Hut, der erst nach längerem Regen schmierig wird, kurzen, rostgelben bis olivbraunen Röhren und kräftigem, gelblichem Stiel ohne Ring. Er wächst vom Sommer bis zum Herbst bei Kiefern auf saurem, sandigem Boden. Von der ähnlichen Ziegenlippe unterscheiden ihn vor allem die Röhren, denn die Ziegenlippe hat grobe, gelbe Röhren und einen samtigen Hut."
+beschreibungEn = "A Suillus bolete with a yellow-ochre to olive-ochre, granular-felty cap that becomes greasy only after long rain, short, rust-yellow to olive-brown tubes and a stout, yellowish stem without a ring. It grows from summer to autumn with pine on acid, sandy soil. The key difference from the similar suede bolete is the tubes, because the suede bolete has coarse, yellow tubes and a velvety cap."
+entwurf = true
 weitereNamen = ["Hirsepilz"]
 synonyme = ["Boletus variegatus", "Versipellis variegata", "Suillus variegatus f. rubescens", "Boletus aureus", "Boletus squalidus", "Boletopsis squalida", "Ixocomus variegatus", "Suillus squalidus"]
 fruchtschicht = { art = "roehren" }

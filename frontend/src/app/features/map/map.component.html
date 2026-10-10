@@ -28,6 +28,17 @@
     @if (view.loading()) {
       <app-skeleton class="map__skeleton" kind="map" />
     }
+    @if (view.noForecast()) {
+      <div class="map__empty">
+        <app-state-view
+          class="map__empty-card"
+          role="status"
+          icon="hourglass"
+          [title]="'map.empty.title' | t"
+          [text]="'map.empty.text' | t"
+        />
+      </div>
+    }
     @if (offline() && !hidden()) {
       <div class="map__grey" aria-hidden="true"></div>
       <app-banner class="map__banner" role="status" kind="noConnection" [float]="true" [chev]="false" />

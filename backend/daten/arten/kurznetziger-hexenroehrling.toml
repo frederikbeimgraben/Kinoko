@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Der Seitenkopf nennt ihn nur bedingt essbar und mit Alkohol giftig. Von ihm stammt der Rat, zum Pilzgericht keinen Alkohol zu trinken; er verursacht dann Magen-Darm-Beschwerden. Alte Pilze sind vom Netzstieligen Hexenröhrling nur mikroskopisch zu trennen."
+beschreibung = "Mittelgroßer bis großer Röhrling mit dunkelbraunem, weinrotem, olivbraunem oder graubraunem, samtigem Hut, roten Röhrenmündungen und Stiel mit rötlicher bis dunkelbrauner Netzzeichnung, die jung nur den oberen Teil bedeckt. Er wächst von März bis November in Laubwäldern und Parks, gern in warmen Lagen. Vom Glattstieligen Hexenröhrling unterscheidet ihn vor allem das Netz am Stiel, denn der Glattstielige Hexenröhrling hat kein Netz. Das gelbe Fleisch blaut sofort schwarzblau, und eine rote Zone zwischen Hutfleisch und Röhren ist ein gutes Erkennungsmerkmal."
+beschreibungEn = "A medium-sized to large bolete with a dark brown, wine-red, olive-brown or grey-brown, velvety cap, red pore openings and a stem with a reddish to dark brown net that covers only the upper part when young. It grows from March to November in broadleaf woods and parks, often in warm areas. The key difference from Suillellus queletii is the net on the stem, because Suillellus queletii has no net. The yellow flesh turns black-blue immediately, and a red zone between the cap flesh and the tubes is a good feature for identification."
+entwurf = true
 weitereNamen = ["Trügerischer Hexenpilz"]
 synonyme = ["Boletus mendax"]
 fruchtschicht = { art = "roehren" }

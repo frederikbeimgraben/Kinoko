@@ -3,7 +3,7 @@ package season
 // Art is one entry of ARTEN: a latin name and its German name.
 type Art struct{ Latin, German string }
 
-// Arten is ARTEN of arten_zaehlen.py, verbatim and in its order: the
+// Arten are, in this order, the
 // collectable species of the app. The season table lists them in this order.
 var Arten = []Art{
 	{"Boletus edulis", "Steinpilz"},

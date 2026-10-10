@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { configure } from '@testing-library/dom';
 import '@testing-library/jest-dom/vitest';
 
 // jsdom has no `matchMedia`. Without this stub, each service that asks the OS for the theme fails.
@@ -61,3 +62,7 @@ afterEach(() => {
   vi.restoreAllMocks();
   localStorage.clear();
 });
+
+// The CSS check of a role query takes seconds in jsdom, so queries also find hidden elements.
+// A test about hidden content gives `hidden: false` to its query.
+configure({ defaultHidden: true });

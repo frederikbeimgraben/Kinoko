@@ -124,7 +124,7 @@ func TestSharedFindsCoarsenAProtectedSpecies(t *testing.T) {
 		Expect(t, http.StatusCreated)
 	join(t, env, group, bert.ID)
 	listed := items(t, env.Get("/finds?mine=false", bert.Person))
-	// The values come from geometry.coarse of the Python service.
+	// The values are the fixed reference values of geo.Coarse.
 	if listed[0]["lat"] != 50.12576356449874 || listed[0]["lon"] != 8.126918419350993 {
 		t.Fatal(listed[0])
 	}

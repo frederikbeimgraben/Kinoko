@@ -12,7 +12,7 @@ type Ranking struct {
 	Total  float64
 }
 
-// Rank sorts the features by gain, descending, with a stable sort as Python's sorted.
+// Rank sorts the features by gain, descending, with a stable sort.
 // Earned keeps the features with a gain of MinGain times the total or more.
 func Rank(names []string, gains []float64) Ranking {
 	idx := make([]int, len(names))
@@ -22,7 +22,7 @@ func Rank(names []string, gains []float64) Ranking {
 	slices.SortStableFunc(idx, func(a, b int) int { return cmp.Compare(-gains[a], -gains[b]) })
 	order := make([]string, len(idx))
 	total := 0.0
-	// Python sums numpy float64 values one by one, without the compensated sum of plain floats.
+	// The total adds the float64 values one by one, without a compensated sum.
 	for i, j := range idx {
 		order[i] = names[j]
 		total += gains[j]
@@ -58,7 +58,7 @@ func ChooseList(scores []float64) int {
 }
 
 // PickSetting returns the index of the grid setting with the strictly highest score.
-// The first maximum wins. Index 0 stays when no score is above -1, as in final_model.py.
+// The first maximum wins. Index 0 stays when no score is above -1.
 func PickSetting(scores []float64) int {
 	best, bestScore := 0, -1.0
 	for i, s := range scores {

@@ -1,4 +1,4 @@
-import { photoPath, type Photo, type SpeciesEntry } from '../../core/api/models';
+import { photoCaption, photoPath, type Photo, type SpeciesEntry } from '../../core/api/models';
 import type { I18nService } from '../../core/i18n/i18n.service';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { LICENCE_CODE, OWN_PHOTO_KEY } from '../../ui/image-credit/licences';
@@ -44,13 +44,14 @@ function rowsOf(photo: Photo, i18n: I18nService): readonly ReviewCardRow[] {
 
 export function reviewCard(photo: Photo, species: SpeciesEntry | null, i18n: I18nService): ReviewCard {
   const name = species?.name ?? i18n.translate('find.unknownSpecies');
+  const caption = photoCaption(photo, i18n.locale());
   return {
     id: photo.id,
     path: photoPath(photo.id, 'full'),
     species: name,
     colour: capColour(species),
-    caption: photo.caption ?? '',
+    caption: caption ?? '',
     rows: rowsOf(photo, i18n),
-    alt: photo.caption ?? name,
+    alt: caption ?? name,
   };
 }

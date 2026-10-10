@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer"]
 baeume = []
 speisewertHinweis = "Tödlich giftig. Er wächst von März bis Mai, wenn kaum Speisepilze da sind. Kennzeichen sind das rosabraune Sporenpulver, der gefurchte, zerbrechliche Stiel und der fehlende Mehlgeruch."
 haeufigkeit = "haeufig"
+beschreibung = "Kleiner Rötling mit jung fast schwarzbraunem bis graubraunem, später rosagrauem, gebuckeltem Hut, der beim Abtrocknen ausblasst, grauen bis graurötlichen Lamellen und graubraunem, längsfaserig gefurchtem, zerbrechlichem Stiel. Er wächst von März bis Juli, vor allem im Frühjahr nach der Schneeschmelze, an grasigen Stellen in Gärten, an Hecken, auf Wiesen, Heiden und Weiden, gern auf saurem Boden, und ist meist häufig. Vom Mairitterling unterscheiden ihn vor allem der fehlende Mehlgeruch und das rosabraune Sporenpulver, denn der Mairitterling riecht kräftig nach Mehl und hat weißes Sporenpulver. Der Frühlingsrötling ist tödlich giftig."
+beschreibungEn = "A small pinkgill with a cap that is almost blackish-brown to grey-brown when young and pink-grey later, with an umbo, and fades as it dries, grey to grey-reddish gills and a grey-brown, fibrous, furrowed, fragile stem. The spring pinkgill grows from March to July, mainly in spring after the snow melts, in grassy places in gardens, at hedges, in meadows, heaths and pastures, often on acid soil, and is mostly common. The key difference from St George's mushroom is the absence of a mealy smell and the pink-brown spore print, because St George's mushroom smells strongly of meal and has a white spore print. The spring pinkgill is deadly poisonous."
+entwurf = true
 weitereNamen = ["Gestreifter Frühlingsrötling", "Aprilrötling"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", schneide = "gesaegt" }
 hutform = { von = "flach" }

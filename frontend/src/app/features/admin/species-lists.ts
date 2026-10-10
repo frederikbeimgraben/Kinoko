@@ -21,6 +21,8 @@ export interface PartLists {
   colourChanges: ColourChange[];
   partNotes: PartNote[];
   traits: TraitEntry[];
+  /** Only the ring has a shape. Removing the ring clears it. */
+  ringShape?: null;
 }
 
 export function colourGroups(species: SpeciesEntry | null, part: BodyPart): ColourGroup[] {
@@ -132,7 +134,7 @@ export function isBodyPart(value: string): value is BodyPart {
   return (PART_ORDER as readonly string[]).includes(value);
 }
 
-/** The parts that the species holds: with a size, a colour, a colour change or a text. */
+/** The parts that the species holds: with a size, a colour, a colour change, a text or a ring shape. */
 export function heldParts(species: SpeciesEntry | null): BodyPart[] {
   const named = new Set<string>([
     ...(species?.measurements ?? []).map((one) => one.part),
@@ -140,6 +142,7 @@ export function heldParts(species: SpeciesEntry | null): BodyPart[] {
     ...changes(species).map((one) => one.part),
     ...(species?.partNotes ?? []).map((one) => one.part),
     ...(species?.traits ?? []).map((one) => one.key),
+    ...(species?.ringShape ? ['ring'] : []),
   ]);
   return PART_ORDER.filter((part) => named.has(part));
 }
@@ -147,6 +150,7 @@ export function heldParts(species: SpeciesEntry | null): BodyPart[] {
 /** Removes a part with its measurements, colours and colour changes. */
 export function withoutPart(species: SpeciesEntry | null, part: BodyPart): PartLists {
   return {
+    ...(part === 'ring' ? { ringShape: null } : {}),
     measurements: (species?.measurements ?? []).filter((one) => one.part !== part),
     colours: (species?.colours ?? []).filter((one) => one.part !== part),
     colourChanges: changes(species).filter((one) => one.part !== part),

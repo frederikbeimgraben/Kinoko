@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["fruehling"]
 baeume = []
 speisewertHinweis = "Roh giftig. Gut durchgaren. Besonders geschützt, deshalb nur kleine Mengen für den Eigenbedarf."
+beschreibung = "Morchel mit eiförmigem, gelbem bis graugelbem Hut mit unregelmäßigen, wabenartigen Gruben und weißlichem Stiel; Hut und Stiel sind innen durchgehend hohl. Sie wächst im Frühling, meist von April bis Mitte Mai, in Auwäldern, Parks, Gärten, an Waldrändern und in Rindenmulch und erscheint oft jedes Jahr an derselben Stelle. Von der ähnlichen Spitzmorchel unterscheidet sie vor allem der Hut, denn die Spitzmorchel hat einen zugespitzten, olivbeigen bis graubraunen Hut mit Längsrippen und Kammern statt runder Waben."
+beschreibungEn = "A morel with an egg-shaped, yellow to grey-yellow cap with irregular, honeycomb-like pits and a whitish stem; the cap and the stem form one continuous cavity. It grows in spring, mostly from April to mid-May, in floodplain woods, parks, gardens, at forest edges and in bark mulch, and often appears at the same place every year. The key difference from the similar black morel is the cap, because the black morel has a pointed, olive-beige to grey-brown cap with vertical ribs and chambers instead of round pits."
+entwurf = true
 weitereNamen = ["Morchel", "Rundmorchel"]
 hutform = { von = "eifoermig" }
 hutmerkmale = ["unregelmaessig"]

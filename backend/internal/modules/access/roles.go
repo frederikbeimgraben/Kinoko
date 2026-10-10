@@ -193,8 +193,8 @@ func (m *Module) createRole(r *http.Request) (web.Response, error) {
 	if err != nil {
 		return nil, err
 	}
-	// The response keeps the request order as the Python service does, but
-	// shows each key once, as setPermissions stores it.
+	// The response keeps the request order, but shows each key once, as
+	// setPermissions stores it.
 	return web.Created(renderRole(made, fn.Unique(keys), 0)), nil
 }
 

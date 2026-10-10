@@ -6,7 +6,11 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "coprinopsis_picacea"
 speisewertHinweis = "Ungenießbar wegen des muffigen Geruchs und Geschmacks."
+beschreibung = "Schlanker Tintling mit braunem Hut voller weißer, flockiger Schuppen, schmutzig weißen, später rosa und schließlich schwarz zerfließenden Lamellen und langem, weißlichem, hohlem Stiel. Er wächst vom Sommer bis zum Herbst im Laubwald, gern auf humus- und kalkreichem Boden. Vom ähnlichen Faltentintling unterscheidet ihn vor allem der Hut, denn der Faltentintling hat keine weißen Flocken. Er gilt wegen seines muffigen Geruchs als ungenießbar."
+beschreibungEn = "A slender ink cap with a brown cap full of white, flaky scales, dirty white gills that turn pink later and finally dissolve into black ink, and a long, whitish, hollow stem. It grows from summer to autumn in broadleaf woods, often on soil rich in humus and lime. The key difference from the similar common ink cap is the cap, because the common ink cap has no white flakes. It is classed as inedible because of its musty smell."
+entwurf = true
 weitereNamen = ["Elsterntintling"]
 synonyme = ["Coprinus picaceus", "Agaricus picaceus"]
 fruchtschicht = { art = "lamellen" }

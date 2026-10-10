@@ -22,7 +22,7 @@ func TestSmoothKeepsMaskedCellsEmptyWithoutSpill(t *testing.T) {
 	spilled := Smooth(field, ny, nx, 1.2, true)
 	kept := Smooth(field, ny, nx, 1.2, false)
 	if math.IsNaN(spilled[3*nx+4]) {
-		t.Fatal("region_map.py fills a masked cell inside the field")
+		t.Fatal("spill must fill a masked cell inside the field")
 	}
 	if !math.IsNaN(kept[3*nx+4]) || !math.IsNaN(kept[0]) {
 		t.Fatal("without spill a masked cell must stay empty")
@@ -61,7 +61,7 @@ func TestGridPlacesByPosition(t *testing.T) {
 	}
 }
 
-func TestDecodeOrderedKeepsPythonText(t *testing.T) {
+func TestDecodeOrderedKeepsText(t *testing.T) {
 	want := pyjson.MarshalManifest(pyjson.O("b", []any{1e-05, 151.9, 0.0, 3}, "a",
 		pyjson.O("x", "Höhe", "n", nil, "t", true, "e", []any{})))
 	v, err := decodeOrdered(want)

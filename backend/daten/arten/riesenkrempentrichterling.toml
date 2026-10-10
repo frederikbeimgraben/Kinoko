@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "In Deutschland auf der Roten Liste mit unbekanntem Gefährdungsausmaß. Maßvoll sammeln."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Sehr großer, weißer bis cremeweißer, im Alter blassockerfarbener Trichterling mit konvexem bis trichterförmigem Hut mit gerolltem Rand, weißen bis cremefarbenen, dicht stehenden Lamellen und kurzem, dickem, weißem Stiel. Er wächst von Juni bis November als Folgezersetzer im Nadelwald, auf Waldwiesen, Wiesen, Weiden, in Parks und Gärten und bildet Hexenringe. Vom Riesentrichterling unterscheidet ihn vor allem der weiße statt ockerbraune Hut mit krempenartig gerolltem Rand und der kurze, dicke Stiel. Die Art steht in Deutschland auf der Roten Liste."
+beschreibungEn = "A very large, white to cream-white funnel that becomes pale ochre with age, with a convex to funnel-shaped cap with a rolled margin, white to cream, crowded gills and a short, thick, white stem. It grows from June to November as a saprobe in coniferous woods, on forest meadows, meadows, pastures, in parks and gardens and forms fairy rings. The key difference from Clitocybe maxima is the white instead of ochre-brown cap with a rolled, brim-like margin and the short, thick stem. The giant funnel is on the Red List in Germany."
+entwurf = true
 synonyme = ["Leucopaxillus candidus paxillus giganteus", "Aspropaxillus giganteus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutform = { von = "gewoelbt" }

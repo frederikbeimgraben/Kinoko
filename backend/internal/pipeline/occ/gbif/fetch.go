@@ -13,7 +13,7 @@ import (
 )
 
 // Fetcher pages the GBIF search API into the cache directory, one file per year
-// or per month. The zero value of each optional field takes the gbif_fetch.py default.
+// or per month. The zero value of each optional field takes the default.
 type Fetcher struct {
 	HTTP           *http.Client  // nil: http.DefaultClient
 	Idle           time.Duration // 0: pio.IdleTimeout. A transfer without bytes fails after it.
@@ -98,16 +98,27 @@ func orZero[T comparable](v, fallback T) T {
 	return v
 }
 
-// baseParams is base_params of gbif_fetch.py followed by extra.
-func (f *Fetcher) baseParams(extra ...param) []param {
-	return append([]param{
-		{"country", f.country()},
-		{"taxonKey", strconv.Itoa(FungiTaxonKey)},
+// Filter gives the record filter of a fetch as key and value pairs, in request order.
+// The fetch uses FungiTaxonKey. tools/gbifcount uses the key of one species.
+func Filter(country string, taxonKey int) [][2]string {
+	return [][2]string{
+		{"country", country},
+		{"taxonKey", strconv.Itoa(taxonKey)},
 		{"hasCoordinate", "true"},
 		{"hasGeospatialIssue", "false"},
 		{"basisOfRecord", "HUMAN_OBSERVATION"},
 		{"occurrenceStatus", "PRESENT"},
-	}, extra...)
+	}
+}
+
+// baseParams gives the base query parameters followed by extra.
+func (f *Fetcher) baseParams(extra ...param) []param {
+	filter := Filter(f.country(), FungiTaxonKey)
+	out := make([]param, 0, len(filter)+len(extra))
+	for _, kv := range filter {
+		out = append(out, param{kv[0], kv[1]})
+	}
+	return append(out, extra...)
 }
 
 func timeParams(year, month int) []param {

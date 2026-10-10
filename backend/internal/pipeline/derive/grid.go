@@ -1,7 +1,7 @@
 // Package derive makes the prepared tables and the static tiles of the
 // forecast chain from the raw admin uploads: the tree species map, the
-// elevation model and the SoilGrids rasters. It ports the one-time Python
-// steps trees_germany.py, tree_scales.py, static_features.py and fine_layers.py.
+// elevation model and the SoilGrids rasters: the trees grid, the tree scales,
+// the site grid and the fine layers.
 package derive
 
 import (
@@ -14,21 +14,20 @@ import (
 // ModelCRS is the CRS of the model grid.
 const ModelCRS = "EPSG:3035"
 
-// Germany is the box of the chain in degrees (west, south, east, north), as
-// GERMANY in trees_germany.py and REGIONEN["de"] in region_map.py.
+// Germany is the box of the pipeline in degrees (west, south, east, north).
 var Germany = [4]float64{5.75, 47.15, 15.15, 55.15}
 
 // CellStep is the edge of a cell of the map grid in metres.
 const CellStep = 500
 
 // Grid is a box of square cells in EPSG:3035. X0, Y0, X1, Y1 are multiples
-// of Step. Row 0 is the north row, as in tile_trees.
+// of Step. Row 0 is the north row.
 type Grid struct {
 	X0, Y0, X1, Y1 int
 	Step           int
 }
 
-// GridOf gives the grid over a box in degrees, as trees_germany.main: it
+// GridOf gives the grid over a box in degrees: it
 // projects the south-west and the north-east corner and floors each to the step.
 func GridOf(wgs [4]float64, step int) Grid {
 	x0, y0 := geo.LAEA3035(wgs[0], wgs[1])
@@ -56,7 +55,7 @@ func (g Grid) Check() error {
 	return nil
 }
 
-// Centre gives the centre of cell (gx, gy), as tile_trees.
+// Centre gives the centre of cell (gx, gy).
 func (g Grid) Centre(gx, gy int) (x, y float64) {
 	s := float64(g.Step)
 	return float64(g.X0) + (float64(gx)+0.5)*s, float64(g.Y1) - (float64(gy)+0.5)*s

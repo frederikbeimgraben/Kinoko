@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Giftig und wie alle Erdritterlinge verdaechtig. Er ist an den bei Verletzung roetenden Lamellen und der blaugruenen bis rosaroten Stielbasis zu erkennen."
+beschreibung = "Ritterling mit braunem bis graubraunem Hut, der auf hellem Grund fein grau bis schwärzlich geschuppt ist, grauweißlichen Lamellen, die bei Verletzung röten, und weißlichem Stiel mit blaugrüner bis rosaroter Basis. Er wächst meist im Herbst und Spätherbst im Laubwald, gern bei Buchen auf kalkreichem Boden, und ist selten. Vom ähnlichen Gilbenden Erdritterling unterscheidet ihn vor allem das rötende Fleisch, denn beim Gilbenden Erdritterling gilben Fleisch und Lamellen. Der Rötende Erdritterling ist giftig."
+beschreibungEn = "A knight with a brown to grey-brown cap with fine grey to blackish scales on a pale background, greyish-white gills that turn red when damaged and a whitish stem with a blue-green to pink-red base. It grows mostly in autumn and late autumn in broadleaf woods, often with beech on calcareous soil, and is rare. The key difference from the similar yellowing knight is the flesh that turns red, because in the yellowing knight the flesh and the gills turn yellow. Tricholoma orirubens is poisonous."
+entwurf = true
 weitereNamen = ["Rötende Erd-Ritterling"]
 synonyme = ["Gyrophila orirubens", "Tricholoma horribile", "Tricholoma orirubens var. basirubens"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

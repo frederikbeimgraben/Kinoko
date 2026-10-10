@@ -9,10 +9,14 @@ sammelbar = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nicht roh verzehren, das kann unverträglich sein."
+beschreibung = "Kleiner bis mittelgroßer Champignon mit weißem bis gelbem Hut voller hellbräunlicher bis dunkelbrauner Schuppen, freien, sehr gedrängten, erst cremegrauen und später rosa bis braunen Lamellen und weißlichem bis rosa Stiel mit dünnhäutigem, hängendem Ring. Er wächst von Juni bis November als Folgezersetzer im sauren Mischwald, meist im Nadelwald auf Nadelstreu. Vom Rebhuhnchampignon unterscheidet ihn vor allem das Fleisch, das sich bei Verletzung gelborange und später blutrot färbt, denn der Rebhuhnchampignon gilbt an der Stielbasis und riecht schwach nach Karbol."
+beschreibungEn = "A small to medium-sized mushroom with a white to yellow cap full of light brownish to dark brown scales, free, very crowded gills that are cream-grey at first and later pink to brown, and a whitish to pink stem with a thin, hanging ring. It grows from June to November as a saprobe in acid mixed woods, mostly in coniferous woods on needle litter. The key difference from Agaricus phaeolepidotus is the flesh, which turns yellow-orange and later blood-red when it is damaged, because Agaricus phaeolepidotus turns yellow at the stem base and has a weak smell of carbolic acid."
+entwurf = true
 weitereNamen = ["Waldegerling", "Waldchampignon", "Kleiner Blutegerling"]
 synonyme = ["Psalliota silvatica var. pallida", "Agaricus haemorrhoidarius forma fagetorum", "Agaricus silvaticus var. vinosobrunneus", "Psalliota sanguinaria", "Agaricus silvaticus"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 stielmerkmale = ["ring"]
+ringform = "haengend"
 
 [baeumeAusErfahrung]
 baeume = ["fichte"]

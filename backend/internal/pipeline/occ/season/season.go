@@ -1,4 +1,4 @@
-// Package season builds the season table of the app (arten_zaehlen.py): per
+// Package season builds the season table of the app: per
 // calendar week the visits and the visits with a find of each species, for
 // the closed years and the running year apart. The backend reads it as daten/saison.json.
 package season
@@ -15,7 +15,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/occ/visits"
 )
 
-// Constants of arten_zaehlen.py.
+// Constants of the season table.
 const (
 	Wochen             = 52
 	AbJahr             = 2015
@@ -96,7 +96,7 @@ func Stufe(besuche int) string {
 	return "Profil"
 }
 
-// Write writes the table as arten_zaehlen.main: compact JSON, not ASCII-escaped, and a line end.
+// Write writes the table as compact JSON, not ASCII-escaped, and a line end.
 // It creates the parent folder and replaces the file atomically.
 func Write(path string, table *pyjson.Obj) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {

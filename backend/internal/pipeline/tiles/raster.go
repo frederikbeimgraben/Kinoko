@@ -1,5 +1,5 @@
 // Package tiles warps fields onto the XYZ tile grid and writes the tile
-// pyramids of the chain, as tiles.py and pyramid.py. A tile carries a value
+// pyramids of the pipeline. A tile carries a value
 // byte per point: 0 is no data, 1..255 is the share 0..1 of the scale.
 package tiles
 
@@ -48,7 +48,7 @@ func (f File) open() (*godal.Dataset, error) {
 }
 
 // open copies the raster into a MEM dataset with NaN as the nodata of each
-// band, as the GeoTIFF that the Python chain writes with nodata=nan.
+// band.
 func (r Raster) open() (*godal.Dataset, error) {
 	registerDrivers()
 	if len(r.Bands) == 0 {

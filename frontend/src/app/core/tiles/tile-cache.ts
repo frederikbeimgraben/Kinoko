@@ -65,3 +65,70 @@ export async function cachedFetch(url: string, kind: TileKind): Promise<Response
   if (kind === 'json') return (await fromNetwork(url, kind)) ?? cached(url, kind);
   return (await cached(url, kind)) ?? fromNetwork(url, kind);
 }
+
+/** The result of a manifest load. */
+export type ManifestReply =
+  | { readonly kind: 'data'; readonly content: unknown }
+  // A 404, or a reply that is not JSON (for example the app page) and no copy on the device.
+  | { readonly kind: 'missing' }
+  // No reply from the origin and no copy on the device.
+  | { readonly kind: 'unreachable' };
+
+const MISSING: ManifestReply = { kind: 'missing' };
+const UNREACHABLE: ManifestReply = { kind: 'unreachable' };
+
+/** A reply that tells that the file is not at the origin. */
+function absent(reply: Response): boolean {
+  return reply.status === 404 || reply.status === 410;
+}
+
+/** Reads the body as a JSON object. A body that is not a JSON object gives `MISSING`. */
+async function parse(reply: Response): Promise<ManifestReply> {
+  let content: unknown;
+  try {
+    content = await reply.json();
+  } catch {
+    return MISSING;
+  }
+  return typeof content === 'object' && content !== null ? { kind: 'data', content } : MISSING;
+}
+
+/** The copy of a manifest on the device. A copy that is not JSON is removed. */
+async function storedManifest(url: string): Promise<ManifestReply> {
+  const known = await cached(url, 'json');
+  if (known === null) return UNREACHABLE;
+  const read = await parse(known);
+  if (read.kind === 'data') return read;
+  await drop(url);
+  return UNREACHABLE;
+}
+
+/** Loads a manifest: network first, then the copy on the device. Without `online`, only the copy. */
+export async function fetchManifest(url: string, online: boolean): Promise<ManifestReply> {
+  if (!online) return storedManifest(url);
+  let reply: Response;
+  try {
+    reply = await fetch(url);
+  } catch {
+    return storedManifest(url);
+  }
+  if (absent(reply)) {
+    // The origin has no such file, so an old copy shows data that is gone.
+    await drop(url);
+    return MISSING;
+  }
+  if (!reply.ok) return storedManifest(url);
+  // A captive portal or a proxy can also send a page that is not JSON, so the copy stays.
+  if (!fits(reply, 'json')) return copyOrMissing(url);
+  const copy = reply.clone();
+  const read = await parse(reply);
+  if (read.kind !== 'data') return copyOrMissing(url);
+  await keep(url, copy);
+  return read;
+}
+
+/** The copy on the device, or `MISSING` when there is none. */
+async function copyOrMissing(url: string): Promise<ManifestReply> {
+  const stored = await storedManifest(url);
+  return stored.kind === 'unreachable' ? MISSING : stored;
+}

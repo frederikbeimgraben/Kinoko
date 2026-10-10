@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke"]
 speisewertHinweis = "Der extrem scharfe Geschmack verrät ihn. Speitäublinge reizen Magen und Darm, vor allem roh und in größerer Menge."
+beschreibung = "Kleiner, zerbrechlicher Täubling mit weißlichem, blass rosa bis rosenrotem Hut mit oft gelblicher Mitte und ganz abziehbarer Huthaut, weißen Lamellen und weißem, sehr brüchigem Stiel. Er wächst von Juni bis November in feuchten Birkenwäldern, oft in höheren Lagen und gern zwischen Torfmoos. Vom Buchenspeitäubling unterscheiden ihn vor allem der blassere Hut und der Standort bei Birke, denn der Buchenspeitäubling hat einen zinnober- bis karminroten Hut mit kaum abziehbarer Huthaut und wächst bei Buche. Der Birkenspeitäubling ist giftig."
+beschreibungEn = "A small, fragile brittlegill with a whitish, pale pink to rose-red cap with an often yellowish centre and a cap skin that peels off completely, white gills and a white, very brittle stem. It grows from June to November in damp birch woods, often at higher altitudes and among peat moss. The key difference from the beechwood sickener is the paler cap and the birch habitat, because the beechwood sickener has a vermilion to carmine-red cap with a skin that hardly peels and grows with beech. The birch brittlegill is poisonous."
+entwurf = true
 synonyme = ["Russula emetica var. betularum"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutrand = { von = ["gerieft"] }

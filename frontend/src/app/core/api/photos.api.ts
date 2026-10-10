@@ -16,6 +16,8 @@ export interface PhotoInput {
   photographer: string;
   licence: Licence;
   caption?: string;
+  /** The English caption. Without it, the English interface shows the German caption. */
+  captionEn?: string;
   source?: string;
   takenOn?: string;
 }

@@ -11,6 +11,9 @@ baeume = ["birke"]
 speisewertHinweis = "Besonders geschützt, sehr selten und in Deutschland gefährdet. Wenn überhaupt, nur wenige Fruchtkörper für den Eigenbedarf nehmen. Ältere Fruchtkörper werden schnell schwammig."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Raufußröhrling mit braungrauem bis schwarzbraunem, oft marmoriert geflecktem Hut, weißlichen bis hellrosa, später olivbraunen Röhren und hellem Stiel mit tabakbraunen bis schwarzbraunen Schüppchen, dessen Basis bei Verletzung blaugrün wird. Er wächst vom Frühsommer bis zum Herbst nur bei Birken auf saurem Boden, ist sehr selten und in Deutschland gefährdet. Vom ähnlichen Hainbuchenröhrling unterscheidet ihn vor allem der Standort, denn der Hainbuchenröhrling wächst bei Hainbuche und Hasel."
+beschreibungEn = "A rough-stemmed bolete with a brown-grey to black-brown, often marbled cap, whitish to light pink tubes that turn olive-brown later and a pale stem with tobacco-brown to black-brown scales and a base that turns blue-green when damaged. It grows from early summer to autumn only with birch on acid soil, is very rare and is endangered in Germany. The key difference from the similar hazel bolete is the habitat, because the hazel bolete grows with hornbeam and hazel."
+entwurf = true
 weitereNamen = ["Vielverfärbender Birkenpilz", "Vielfärbender Birkenpilz", "Verfärbender Raufußröhrling", "Blaufärbender Raufuß"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig" }

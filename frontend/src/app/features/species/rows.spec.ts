@@ -34,6 +34,15 @@ describe('speciesRow', () => {
     expect(row.latin).toBe('Boletus edulis');
   });
 
+  it('markiert eine Art mit Vorhersage und lässt eine Art ohne Vorhersage ohne Zeichen', () => {
+    expect(speciesRow(speciesEntry({ ...STONE, forecastEnabled: true }), I18N).forecastLabel).toBe(
+      'species.forecast.mark',
+    );
+    expect(
+      speciesRow(speciesEntry({ ...STONE, forecastEnabled: false }), I18N).forecastLabel,
+    ).toBeUndefined();
+  });
+
   it.each<[Edibility, string, string]>([
     ['edible', 'var(--color-primary)', 'var(--color-primary-subtle)'],
     ['conditionally_edible', 'var(--color-warning)', 'var(--color-warning-subtle)'],

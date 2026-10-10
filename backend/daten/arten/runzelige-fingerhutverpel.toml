@@ -10,6 +10,9 @@ jahreszeiten = ["fruehling"]
 baeume = []
 speisewertHinweis = "Roh giftig. Nur gut durchgegart verwenden und das Kochwasser weggiessen. Er ist selten und sollte besser stehen bleiben."
 haeufigkeit = "selten"
+beschreibung = "Kleiner Schlauchpilz mit kastanien- bis rotbraunem, stark hirnartig gerunzeltem Hut und weißlichem bis ockerbräunlichem, hohlem Stiel mit körnigen Schuppen. Sie wächst im April und Mai in Auen und Flussauen und ist selten. Von der ähnlichen Speisemorchel unterscheidet sie vor allem der hirnartig gerunzelte Hut, denn die Speisemorchel hat wabenartige Gruben, und bei ihr bilden Hut und Stiel einen durchgehenden Hohlraum."
+beschreibungEn = "A small morel relative with a chestnut-brown to red-brown, strongly brain-like wrinkled cap and a whitish to ochre-brownish, hollow stem with granular scales. It grows in April and May in floodplains and river meadows and is rare. The key difference from the similar common morel is the brain-like wrinkled cap, because the common morel has honeycomb-like pits, and its cap and stem form one continuous cavity."
+entwurf = true
 synonyme = ["Verpa conica var. cerebriformis"]
 hutform = { von = "eifoermig" }
 stielmerkmale = ["genattert", "beflockt", "hohl"]

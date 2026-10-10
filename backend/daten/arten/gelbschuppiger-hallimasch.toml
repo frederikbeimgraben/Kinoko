@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als giftig und erst nach besonderer Vorbehandlung essbar. Nur die Hüte, mindestens 20 Minuten abkochen und das Kochwasser weggießen. Nach Frost und bei alten Stücken steigt die Unverträglichkeit. Auch dann vertragen ihn nicht alle."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer Lamellenpilz mit haselnussbraunem bis rotbraunem Hut mit abwischbaren grauen bis goldbraunen Schüppchen und gelblichen Velumresten am Rand, weißlichen, später hellbraunen Lamellen und zähem, längsfaserigem Stiel mit dickem Ring, dessen unterer Rand goldgelb ist. Er wächst von Juni bis November in Gruppen an Laubbäumen, als Parasit an kranken Bäumen oder an totem Holz, und ist häufig. Vom Honiggelben Hallimasch unterscheidet ihn vor allem der haselnuss- bis rotbraune Hut, denn der Honiggelbe Hallimasch hat einen gelblichen bis zitronengelben Hut."
+beschreibungEn = "A medium-sized gilled mushroom with a hazel-brown to red-brown cap with grey to golden-brown scales that rub off and yellowish veil remnants at the margin, whitish gills that later turn light brown, and a tough, fibrous stem with a thick ring whose lower edge is golden-yellow. The bulbous honey fungus grows from June to November in groups on broadleaf trees, as a parasite on weak trees or on dead wood, and is common. The key difference from the honey fungus is the hazel-brown to red-brown cap, because the honey fungus has a yellowish to lemon-yellow cap."
+entwurf = true
 weitereNamen = ["Gelbschuppiger Hallimasch", "Dunkler Laubholzhallimasch"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 stielmerkmale = ["faserig", "ring", "beflockt"]

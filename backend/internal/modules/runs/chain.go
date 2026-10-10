@@ -12,7 +12,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
-// These rules are those of tools/pipeline_worker.py: step i has the name of script i. A species state goes
+// Step i has the name of script i. A species state goes
 // queued, running, then finished or failed. A run fails when one species fails.
 
 var stages = map[enums.RunKind][]string{
@@ -69,8 +69,7 @@ func BrierIn(output string) *float64 {
 }
 
 // MeanBrier gives the Brier score of a run: the mean of the species scores,
-// else nil. Python's statistics.mean adds exact fractions and rounds once,
-// so the sum is exact here too.
+// else nil. The sum is exact and rounds once.
 func MeanBrier(scores []float64) *float64 {
 	if len(scores) == 0 {
 		return nil

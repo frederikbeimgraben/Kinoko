@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Zu erkennen am brennend scharfen Geschmack, am blut- bis kirschroten Hut mit fast ganz abziehbarer Haut und am rein weißen Stiel ohne Rottöne."
+beschreibung = "Kleiner bis mittelgroßer Täubling mit blut- bis kirschrotem Hut mit niedergedrückter Mitte und fast ganz abziehbarer Haut, weißen Lamellen und rein weißem Stiel ohne Rottöne. Er wächst von Juni bis November im trockenen Mischwald, gern bei Kiefern auf sandigem, saurem Boden. Vom Birkenspeitäubling unterscheidet ihn vor allem der kräftiger rote Hut und der Standort, denn der Birkenspeitäubling ist blasser, weißlich bis rosenrot und wächst bei Birken auf feuchtem Boden. Der Kiefernspeitäubling ist giftig."
+beschreibungEn = "A small to medium-sized brittlegill with a blood-red to cherry-red cap with a depressed centre and skin that peels off almost completely, white gills and a pure white stem without red tones. It grows from June to November in dry mixed woods, often with pine on sandy, acid soil. The key difference from the birch brittlegill is the stronger red cap and the habitat, because the birch brittlegill is paler, whitish to rose-red, and grows with birch on damp soil. This species is poisonous."
+entwurf = true
 weitereNamen = ["Speitäufel"]
 synonyme = ["Russula emetica var. silvestris"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

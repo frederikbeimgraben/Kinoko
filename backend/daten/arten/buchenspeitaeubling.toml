@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Der extrem scharfe Geschmack verrät ihn. Ein winziges Stück auf die Zunge legen und wieder ausspucken reicht zum Prüfen. Er löst Magen- und Darmbeschwerden aus."
 haeufigkeit = "haeufig"
+beschreibung = "Kleiner bis mittelgroßer Täubling mit zinnober- bis karminrotem, stellenweise weißfleckigem Hut mit matt samtiger, kaum abziehbarer Huthaut, weißen, jung gedrängten Lamellen und festem, weißem Stiel ohne rötliche Töne. Er wächst von Juni bis November im Laubwald bei Buche, bevorzugt auf kalkhaltigem Boden, und ist häufig. Vom Kiefernspeitäubling unterscheidet ihn vor allem der Standort bei Buche, denn der Kiefernspeitäubling wächst bei Kiefer auf saurem Boden und hat einen blutroten, stärker ausblassenden Hut. Der Buchenspeitäubling ist giftig."
+beschreibungEn = "A small to medium-sized brittlegill with a vermilion to carmine-red cap, white in places, with a matt, velvety skin that hardly peels, white gills that are crowded when young, and a firm, white stem without red tints. The beechwood sickener grows from June to November in broadleaf woods with beech, mainly on calcareous soil, and is common. The key difference from Russula silvestris is the beech habitat, because Russula silvestris grows with pine on acid soil and has a blood-red cap that fades more. The beechwood sickener is poisonous."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 hutrand = { von = ["gerieft"] }
 stielmerkmale = ["bruechig"]

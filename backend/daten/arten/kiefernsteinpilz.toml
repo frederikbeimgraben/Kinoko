@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "tanne", "fichte"]
 schutzHinweis = "Die Verordnung nennt Boletus edulis und Boletus aereus. Dieses Projekt behandelt den Kiefernsteinpilz gleich, weil er im Wald kaum von ihnen zu trennen ist."
+beschreibung = "Großer Röhrling mit rotbraunem, weinrotem bis purpurbraunem Hut mit lange eingerolltem, meist hellerem Rand, erst weißlichen und später olivgrünen Röhren und dickem, bräunlichem bis rotbräunlichem Stiel mit weißem Netz. Er wächst von Juni bis November meist bei Kiefern, nur gelegentlich bei Weißtanne und Fichte. Vom Gallenröhrling unterscheidet ihn vor allem das Netz am Stiel, denn es ist weiß, beim Gallenröhrling braun, dazu hat der Gallenröhrling Röhren, die jung weiß und dann rosa sind."
+beschreibungEn = "A large bolete with a red-brown, wine-red to purple-brown cap with a margin that stays inrolled for a long time and is mostly paler, tubes that are whitish at first and later olive-green, and a thick, brownish to red-brownish stem with a white net. It grows from June to November mostly with pines, only occasionally with silver fir and spruce. The key difference from the bitter bolete is the net on the stem, because it is white, while the bitter bolete has a brown net and tubes that are white when young and then pink."
+entwurf = true
 weitereNamen = ["Kiefernsteini", "Steinpilze", "Herrenpilz", "Dobberniggl", "Gemeiner Steinpilz"]
 fruchtschicht = { art = "roehren" }
 hutform = { von = "halbkugelig", nach = "gewoelbt" }

@@ -21,15 +21,15 @@ function fromGit() {
   }
 }
 
-/** The version as the about page shows it, per `Account.dc.html`: `v0.1.0-14`.
- * The commit hash goes, and a plain number gets the `v`. `config.Label` in the service agrees. */
+/** The version as the about page shows it: the release tag `vYYYY-MM-DD-NN` and the count of later commits.
+ * The commit hash goes, and a release tag without `v` gets the `v`. `config.Label` in the service agrees. */
 export function label(raw) {
   const version = (raw ?? '').trim().replace(/-g[0-9a-f]{7,}$/, '');
   if (version === '') return FALLBACK;
-  return /^\d+\.\d+/.test(version) ? `v${version}` : version;
+  return /^\d{4}-\d{2}-\d{2}-\d+/.test(version) ? `v${version}` : version;
 }
 
-/** The Nix build has no Git directory and sets `KINOKO_VERSION` (VERSION file and commit). Local builds use Git. */
+/** The Nix build has no Git directory and sets `KINOKO_VERSION` (date and commit of the flake). Local builds use Git. */
 export function describe(env = process.env, git = fromGit) {
   return label(env.KINOKO_VERSION || git());
 }

@@ -8,6 +8,7 @@ interface Shape {
   licence: string;
   source?: string | null;
   caption?: string | null;
+  captionEn?: string;
   takenOn?: string | null;
   lat?: number | null;
   lon?: number | null;
@@ -29,6 +30,7 @@ export function photo(entry: Shape): Record<string, unknown> {
     ownerName: entry.ownerName ?? entry.photographer.split(' ')[0],
     licence: entry.licence,
     caption: entry.caption ?? null,
+    captionEn: entry.captionEn ?? '',
     source: entry.source ?? null,
     takenOn: entry.takenOn ?? '2026-09-06',
     lat: entry.lat ?? null,

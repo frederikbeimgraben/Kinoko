@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = ["kiefer"]
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Mittelgroßer Schmierröhrling mit gelbbraunem, haselnussbraunem bis olivbraunem, schmierig klebrigem Hut, weißlichen bis gelblichen, später gelbgrünen Röhren, oft mit gelben Tröpfchen, und weißlichem bis chromgelbem Stiel mit braunen Drüsenpunkten. Er wächst von September bis Mai bei Kiefern wie Aleppokiefer, Pinie und See-Kiefer, auch bei Zypressen, meist auf kalkreichem Boden, und ist im Mittelmeerraum sehr häufig. Vom Ringlosen Butterpilz unterscheiden ihn vor allem die Tröpfchen an den Röhren und die oft rosaviolette Stielbasis mit rosa Myzelfäden, denn der Ringlose Butterpilz hat einen braunen bis kastanienbraunen Hut."
+beschreibungEn = "A medium-sized slippery bolete with a yellow-brown, hazel-brown to olive-brown, slimy and sticky cap, whitish to yellowish tubes that later become yellow-green and often have yellow drops, and a whitish to chrome-yellow stem with brown glandular dots. It grows from September to May with pines such as Aleppo pine, stone pine and maritime pine, also with cypress, mostly on calcareous soil, and is very common in the Mediterranean region. The key difference from Suillus collinitus is the drops on the tubes and the often pink-violet stem base with pink mycelium threads, because Suillus collinitus has a brown to chestnut-brown cap."
+entwurf = true
 weitereNamen = ["Mediterraner Körnchenröhrling", "Mittelmeer Körnchenröhrling"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["gebuckelt"]

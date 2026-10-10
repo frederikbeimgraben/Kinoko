@@ -22,7 +22,7 @@ import (
 // FineM is the edge of the cell_fine square of the tree join in metres.
 const FineM = 500
 
-// Blocks is the blocks JSON of visit_model.py: the feature names of each block, in table order.
+// Blocks gives the feature names of each block, in table order.
 type Blocks struct {
 	Detection []string
 	Season    []string
@@ -31,8 +31,8 @@ type Blocks struct {
 	Activity  map[int][]string
 }
 
-// Table is the prepared visit table of visit_model.py --save-prepared, one row per visit with weather.
-// Columns holds each feature column as float64; a float32 column of Python keeps its float32 value.
+// Table is the prepared visit table, one row per visit with weather.
+// Columns holds each feature column as float64; a float32 column keeps its float32 value.
 type Table struct {
 	N        int
 	Keys     []string
@@ -58,7 +58,7 @@ type TableStats struct {
 	WithWeather int
 }
 
-// BuildTable builds the visit table as visit_model.main with --quick:
+// BuildTable builds the visit table:
 // the gated visits, the activity of each horizon, the tree scales, the weather join and the season columns.
 func BuildTable(ctx context.Context, in Inputs, cfg Config) (*Table, TableStats, error) {
 	cfg = cfg.withDefaults()
@@ -108,9 +108,9 @@ func visitCells(vs []visits.Visit) []geo.CellKey {
 	return out
 }
 
-// weatherFeatures derives the 35 weather columns of add_lags and add_anomalies, in their column order.
-// Deviation: weather.Derive stores the rolling sums, the means and the pr anomalies as float32;
-// pandas keeps them float64. The rounding keeps the order of the values, so the LightGBM bins agree.
+// weatherFeatures derives the 35 weather lag and anomaly columns, in their column order.
+// weather.Derive stores the rolling sums, the means and the pr anomalies as float32;
+// the rounding keeps the order of the values, so the LightGBM bins do not change.
 func weatherFeatures(cube *weather.Cube) ([]string, map[string][]float32, error) {
 	for _, v := range weather.LagVars {
 		if _, ok := cube.Vars[v]; !ok {
@@ -123,7 +123,7 @@ func weatherFeatures(cube *weather.Cube) ([]string, map[string][]float32, error)
 }
 
 // joinWeather is the inner join on (cell, week_id) and the dropna over the lag columns.
-// It returns the kept visit indices in visit order, as the merge of pandas keeps the left order.
+// It returns the kept visit indices in visit order.
 func joinWeather(vs []visits.Visit, cube *weather.Cube, derived map[string][]float32) []int {
 	weekIndex := make(map[calendar.Week]int, len(cube.Weeks))
 	for w, wk := range cube.Weeks {
@@ -196,7 +196,7 @@ func (t *Table) addDetectionAndSeason(vs []visits.Visit) {
 	t.column("week_cos", func(i int) float64 { _, c := visits.WeekSinCos(vs[i].ISOWeek); return c })
 }
 
-// addActivity samples the activity of every horizon of horizons.Horizons, as visit_model.main does.
+// addActivity samples the activity of every horizon of horizons.Horizons.
 func (t *Table) addActivity(f *activity.Fields, vs []visits.Visit) {
 	for _, h := range horizons.Horizons {
 		for _, col := range f.Sample(t.X, t.Y, t.Date, h) {
@@ -227,7 +227,7 @@ func (t *Table) addTrees(ts TreeScales) {
 	}
 }
 
-// FineCell is cell_fine of visit_model.py: "<x // 500>_<y // 500>".
+// FineCell is the key of the 500 m cell: "<x // 500>_<y // 500>".
 func FineCell(x, y float64) string {
 	return strconv.Itoa(int(geo.FloorDiv(x, FineM))) + "_" + strconv.Itoa(int(geo.FloorDiv(y, FineM)))
 }

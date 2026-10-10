@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter"]
 baeume = ["kiefer", "fichte", "tanne"]
 haeufigkeit = "selten"
+beschreibung = "Winziger Pilz aus weißen, später milchkaffeefarbenen bis ockerfarbenen, nur 1 bis 3 mm langen Stacheln, die in dichten Rasen stehen. Er wächst von September bis Februar als Folgezersetzer an Nadelholz, meist an Kieferntotholz, seltener an Fichte und Tanne, gern an der feuchten Unterseite von Totholz oder an der Schattenseite eines Stumpfes, und ist selten. Vom Igelstachelbart unterscheidet ihn vor allem die Größe, denn der Igelstachelbart bildet einen großen weißen Klumpen mit langen Stacheln an Laubholz. Das Rasige Stachelspitzchen ist ungenießbar."
+beschreibungEn = "A tiny fungus made of white spines that later become milky-coffee-coloured to ochre and are only 1 to 3 mm long, standing in dense groups. It grows from September to February as a saprobe on conifer wood, mostly dead pine wood, less often spruce and fir, often on the damp underside of dead wood or on the shaded side of a stump, and is rare. The key difference from the lion's mane is the size, because the lion's mane forms a large white mass with long spines on broadleaf wood. This species is inedible."
+entwurf = true
 weitereNamen = ["Rasiges Pfriempilzchen"]
 
 [quelle]

@@ -1,3 +1,4 @@
+import { fits } from './tile-cache';
 import { tilePath } from './tile-paths';
 import { covers } from './coverage';
 import type { SpeciesManifest } from './manifest';
@@ -34,7 +35,7 @@ export function tileLocation(lon: number, lat: number, zoom: number): TileLocati
 }
 
 /**
- * Converts a value tile byte to a probability. Byte 0 means no data. Else `(byte - 1) / 254 * top`, as in `modell/src/pilze/tiles.py`.
+ * Converts a value tile byte to a probability. Byte 0 means no data. Else `(byte - 1) / 254 * top`.
  */
 export function valueFromByte(byte: number, top: number): number | null {
   return byte === 0 ? null : ((byte - 1) / 254) * top;
@@ -60,7 +61,8 @@ export async function valueAtPoint(
 async function readByte(url: string, location: TileLocation): Promise<number | null> {
   try {
     const reply = await fetch(url);
-    if (!reply.ok) return null;
+    // An origin without the file can send the app page with status 200.
+    if (!reply.ok || !fits(reply, 'image')) return null;
     const shot = await createImageBitmap(await reply.blob());
     const canvas = new OffscreenCanvas(shot.width, shot.height);
     const pen = canvas.getContext('2d', { willReadFrequently: true });

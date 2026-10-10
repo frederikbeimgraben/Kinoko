@@ -14,7 +14,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
-// weeklyNames are the checkpoints of extract_grids.py, one file per measure.
+// weeklyNames are the weekly checkpoints, one file per measure.
 var weeklyNames = []string{
 	"pr", "tas", "tasmin", "tasmax", "hurs",
 	"paws_spruce", "paws_beech", "paws_oak", "paws_pine",

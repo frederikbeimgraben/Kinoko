@@ -16,7 +16,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// TileFile returns <root>/<z>/<x>/<y>.png, as pyramid.tile_file.
+// TileFile returns <root>/<z>/<x>/<y>.png.
 func TileFile(root string, id geo.TileID) string {
 	return filepath.Join(root, strconv.Itoa(id.Z), strconv.Itoa(id.X), strconv.Itoa(id.Y)+".png")
 }
@@ -50,7 +50,7 @@ func DecodePNG(data []byte) ([]uint8, error) {
 	return g.Pix, nil
 }
 
-// WriteTile writes one tile as pyramid.write_tile. A tile without data
+// WriteTile writes one tile. A tile without data
 // writes nothing and returns false.
 func WriteTile(root string, id geo.TileID, code []uint8) (bool, error) {
 	if !HasData(code) {
@@ -134,11 +134,11 @@ func swapDir(tmp, root string) error {
 var renameDir = os.Rename
 
 // DirStore is a Store on disk: the value tree under Root and the weight tree
-// under Weights, as the block loop of fine_layers.py. It suits pyramids that
+// under Weights. It suits pyramids that
 // do not fit in memory.
 type DirStore struct{ Root, Weights string }
 
-// At lists the value tiles of one zoom, as pyramid.tiles_at.
+// At lists the value tiles of one zoom.
 func (d DirStore) At(zoom int) ([]geo.TileID, error) {
 	folder := filepath.Join(d.Root, strconv.Itoa(zoom))
 	cols, err := os.ReadDir(folder)

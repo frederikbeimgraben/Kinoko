@@ -7,7 +7,11 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = ["buche", "eiche"]
+karte = "pleurotus_ostreatus"
 speisewertHinweis = "Roh zersetzt er rote Blutkörperchen. Nur durchgegart essen."
+beschreibung = "Muschelförmiger Seitling mit glattem, silbergrauem bis graubraunem Hut, weißlichen Lamellen, die am kurzen, seitlichen Stiel herablaufen, und oft dachziegelig übereinander wachsenden Fruchtkörpern. Er wächst von September bis Mai an lebenden und abgestorbenen Laubbäumen, vor allem an Buche und Eiche, und erscheint erst nach einem Kältereiz, häufig ab Mitte November. Vom Lungenseitling unterscheiden ihn vor allem der silbergraue bis graubraune Hut und die Zeit im Winterhalbjahr, denn der Lungenseitling ist milchweiß bis cremeweiß, dünnfleischiger und wächst im Sommer."
+beschreibungEn = "A shell-shaped mushroom with a smooth, silver-grey to grey-brown cap, whitish gills that run down the short, lateral stem, and fruit bodies that often grow in overlapping tiers. It grows from September to May on living and dead broadleaf trees, mainly beech and oak, and appears only after a cold spell, often from mid-November. The key difference from the pale oyster is the silver-grey to grey-brown cap and the winter season, because the pale oyster is milk-white to cream-white, has thinner flesh and grows in summer."
+entwurf = true
 weitereNamen = ["Austernpilz", "Kalbfleischpilz", "Buchenschwamm", "Drehling", "Austernschwamm", "Eichhännchen", "Muschelpilz", "Sommerauster"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", schneide = "gesaegt" }
 hutform = { von = "muschelfoermig" }

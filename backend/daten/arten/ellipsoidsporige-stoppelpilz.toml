@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Jung sammeln. Alte Stücke werden bitter und beim längeren Kauen etwas scharf."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner Stoppelpilz mit gelborangem bis terrakottafarbenem Hut mit lange eingerolltem Rand, weißen bis hellorangen Stacheln und weißlichem bis hellgelbem Stiel, der auf Druck gilbt. Er wächst von Juni bis November in Mischwäldern und ist sehr häufig, oft in großen Mengen. Vom Genabelten Semmelstoppelpilz unterscheidet ihn vor allem die Hutmitte ohne Nabel, denn der Genabelte Semmelstoppelpilz hat eine deutlich genabelte Mitte und einen blasseren Hut."
+beschreibungEn = "A small hedgehog fungus with a yellow-orange to terracotta cap with a long inrolled margin, white to light orange spines and a whitish to light yellow stem that turns yellow when pressed. It grows from June to November in mixed woods and is very common, often in large numbers. The key difference from Hydnum umbilicatum is the cap centre without a navel, because Hydnum umbilicatum has a clearly umbilicate centre and a paler cap."
+entwurf = true
 weitereNamen = ["Kleinwüchsiger Semmelstoppelpilz"]
 fruchtschicht = { art = "stacheln" }
 hutrand = { von = ["eingerollt"] }

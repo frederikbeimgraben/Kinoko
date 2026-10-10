@@ -2630,6 +2630,7 @@ components:
           type: string
         version:
           type: string
+          description: Version of the build, the release tag (vYYYY-MM-DD-NN) and the count of later commits. "dev" without a version.
       required: [oidcIssuer, oidcName, oidcClientId, origin, version]
 
     Me:
@@ -2916,6 +2917,10 @@ components:
         - club
         - cylindrical
 
+    RingShape:
+      type: string
+      enum: [pendant, flaring, sheathing, double, zone, cortina]
+
     CapFeature:
       type: string
       enum: [umbonate, hygrophanous, zoned, sunken, irregular, navelled]
@@ -2994,7 +2999,7 @@ components:
 
     Licence:
       type: string
-      enum: [own, cc0, cc_by_4, cc_by_sa_4, public_domain]
+      enum: [own, cc0, cc_by_4, cc_by_sa_4, public_domain, cc_by_3, cc_by_sa_3, cc_by_2_5, cc_by_sa_2_5, cc_by_2, cc_by_sa_2]
 
     PhotoSize:
       type: string
@@ -3315,9 +3320,13 @@ components:
             - $ref: "#/components/schemas/RedListStatus"
             - type: "null"
         description:
+          description: The German description.
           oneOf:
             - type: string
             - type: "null"
+        descriptionEn:
+          type: string
+          description: The English description. Without the field, a create stores an empty text and an update keeps the old one.
         edibilityNote:
           oneOf:
             - type: string
@@ -3384,6 +3393,10 @@ components:
         capShapeOld:
           oneOf:
             - $ref: "#/components/schemas/CapShape"
+            - type: "null"
+        ringShape:
+          oneOf:
+            - $ref: "#/components/schemas/RingShape"
             - type: "null"
         names:
           type: array
@@ -3456,9 +3469,16 @@ components:
                 - type: string
                 - type: "null"
             description:
+              description: The German description.
               oneOf:
                 - type: string
                 - type: "null"
+            descriptionEn:
+              type: string
+              description: The English description. Empty if nobody has written it.
+            descriptionDraft:
+              type: boolean
+              description: True when nobody has reviewed the description.
             marketable:
               type: boolean
             frequency:
@@ -3524,6 +3544,10 @@ components:
             capShapeOld:
               oneOf:
                 - $ref: "#/components/schemas/CapShape"
+                - type: "null"
+            ringShape:
+              oneOf:
+                - $ref: "#/components/schemas/RingShape"
                 - type: "null"
             names:
               type: array
@@ -4194,6 +4218,10 @@ components:
         caption:
           type: string
           maxLength: 200
+        captionEn:
+          type: string
+          maxLength: 200
+          description: The English caption. Without the field, the photo has no English caption.
         source:
           oneOf:
             - type: string
@@ -4239,6 +4267,9 @@ components:
           oneOf:
             - type: string
             - type: "null"
+        captionEn:
+          type: string
+          description: The English caption. Empty if nobody has written it.
         source:
           oneOf:
             - type: string
@@ -4288,6 +4319,7 @@ components:
         - photographer
         - ownerName
         - licence
+        - captionEn
         - lead
         - state
         - createdAt

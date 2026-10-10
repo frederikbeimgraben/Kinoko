@@ -16,14 +16,14 @@ func compareTiles(a, b TileID) int {
 	return cmp.Or(cmp.Compare(a.Z, b.Z), cmp.Compare(a.X, b.X), cmp.Compare(a.Y, b.Y))
 }
 
-// HaveList returns the "have" object of a manifest, as pyramid.belegung:
-// per zoom, the tiles "x/y" in the order (z, x, y). Duplicates stay, as in Python.
+// HaveList returns the "have" object of a manifest: per zoom, the tiles
+// "x/y" in the order (z, x, y). Duplicates stay.
 func HaveList(tiles []TileID) *pyjson.Obj {
 	sorted := slices.SortedFunc(slices.Values(tiles), compareTiles)
 	return groupByZoom(sorted)
 }
 
-// HaveUpTo returns HaveList of the tiles with a zoom of cap or less, as pyramid.have_up_to.
+// HaveUpTo returns HaveList of the tiles with a zoom of cap or less.
 func HaveUpTo(tiles []TileID, cap int) *pyjson.Obj {
 	kept := slices.DeleteFunc(slices.Clone(tiles), func(t TileID) bool { return t.Z > cap })
 	return HaveList(kept)

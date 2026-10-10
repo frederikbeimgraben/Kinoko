@@ -102,6 +102,25 @@ var ReviewStateValues = []ReviewState{"open", "accepted", "rejected"}
 // Valid tells if the value is in the set.
 func (v ReviewState) Valid() bool { return slices.Contains(ReviewStateValues, v) }
 
+// RingShape is a value of the set RingShape.
+type RingShape string
+
+// The values of RingShape.
+const (
+	RingShapePendant   RingShape = "pendant"
+	RingShapeFlaring   RingShape = "flaring"
+	RingShapeSheathing RingShape = "sheathing"
+	RingShapeDouble    RingShape = "double"
+	RingShapeZone      RingShape = "zone"
+	RingShapeCortina   RingShape = "cortina"
+)
+
+// RingShapeValues lists each value of RingShape in declaration order.
+var RingShapeValues = []RingShape{"pendant", "flaring", "sheathing", "double", "zone", "cortina"}
+
+// Valid tells if the value is in the set.
+func (v RingShape) Valid() bool { return slices.Contains(RingShapeValues, v) }
+
 // Rule is a value of the set Rule.
 type Rule string
 

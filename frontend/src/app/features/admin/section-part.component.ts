@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import type { BodyPart } from '../../core/api/models';
+import { RING_SHAPES, type BodyPart, type RingShape } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { decimal } from '../../core/i18n/numbers';
 import { HistoryService } from '../../core/navigation/history.service';
@@ -8,13 +8,14 @@ import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { AddRowComponent } from '../../ui/add-row/add-row.component';
+import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
 import { FormFieldComponent } from '../../ui/form-field/form-field.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { StateViewComponent } from '../../ui/state-view/state-view.component';
-import { DIMENSION_TEXT, PART_TEXT } from '../species/labels';
+import { DIMENSION_TEXT, PART_TEXT, RING_SHAPE_TEXT } from '../species/labels';
 import { draftField } from './editor-draft';
 import { SpeciesEditorStore } from './species-editor.store';
 import { UNIT_TEXT } from './species-editor.rows';
@@ -32,13 +33,14 @@ import {
   withoutPart,
 } from './species-lists';
 
-/** A part of a species: its measurements, its colours, its colour changes and its texts. */
+/** A part of a species: its measurements, its colours, its colour changes and its texts. The ring also has a shape. */
 @Component({
   selector: 'app-section-part',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
     AddRowComponent,
+    ChipGroupComponent,
     FormFieldComponent,
     ListRowComponent,
     PageHeaderComponent,
@@ -116,6 +118,22 @@ export class SectionPartComponent {
     () => `${this.draftKey()}comment`,
     () => this.note()?.comment ?? '',
   );
+  protected readonly shape = draftField<RingShape | null>(
+    this.state,
+    () => `${this.draftKey()}shape`,
+    () => this.state.species()?.ringShape ?? null,
+  );
+
+  /** The shape chips of the ring. Other parts have no shape row. */
+  protected readonly shapes = computed<Chip[]>(() =>
+    this.part() === 'ring'
+      ? RING_SHAPES.map((value) => ({ value, label: this.i18n.translate(RING_SHAPE_TEXT[value]) }))
+      : [],
+  );
+  protected readonly shapeValue = computed<string[]>(() => {
+    const shape = this.shape();
+    return shape === null ? [] : [shape];
+  });
 
   constructor() {
     this.state.load(this.slug);
@@ -145,6 +163,10 @@ export class SectionPartComponent {
     this.openChange(changes(this.state.species()).length);
   }
 
+  protected chooseShape(values: readonly string[]): void {
+    this.shape.set((values[0] as RingShape | undefined) ?? null);
+  }
+
   private open(step: string, ...rest: string[]): void {
     const part = this.part();
     if (part !== null) void this.router.navigate(['/verwaltung/arten', this.slug(), step, part, ...rest]);
@@ -156,13 +178,14 @@ export class SectionPartComponent {
     const species = this.state.species();
     if (part === null || species === null) return;
     const comment = this.comment();
+    const shape = part === 'ring' ? { ringShape: this.shape() } : {};
     this.state.save(
       isTraitPart(part)
         ? {
             traits: withPartText(species, part, this.description()),
             partNotes: withPartNote(species, { part, description: '', comment }),
           }
-        : { partNotes: withPartNote(species, { part, description: this.description(), comment }) },
+        : { ...shape, partNotes: withPartNote(species, { part, description: this.description(), comment }) },
     );
     this.back();
   }

@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer"]
 baeume = ["laerche"]
 speisewertHinweis = "Sehr selten und kaum bekannt. Er riecht schwächer und weniger angenehm als der Maipilz."
+beschreibung = "Kleiner bis mittelgroßer Ritterling mit rotbraunem bis ockerorangem, später schmutzig weißem bis gelblichem Hut mit fast immer rötlichem Unterton, weißen, sehr dicht stehenden, ausgebuchtet angewachsenen Lamellen und weißlichem bis gelblichem, faserigem Stiel. Er wächst von März bis Juli auf Wiesen und in Parks, gern bei Lärchen, gesellig in Hexenringen, und ist sehr selten. Vom tödlich giftigen Riesenrötling unterscheiden ihn vor allem die weißen Lamellen und das weiße Sporenpulver, denn der Riesenrötling hat jung gelbliche, später rotockerfarbene Lamellen und fleischrötliches Sporenpulver. Der Orangerote Mairitterling ist ungenießbar."
+beschreibungEn = "A small to medium-sized knight with a red-brown to ochre-orange cap that later becomes dirty white to yellowish and almost always has a reddish tinge, white, very crowded, notched gills and a whitish to yellowish, fibrous stem. It grows from March to July on meadows and in parks, often with larch, in groups in fairy rings, and is very rare. The key difference from the deadly poisonous livid pinkgill is the white gills and the white spore print, because the livid pinkgill has gills that are yellowish when young and later reddish-ochre, and a flesh-pink spore print. This species is inedible."
+entwurf = true
 weitereNamen = ["Starkriechender Schönkopf", "Starkriechender Maipilz"]
 synonyme = ["Calocybe gambosa f. graveolens", "Gyrophila graveolens"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }

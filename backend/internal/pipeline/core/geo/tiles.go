@@ -2,7 +2,7 @@ package geo
 
 import "math"
 
-// Constants of the XYZ tile grid and of the byte coding, as tiles.py and pyramid.py.
+// Constants of the XYZ tile grid and of the byte coding.
 const (
 	// Rand is half the width of the web mercator world, in metres.
 	Rand = 20037508.342789244

@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["buche", "esche", "pappel", "birke"]
 speisewertHinweis = "Roh zersetzt er rote Blutkörperchen. Nur durchgegart essen. Weiße Seitlinge ohne Stiel bleiben stehen."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Seitling mit milchweißem, cremeweißem bis hellbeigem, nie reinweißem, fettig glänzendem Hut, weißlichen bis cremefarbenen, gedrängten Lamellen und kurzem, seitlich angesetztem, weißem Stiel. Er wächst von März bis November als Folgezersetzer an Laubholz, gern an Buche, Esche, Pappel und Birke. Vom Austernseitling unterscheidet ihn vor allem der Hut, der kleiner, zarter, dünnfleischiger und heller ist, außerdem erscheint er vor allem in der warmen Jahreszeit."
+beschreibungEn = "A medium-sized oyster mushroom with a milky-white, cream-white to light beige, never pure white, greasy and shiny cap, whitish to cream, crowded gills and a short, lateral, white stem. It grows from March to November as a saprobe on broadleaf wood, often beech, ash, poplar and birch. The key difference from the oyster mushroom is the cap, which is smaller, more delicate, thinner and paler, and it appears mainly in the warm season."
+entwurf = true
 weitereNamen = ["Löffelförmiger Seitling", "Cremeweißer Seitling", "Sommer-Austernseitling"]
 synonyme = ["Agaricus pulmonarius", "Pleurotus ostreatus var. pulmonarius", "Pleurotus populinus (nur bei espen + pappeln"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "eng", schneide = "glatt" }

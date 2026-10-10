@@ -38,8 +38,8 @@ func (GDALWarper) Warp(src Source, switches []string) (Raster, error) {
 	return readRaster(out)
 }
 
-// The switch lists below are those of the Python chain without "-q",
-// "-overwrite" and the file names: they only steer the command-line tool.
+// The switch lists below have no "-q", "-overwrite" and file names: these
+// only steer the command-line tool.
 
 func extent(box [4]float64) []string {
 	out := make([]string, 4)
@@ -49,8 +49,7 @@ func extent(box [4]float64) []string {
 	return out
 }
 
-// TileGridSwitches hits the tile grid of box exactly with w×h points, as
-// pyramid.render_field and fine_layers.warp_block. Each band keeps its own mask.
+// TileGridSwitches hits the tile grid of box exactly with w×h points. Each band keeps its own mask.
 func TileGridSwitches(box [4]float64, w, h int) []string {
 	s := []string{"-t_srs", Mercator, "-te"}
 	s = append(s, extent(box)...)
@@ -59,7 +58,7 @@ func TileGridSwitches(box [4]float64, w, h int) []string {
 }
 
 // BlockCutSwitches cuts one block of a source file at the mercator step
-// pixel, as fine_layers.raster_block. nodata is the nodata of the source.
+// pixel. nodata is the nodata of the source.
 func BlockCutSwitches(box [4]float64, pixel, nodata float64) []string {
 	step := fmt.Sprintf("%.6f", pixel)
 	s := []string{"-t_srs", Mercator, "-te"}
@@ -68,8 +67,8 @@ func BlockCutSwitches(box [4]float64, pixel, nodata float64) []string {
 		"-srcnodata", pyjson.PyFloat(nodata), "-dstnodata", "nan")
 }
 
-// PreviewSwitches lets GDAL choose extent and step, as the image warp of
-// region_map.py and input_layers.py. The manifest bounds come from its result.
+// PreviewSwitches lets GDAL choose extent and step. The manifest bounds come
+// from its result.
 func PreviewSwitches() []string {
 	return []string{"-t_srs", Mercator, "-r", "bilinear", "-dstnodata", "nan"}
 }
@@ -81,7 +80,7 @@ func ToTileGrid(w Warper, src Source, tx0, ty0, tx1, ty1, z int) (Raster, error)
 }
 
 // AutoBounds3857 returns the extent (west, south, east, north) that gdalwarp
-// chooses for src in EPSG:3857, as merc_bounds in region_map.py.
+// chooses for src in EPSG:3857.
 func AutoBounds3857(w Warper, src Source) ([4]float64, error) {
 	r, err := w.Warp(src, PreviewSwitches())
 	if err != nil {

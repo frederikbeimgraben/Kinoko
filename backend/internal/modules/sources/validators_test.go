@@ -317,6 +317,20 @@ func TestMatchChainsTakesTheFirstKnownTaxon(t *testing.T) {
 	}
 }
 
+func TestDefaultChainUsesTheLatinName(t *testing.T) {
+	c := DefaultChain(" Imleria  badia ")
+	if c.Key != "imleria_badia" || len(c.Taxa) != 1 || c.Taxa[0] != "Imleria badia" || c.MinForest != defaultMinForest {
+		t.Fatal(c)
+	}
+	if ChainKey("Boletus edulis") != Chains[0].Key {
+		t.Fatal(ChainKey("Boletus edulis"))
+	}
+	lachs := DefaultChain("Lactarius salmonicolor")
+	if lachs.Key != "lactarius_salmonicolor" || len(lachs.Taxa) != 4 || lachs.Taxa[0] != "Lactarius deliciosus" {
+		t.Fatal(lachs)
+	}
+}
+
 func TestISOWeeks(t *testing.T) {
 	if weeksIn(2020) != 53 || weeksIn(2021) != 52 {
 		t.Fatal(weeksIn(2020), weeksIn(2021))

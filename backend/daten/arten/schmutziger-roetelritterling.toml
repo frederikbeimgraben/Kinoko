@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst", "winter"]
 baeume = ["fichte"]
 speisewertHinweis = "Roh giftig, er zersetzt das Blut. Nur gut durchgegart essen."
+beschreibung = "Kleiner Rötelritterling mit blass bis kräftig lila Hut, der beim Trocknen heller wird, schmutzig weißen bis blass lila Lamellen und blaulila bis rötlich lila Stiel. Er wächst vom Frühling bis zum Winteranfang auf Wiesen, in Misch- und Fichtenwäldern sowie auf Kompost, einzeln oder büschelig. Vom ähnlichen Bocksdickfuß unterscheiden ihn vor allem die Lamellen, denn der Bocksdickfuß hat rostbraune Lamellen und rostbraunes Sporenpulver und riecht stark nach Ziegenbock."
+beschreibungEn = "A small blewit with a pale to deep lilac cap that becomes paler when it dries, dirty white to pale lilac gills and a blue-lilac to reddish-lilac stem. It grows from spring to early winter in meadows, in mixed and spruce woods and on compost, single or in clusters. The key difference from the similar Cortinarius camphoratus is the gills, because that species has rust-brown gills, a rust-brown spore print and a strong smell of billy goat."
+entwurf = true
 weitereNamen = ["Fleischbrauner Rötelritterling"]
 synonyme = ["Lepista sordida var. lilacea", "Lepista sordida var. obscurata", "Rhodopaxillus sordidus forma obscuratus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }

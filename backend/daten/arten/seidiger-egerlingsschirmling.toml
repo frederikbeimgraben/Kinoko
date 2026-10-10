@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Giftig. Alle Egerlingsschirmlinge gelten als verdächtig."
+beschreibung = "Schirmling mit seidigem, weißem bis cremefarbenem, teils rosa getöntem Hut, weißen, freien, sehr dicht stehenden Lamellen und weißem Stiel mit schmalem, vergänglichem Ring und knollig verdickter Basis. Er wächst vom Frühling bis zum Spätherbst in Parks, Gärten, Wäldern, auf Wiesen und an Ruderalstellen. Vom ähnlichen Rosablättrigen Egerlingsschirmling unterscheiden ihn vor allem die Lamellen, die weiß bleiben, und das Fleisch, das bei Berührung leicht gilbt. Der Seidige Egerlingsschirmling ist giftig."
+beschreibungEn = "A dapperling with a silky, white to cream cap that is sometimes tinged pink, free, very crowded white gills and a white stem with a narrow, fleeting ring and a bulbous base. It grows from spring to late autumn in parks, gardens, woods, meadows and on waste ground. The key difference from the similar white dapperling is the gills, which stay white, and the flesh, which turns slightly yellow when touched. Leucoagaricus holosericeus is poisonous."
+entwurf = true
 weitereNamen = ["Reinseidiger Egerlingsschirmpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 stielmerkmale = ["ring", "knolle", "hohl"]

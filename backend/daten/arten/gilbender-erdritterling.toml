@@ -8,12 +8,16 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Kenntlich an den beim Reiben gilbenden Lamellen und am ranzig mehligen Geruch. Die Gilbung bleibt oft aus, deshalb ist er schwer zu bestimmen und von den giftigen Erdritterlingen kaum sicher zu trennen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner bis mittelgroßer Ritterling mit hell silbergrauem bis graubraunem, filzig schuppigem Hut mit kleinem Buckel, weißen bis grauweißlichen Lamellen, die beim Reiben gilben, und weißem bis blassgrauem, oft verbogenem Stiel. Er wächst von Juni bis November bei verschiedenen Sträuchern im Mischwald, auf Wiesen sowie in Parks und Gärten, riecht ranzig mehlig und ist sehr selten. Vom Mausgrauen Erdritterling unterscheiden ihn vor allem die gilbenden Lamellen, denn diese gilben beim Mausgrauen Erdritterling nicht; die Gilbung bleibt aber oft aus. Der Gilbende Erdritterling ist giftig."
+beschreibungEn = "A small to medium-sized knight with a light silver-grey to grey-brown, felty-scaly cap with a small umbo, white to grey-whitish gills that turn yellow when rubbed, and a white to pale grey, often bent stem. The yellowing knight grows from June to November with various shrubs in mixed woods, in meadows and in parks and gardens, smells rancid and mealy, and is very rare. The key difference from Tricholoma myomyces is the yellowing gills, because the gills of Tricholoma myomyces do not turn yellow; but the yellowing often does not occur. The yellowing knight is poisonous."
+entwurf = true
 weitereNamen = ["Gilbernder Erdritterling", "Silbergrauer Erdritterling"]
 synonyme = ["Tricholoma scalpturatum var. argyraceum"]
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["eingebogen"] }
 stielmerkmale = ["faserig", "hohl"]
+ringform = "spinnwebartig"
 
 [quelle]
 titel = "123pilzsuche"

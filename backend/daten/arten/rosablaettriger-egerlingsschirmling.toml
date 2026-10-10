@@ -7,11 +7,15 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 warnung = "123pilzsuche führt den Rosablättrigen Egerlingsschirmling als giftig. Dazu kommt die Verwechslung mit weißen Knollenblätterpilzen, die tödlich endet."
 speisewertHinweis = "Die DGfM meldet häufig Magen-Darm-Beschwerden. Er galt früher als essbar. Wegen der Verwechslung mit Knollenblätterpilzen ganz meiden."
+beschreibung = "Schirmling mit seidigem, weißem bis cremefarbenem Hut, weißen, freien Lamellen, die später blass fleischfarben bis rosa werden, und cremeweißem Stiel mit schmalem weißem Ring und knollig verdickter Basis ohne Scheide. Er wächst vom Frühling bis zum Spätherbst in Parks, Gärten, Wäldern und auf Wiesen, oft zwischen Wiesenchampignons. Vom tödlich giftigen Weißen Knollenblätterpilz unterscheidet ihn vor allem die Stielbasis ohne Scheide, denn der Weiße Knollenblätterpilz hat eine häutige, sackartige Scheide und Lamellen, die weiß bleiben. Der Rosablättrige Egerlingsschirmling ist giftig."
+beschreibungEn = "A dapperling with a silky, white to cream cap, white free gills that later turn pale flesh-coloured to pink, and a cream-white stem with a narrow white ring and a bulbous base without a volva. It grows from spring to late autumn in parks, gardens, woods and meadows, often among meadow mushrooms. The key difference from the deadly poisonous white form of the death cap is the stem base without a volva, because the death cap has a membranous, sack-like volva and gills that stay white. The white dapperling is poisonous."
+entwurf = true
 weitereNamen = ["Rosablättriger Egerlingsschirmpilz", "Gemeiner Egerlingsschirmling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng", schneide = "gesaegt" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["hohl", "knolle", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

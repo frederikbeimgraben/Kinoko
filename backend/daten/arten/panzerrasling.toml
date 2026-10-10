@@ -8,6 +8,9 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Kleiner bis mittelgroßer Rasling mit dunkelbraunem, olivbraunem bis schwarzbraunem Hut mit dicker, knorpeliger, wie gepanzerter Huthaut und lange eingerolltem Rand, weißen bis cremefarbenen, breit angewachsenen Lamellen und weißlichem bis gelbbraunem, längsfaserigem Stiel mit wurzelnder Basis. Er wächst von Juni bis November als Folgezersetzer auf grasigen Wegen, an Wegrändern und in Parks, bevorzugt auf kalkreichem Boden, meist büschelig aus einem Strunk. Sein bestes Merkmal ist die knorpelige Huthaut zusammen mit dem rein weißen Sporenpulver."
+beschreibungEn = "A small to medium-sized domecap with a dark brown, olive-brown to black-brown cap with a thick, cartilaginous skin that looks like armour and a margin that stays inrolled for a long time, white to cream, broadly adnate gills and a whitish to yellow-brown, fibrous stem with a rooting base. It grows from June to November as a saprobe on grassy paths, at roadsides and in parks, mainly on calcareous soil, mostly in clusters from a common base. Its best feature is the cartilaginous cap skin together with the pure white spore print."
+entwurf = true
 weitereNamen = ["Panzerrasling", "Erdzimmerling", "Erdzimmermandl", "Knorpeliger Knäuelrasling", "Büschelrasling", "Brauner Rasling"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutrand = { von = ["eingerollt"] }

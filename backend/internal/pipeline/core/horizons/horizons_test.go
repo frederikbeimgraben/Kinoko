@@ -10,8 +10,8 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/calendar"
 )
 
-// horizons.json comes from testdata/golden.py (horizons_golden): horizons.knowable,
-// activity_names, forecast_weeks, horizon_for (one year only) and shared_horizon.
+// horizons.json is the golden file of Knowable, ActivityNames, ForecastWeeks,
+// HorizonFor (one year only) and SharedHorizon.
 type golden struct {
 	Knowable []struct {
 		Name  string
@@ -49,7 +49,7 @@ func load(t *testing.T) golden {
 	return g
 }
 
-func TestKnowableMatchesPython(t *testing.T) {
+func TestKnowableMatchesGolden(t *testing.T) {
 	for _, c := range load(t).Knowable {
 		if got := Knowable(c.Name, c.H); got != c.Known {
 			t.Errorf("Knowable(%q, %d) = %v, want %v", c.Name, c.H, got, c.Known)
@@ -79,7 +79,7 @@ func TestKnowableCountFallsWithHorizon(t *testing.T) {
 	}
 }
 
-func TestActivityNamesMatchPython(t *testing.T) {
+func TestActivityNamesMatchGolden(t *testing.T) {
 	for key, want := range load(t).Activity {
 		h := int(key[0] - '0')
 		if got := ActivityNames(h); !slices.Equal(got, want) {
@@ -88,7 +88,7 @@ func TestActivityNamesMatchPython(t *testing.T) {
 	}
 }
 
-func TestForecastWeeksMatchesPython(t *testing.T) {
+func TestForecastWeeksMatchesGolden(t *testing.T) {
 	for _, c := range load(t).Forecast {
 		today, err := time.Parse(time.DateOnly, c.Today)
 		if err != nil {
@@ -104,7 +104,7 @@ func TestForecastWeeksMatchesPython(t *testing.T) {
 	}
 }
 
-func TestHorizonForMatchesPythonInOneYear(t *testing.T) {
+func TestHorizonForMatchesGoldenInOneYear(t *testing.T) {
 	for _, c := range load(t).Horizon {
 		last := calendar.Week{Year: c.Year, Week: c.Last}
 		got, err := HorizonFor(calendar.Week{Year: c.Year, Week: c.Week}, &last, c.Available)
@@ -137,13 +137,13 @@ func TestHorizonForUsesTheCalendar(t *testing.T) {
 	}
 }
 
-func TestSharedHorizonMatchesPython(t *testing.T) {
+func TestSharedHorizonMatchesGolden(t *testing.T) {
 	for _, c := range load(t).Shared {
 		if got := SharedHorizon(c.Sets); got != c.Shared {
 			t.Errorf("SharedHorizon(%v) = %d, want %d", c.Sets, got, c.Shared)
 		}
 	}
 	if SharedHorizon([][]int{{0, 2}, {0, 1, 2, 3}}) != 2 || SharedHorizon(nil) != 0 {
-		t.Error("hand cases of test_horizons.py fail")
+		t.Error("hand cases of SharedHorizon fail")
 	}
 }

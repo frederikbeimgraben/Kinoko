@@ -7,7 +7,11 @@ marktfaehigSchweiz = false
 marktfaehig = false
 jahreszeiten = ["fruehling", "sommer"]
 baeume = ["buche", "eiche", "weide", "birke", "laerche", "obstbaum"]
+karte = "laetiporus_sulphureus"
 speisewertHinweis = "Roh unverträglich wegen Oxalsäure. Nur junge Stücke, in etwa 1 cm dicke Scheiben schneiden, zehn Minuten in Salzwasser kochen und das Kochwasser weggießen. Funde an Eibe und Goldregen stehen lassen, der Pilz kann das Gift des Baumes aufnehmen. Auch Funde aus Obstplantagen meiden, wegen der Spritzmittel. Die DGfM nennt gelegentlich Magen-Darm-Beschwerden und allergische Reaktionen."
+beschreibung = "Großer Porling ohne Stiel mit fächerförmigen, dachziegelartig übereinander wachsenden, orangen bis hellgelben Hüten, gelben Poren und gelbem, jung weichem Fleisch, das im Alter weiß ausbleicht. Er wächst von Mai bis September an Laubbäumen wie Eiche, Buche, Weide und Obstbäumen, in höheren Lagen auch an Lärche, und verursacht Braunfäule. Vom sehr ähnlichen Nadelholzschwefelporling unterscheidet ihn vor allem das Holz, denn der Nadelholzschwefelporling wächst meist an Fichte und Tanne."
+beschreibungEn = "A large polypore without a stem, with fan-shaped, orange to light yellow caps that grow over each other like roof tiles, yellow pores and yellow flesh that is soft when young and fades to white with age. It grows from May to September on broadleaf trees such as oak, beech, willow and fruit trees, at higher altitudes also on larch, and causes brown rot. The key difference from the very similar Laetiporus montanus is the host wood, because that species grows mostly on spruce and fir."
+entwurf = true
 weitereNamen = ["Eierporling", "Gemeiner Schwefelporling", "Laubholzschwefelporling"]
 synonyme = ["Sulphurina sulphurea", "Tyromyces sulphureus", "Sporotrichum versisporum", "Polyporus sulphureus var. albolabyrinthiporus"]
 fruchtschicht = { art = "poren" }

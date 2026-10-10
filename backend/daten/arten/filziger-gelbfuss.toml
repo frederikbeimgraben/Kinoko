@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte", "kiefer"]
 speisewertHinweis = "Relativ selten. Nach einem trockenen Sommer und anschließendem Regen tritt er häufiger auf."
 haeufigkeit = "selten"
+beschreibung = "Kleiner bis mittelgroßer Lamellenpilz mit orangebraunem, filzig schuppigem, feucht schmierigem Hut mit lange eingerolltem Rand, entfernt stehenden, gelborangen bis rotbraunen, etwas herablaufenden Lamellen und lebhaft orangegelbem, langem Stiel, der tief im Moos steckt; das Fleisch rötet bei Verletzung. Er wächst von Juni bis November unter Fichten, vereinzelt unter zweinadeligen Kiefern, und ist relativ selten. Vom Spitzgebuckelten Raukopf unterscheiden ihn vor allem die herablaufenden Lamellen und das olivschwarze Sporenpulver, denn der Raukopf hat einen spitz gebuckelten Hut, zimtbraune Lamellen und rostbraunes Sporenpulver."
+beschreibungEn = "A small to medium-sized gilled mushroom with an orange-brown, felty-scaly cap that is slimy when wet and has a long inrolled margin, widely spaced, yellow-orange to red-brown, slightly decurrent gills and a bright orange-yellow, long stem that sits deep in the moss; the flesh turns red where damaged. Chroogomphus helveticus grows from June to November under spruce, sometimes under two-needled pines, and is fairly rare. The key difference from the deadly webcap is the decurrent gills and the olive-black spore print, because the deadly webcap has a cap with a pointed umbo, cinnamon-brown gills and a rust-brown spore print."
+entwurf = true
 synonyme = ["Gomphidus helveticus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 hutrand = { von = ["eingerollt"] }

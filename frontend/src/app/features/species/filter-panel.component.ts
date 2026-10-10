@@ -19,9 +19,10 @@ const FLAT_GROUPS: readonly { key: GroupKey; labelOf: GroupKey }[] = [
   { key: 'capShape', labelOf: 'capShape' },
   { key: 'hymenium', labelOf: 'hymenium' },
   { key: 'period', labelOf: 'period' },
+  { key: 'forecast', labelOf: 'forecast' },
 ];
 
-/** The content of the filter: edibility, cap shape, colour, hymenium and time in one column. */
+/** The content of the filter: edibility, cap shape, colour, hymenium, time and forecast in one column. */
 @Component({
   selector: 'app-species-filter-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,

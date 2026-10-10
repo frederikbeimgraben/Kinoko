@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer"]
 speisewertHinweis = "Die schleimige Huthaut vor dem Garen abziehen. In Deutschland gefährdet."
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Mittelgroßer Schmierröhrling mit weißem bis cremefarbenem, schleimigem Hut, der im Alter gelbbraun wird, weißen, später gelblichen, herablaufenden Röhren und weißem bis gelbem Stiel mit braunen, harzigen Pünktchen. Er wächst von Juni bis November nur bei fünfnadeligen Kiefern wie Zirbelkiefer und Weymouthskiefer und ist in Deutschland gefährdet. Kennzeichnend sind die helle Farbe des jungen Hutes und die Bindung an fünfnadelige Kiefern."
+beschreibungEn = "A medium-sized slippery bolete with a white to cream, slimy cap that turns yellow-brown with age, white, later yellowish, decurrent tubes and a white to yellow stem with brown, resinous dots. It grows from June to November only with five-needled pines such as Swiss stone pine and Weymouth pine, and is endangered in Germany. Key features are the pale colour of the young cap and the link to five-needled pines."
+entwurf = true
 weitereNamen = ["Weymouthsröhrling"]
 synonyme = ["Boletus placidus", "Uloporus placidus", "Suillus plorans subsp. placidus", "Boletus fusipes", "Gyrodon placidus", "Viscipellis fusipes", "Ixocomus fusipes"]
 fruchtschicht = { art = "roehren" }

@@ -78,7 +78,7 @@ func readSome(path string, wanted, required []string) (*pio.Table, error) {
 }
 
 // ScaleColumns returns the tree-scale columns that a map reads: the features of
-// each horizon of each bundle plus forest_fraction_500m, sorted, as region_map.py.
+// each horizon of each bundle plus forest_fraction_500m, sorted.
 // LoadTables drops the names that are not in the file, such as the weather features.
 func ScaleColumns(bundles ...*bundle.Bundle) []string {
 	var features []string
@@ -117,7 +117,7 @@ func floats(t *pio.Table, name string) ([]float64, bool) {
 	return nil, false
 }
 
-// float32s returns a numeric column as float32, as to_numpy(dtype="float32").
+// float32s returns a numeric column as float32.
 func float32s(t *pio.Table, name string) ([]float32, bool) {
 	if v, ok := t.F32[name]; ok {
 		return v, true

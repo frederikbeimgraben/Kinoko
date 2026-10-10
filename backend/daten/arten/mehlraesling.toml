@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur mit starkem Mehlgeruch und rosa Sporenabdruck nehmen. Fehlt eines von beiden, kann es ein tödlich giftiger weißer Trichterling sein."
+beschreibung = "Kleiner bis mittelgroßer Räsling mit weißem bis grauweißem, fein bereiftem, samtigem Hut mit unregelmäßig vertiefter Mitte und eingerolltem, welligem Rand, weißen, herablaufenden, leicht ablösbaren Lamellen und weißem, vollem Stiel. Er wächst von Juni bis November im Mischwald und gilt als Zeiger für Steinpilze am selben Ort. Vom tödlich giftigen Bleiweißen Firnistrichterling unterscheiden ihn vor allem der starke Geruch nach Mehl und Gurke und das rosa Sporenpulver, denn der Trichterling hat weißes Sporenpulver und riecht süßlich ohne Mehlnote."
+beschreibungEn = "A small to medium-sized miller with a white to grey-white, finely bloomed, velvety cap with an irregularly depressed centre and an inrolled, wavy margin, white, decurrent gills that come off easily, and a white, solid stem. It grows from June to November in mixed woods and is considered an indicator of ceps at the same place. The key difference from the deadly poisonous Clitocybe phyllophila is the strong smell of meal and cucumber and the pink spore print, because Clitocybe phyllophila has a white spore print and a sweetish smell without a note of meal."
+entwurf = true
 weitereNamen = ["Mehlpilz", "Großer Mehlräsling", "Moosling", "Großer Musseron", "Pflaumenpilz", "Pflaumen-Räsling", "Simmerling", "Pflaumen-Rässling"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutmerkmale = ["vertieft", "unregelmaessig", "gebuckelt"]

@@ -8,11 +8,15 @@ jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er sieht jungen Egerlingen und Schirmlingen ähnlich. Sein Sporenpulver bleibt weiß, das des Rosablättrigen Egerlingsschirmlings wird am nächsten Tag rosa. Nicht verzehren."
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer Schirmling mit schmutzig weißem bis hell ockerbraunem, seidigem Hut, dessen Huthaut beim Aufschirmen in feine bräunliche Felder aufreißt, weißen bis gelblichen, freien Lamellen, die im Alter leicht rosa werden, und weißem bis gelbem, hohlem Stiel mit knolliger Basis und schmalem, häutigem Ring. Er wächst von März bis November in Parks, Gärten und Wäldern, auf Wiesen und an Gebüschrändern, gern an lichten, sonnigen Stellen auf kalkreichem Boden, und ist sehr selten. Vom Rosablättrigen Egerlingsschirmling unterscheidet ihn vor allem das Sporenpulver, denn es bleibt weiß, während das des Rosablättrigen Egerlingsschirmlings am nächsten Tag rosa wird. Der Fleischblättrige Egerlingsschirmling ist giftig."
+beschreibungEn = "A medium-sized dapperling with a dirty white to light ochre-brown, silky cap whose skin breaks into fine brownish patches as it opens, white to yellowish free gills that turn slightly pink with age, and a white to yellow, hollow stem with a bulbous base and a narrow, membranous ring. Leucoagaricus carneifolius grows from March to November in parks, gardens and woods, in meadows and at the edges of shrubs, often in open, sunny places on calcareous soil, and is very rare. The key difference from the white dapperling is the spore print, because it stays white, while the spore print of the white dapperling turns pink the next day. Leucoagaricus carneifolius is poisonous."
+entwurf = true
 weitereNamen = ["Dichtblättriger Egerlingsschirmling", "Grauhütiger Egerlingsschirmpilz"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["hohl", "knolle", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

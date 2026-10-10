@@ -7,7 +7,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// Credits of the sources that CC BY 4.0 asks for (fine_layers.py).
+// Credits of the sources that CC BY 4.0 asks for.
 const (
 	thuenen    = "10-m-Raster, Thünen-Institut, Dominant Tree Species for Germany (2017/2018), CC BY 4.0"
 	copernicus = "90-m-Raster, Copernicus DEM GLO-90"
@@ -26,8 +26,7 @@ const (
 	SourceSoil                         // a SoilGrids file, see FineLayer.Soil
 )
 
-// FineLayer is one static layer, its source and the scale of a byte, as
-// FineLayer in fine_layers.py.
+// FineLayer is one static layer, its source and the scale of a byte.
 type FineLayer struct {
 	Name        string
 	Label       string
@@ -56,7 +55,7 @@ func rasterLayer(name, label, unit string, res, low, high float64, note string, 
 		Source: src, Scale: scale, Nodata: nodata, OfflineZoom: 12}
 }
 
-// FineLayers are the static layers in the order of fine_layers.py: TREES, then RASTERS.
+// FineLayers are the static layers in this order: the tree layers, then the raster layers.
 var FineLayers = []FineLayer{
 	treeLayer(Wald, "Waldanteil"),
 	treeLayer("fichte", "Fichte", 8),
@@ -81,8 +80,8 @@ func withSoil(l FineLayer, stem string) FineLayer {
 // Zoom gives the finest zoom that the source of the layer carries.
 func (l FineLayer) Zoom(cap int) int { return geo.FinestZoom(l.Resolution, cap, geo.ZoomBase) }
 
-// ScaleField reads a source field as a share 0..1 of the layer scale, as
-// scale_field: nodata and NaN give NaN. The arithmetic is float32, as numpy.
+// ScaleField reads a source field as a share 0..1 of the layer scale:
+// nodata and NaN give NaN. The arithmetic is float32.
 func ScaleField(raw []float32, l FineLayer) []float32 {
 	nodata := float32(l.Nodata)
 	scale, low, width := float32(l.Scale), float32(l.Low), float32(l.High-l.Low)

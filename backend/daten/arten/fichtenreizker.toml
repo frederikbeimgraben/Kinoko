@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 karte = "reizker"
 speisewertHinweis = "Schmeckt bitterlich und leicht scharf, geringer als der Edelreizker."
+beschreibung = "Mittelgroßer Milchling mit orangem bis orangerotem, dunkler gezontem Hut, der bald kräftige grüne Flecken bekommt, orangeockerfarbenen Lamellen, karottenroter Milch und hohlem, rötlichem bis orangem Stiel ohne Grübchen. Er wächst von Juni bis November bei Fichten. Vom Edelreizker unterscheidet ihn vor allem die Milch, die nach etwa 15 Minuten weinrot wird, denn beim Edelreizker bleibt sie karottenrot; der Edelreizker hat außerdem Grübchen am Stiel und wächst bei Kiefer."
+beschreibungEn = "A medium-sized milkcap with an orange to orange-red cap with darker zones that soon gets strong green spots, orange-ochre gills, carrot-red milk and a hollow, reddish to orange stem without pits. The false saffron milkcap grows from June to November with spruce. The key difference from the saffron milkcap is the milk, which turns wine-red after about 15 minutes, because the milk of the saffron milkcap stays carrot-red; the saffron milkcap also has pits on the stem and grows with pine."
+entwurf = true
 weitereNamen = ["Nadelwaldreizker"]
 synonyme = ["Lactarius deliciosus var. deterrimus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

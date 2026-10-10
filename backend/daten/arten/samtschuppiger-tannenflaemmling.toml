@@ -7,10 +7,14 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["tanne", "kiefer"]
 speisewertHinweis = "Giftig und halluzinogen. Der bitterliche Geschmack, die gelben bis rostbraunen Lamellen und das rostbraune Sporenpulver kennzeichnen ihn."
+beschreibung = "Flämmling mit gelbfuchsigem bis gelbbraunem, trockenem, schuppigem Hut, gelben bis goldgelben, im Alter rostbraunen Lamellen und gelblichem, rotbraun geflecktem Stiel mit undeutlicher Ringzone. Er wächst vom Sommer bis zum Spätherbst auf Nadeltotholz, bevorzugt an Tanne und Kiefer, auch auf Zapfen und Holzresten. Typisch ist das rostbraune Sporenpulver, das auch die Ringzone färbt. Der Samtschuppige Tannenflämmling ist giftig."
+beschreibungEn = "A rustgill with a tawny-yellow to yellow-brown, dry, scaly cap, yellow to golden-yellow gills that turn rust-brown with age and a yellowish stem with red-brown spots and an indistinct ring zone. It grows from summer to late autumn on dead conifer wood, mostly on fir and pine, also on cones and wood debris. A typical feature is the rust-brown spore print, which also colours the ring zone. Gymnopilus sapineus is poisonous."
+entwurf = true
 weitereNamen = ["Scaly Rustgill"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", schneide = "gesaegt" }
 hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["behaart", "ring"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

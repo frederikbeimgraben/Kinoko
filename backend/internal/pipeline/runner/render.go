@@ -22,7 +22,7 @@ type Assets struct {
 }
 
 // SpeciesRender is the input of the map of one species. The manifest goes
-// to <Maps>/<Slug>.json, named by the catalogue slug (finding 1 of the plan).
+// to <Maps>/<Slug>.json, named by the catalogue slug (finding 1).
 type SpeciesRender struct {
 	Slug      string
 	ChainKey  string

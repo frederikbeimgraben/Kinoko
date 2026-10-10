@@ -9,6 +9,9 @@ baeume = ["fichte"]
 speisewertHinweis = "Er schmeckt schärflich bis bitterlich. In Deutschland vom Aussterben bedroht und deshalb stehen zu lassen."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "vomAussterbenBedroht"
+beschreibung = "Mittelgroßer, gestielter Porling mit hell- bis kastanienbraunem, fein samtig behaartem Hut, weißlichen, tief herablaufenden Poren und zentralem, weißlichem, filzigem Stiel. Er wächst von Juni bis November meist im Nadelwald an totem, oft vergrabenem Fichtenholz und scheint deshalb am Boden zu wachsen; er ist sehr selten und in Deutschland vom Aussterben bedroht. Vom Bergporling unterscheidet ihn vor allem der einzelne Hut auf zentralem Stiel, denn der Bergporling bildet fächerförmige Hüte aus einem gemeinsamen Strunk an Weißtanne."
+beschreibungEn = "A medium-sized, stalked polypore with a light to chestnut-brown, finely velvety, hairy cap, whitish pores that run far down the stem, and a central, whitish, felty stem. It grows from June to November mostly in coniferous woods on dead, often buried spruce wood, so it seems to grow from the ground; it is very rare and threatened with extinction in Germany. The key difference from Bondarzewia mesenterica is the single cap on a central stem, because Bondarzewia mesenterica forms fan-shaped caps from a common base on silver fir."
+entwurf = true
 synonyme = ["Piptoporus hirtus", "Polyporus lucienqueletii", "Cerioporus lucienqueletii", "Polyporus hirtus", "Albatrellus hirtus", "Favolus hirtus", "Polyporellus hirtus", "Polyporus hispidellus"]
 fruchtschicht = { art = "poren" }
 hutrand = { von = ["wellig"] }

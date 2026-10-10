@@ -130,6 +130,27 @@ func TestTrainingRunWritesProvenanceRecordsAndTheMeanBrier(t *testing.T) {
 	}
 }
 
+func TestASpeciesWithoutChainRowTrainsWithTheDefaultChain(t *testing.T) {
+	f := newFixture(t, 1)
+	f.install(sources.KindTreeScales, "tree_scales", nil)
+	var slug, latin string
+	if err := f.env.DB.QueryRow(`SELECT slug, latin_name FROM species
+		WHERE id NOT IN (SELECT species_id FROM species_forecast) ORDER BY name LIMIT 1`).Scan(&slug, &latin); err != nil {
+		t.Fatal(err)
+	}
+	f.exec("UPDATE species SET forecast_enabled = 1 WHERE slug = ?", slug)
+	run := f.queue(enums.RunKindTraining)
+	f.runNext()
+	if got := f.get(run.ID); got.State != enums.RunStateFinished {
+		t.Fatalf("run = %+v", got)
+	}
+	want := sources.DefaultChain(latin)
+	got := f.stages.chains[slug]
+	if got.Key != want.Key || !slices.Equal(got.Taxa, want.Taxa) || got.MinForest != want.MinForest {
+		t.Fatalf("chain = %+v, want %+v", got, want)
+	}
+}
+
 func TestAFailedSpeciesKeepsTheOthersAndSkipsItsMap(t *testing.T) {
 	f := newFixture(t, 3)
 	for _, k := range []sources.Kind{sources.KindTreesGrid, sources.KindTreeScales, sources.KindSiteGrid} {

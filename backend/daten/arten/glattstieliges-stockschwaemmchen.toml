@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Der Stiel ist glatt und dunkel, ohne die braunen Schüppchen des Stockschwämmchens. Wegen der Ähnlichkeit mit dem Gifthäubling nicht sammeln."
+beschreibung = "Kleiner Lamellenpilz mit hell- bis dattelbraunem Hut mit ausbleichender Mitte und meist kleinen braunen Schüppchen, hellbraunen bis zimtbraunen, gedrängten Lamellen und glattem, dunkelbraunem bis schwarzbraunem, weiß überfasertem Stiel. Er wächst von März bis November meist büschelig an totem Laubholz, an Stümpfen, Ästen und Holzabfällen. Vom Gifthäubling ist er kaum sicher zu trennen; der Gifthäubling riecht muffig nach faulendem Holz und wächst meist an Nadelholz."
+beschreibungEn = "A small gilled mushroom with a light brown to date-brown cap with a fading centre and mostly small brown scales, light brown to cinnamon-brown, crowded gills and a smooth, dark brown to blackish-brown stem with white fibres. Pholiota lignicola grows from March to November, mostly in clusters, on dead broadleaf wood, on stumps, branches and wood debris. It is hard to separate with certainty from the funeral bell; the funeral bell smells musty of rotting wood and mostly grows on conifers."
+entwurf = true
 weitereNamen = ["Glattstieliges Frühlings-Stockschwämmchen"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 stielmerkmale = ["faserig", "ring"]

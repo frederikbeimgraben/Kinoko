@@ -17,7 +17,7 @@ import (
 
 // bundleShape changes when the form of the bundle changes. A new value
 // makes the clients drop the bundles in their caches.
-const bundleShape = 3
+const bundleShape = 4
 
 // bundleCache holds the built bundle of one tag. A build takes more than
 // a second, so requests wait for the first build and do not build again.
@@ -57,7 +57,8 @@ type Bundle struct {
 	Facets          *Axes            `json:"facets"`
 }
 
-// isoNaive gives the Python isoformat of a time without a zone.
+// isoNaive gives the ISO 8601 form of a time without a zone. A zero
+// fraction is left out.
 func isoNaive(t time.Time) string {
 	if t.Nanosecond() == 0 {
 		return t.UTC().Format("2006-01-02T15:04:05")

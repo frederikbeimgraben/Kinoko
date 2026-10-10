@@ -9,6 +9,9 @@ baeume = []
 speisewertHinweis = "Der Geschmack ist extrem scharf."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "starkGefaehrdet"
+beschreibung = "Mittelgroßer Milchling mit fleischrosa, kastanienbraunem bis purpurbraunem Hut mit eingedrückter Mitte und lange eingebogenem Rand, blassgelben bis ockergelben, gedrängten Lamellen und blassbraunem Stiel, oft mit dunkleren Gruben. Er wächst von Juni bis November im Mischwald, gern in Bergregionen auf saurem, grasigem Boden, und ist sehr selten. Vom Rotbraunen Milchling unterscheidet ihn vor allem der Geruch nach Zichorien und Maggi, denn der Rotbraune Milchling riecht harzig. Der Kuhrote Milchling ist ungenießbar und in Deutschland stark gefährdet."
+beschreibungEn = "A medium-sized milkcap with a flesh-pink, chestnut-brown to purple-brown cap with a depressed centre and a margin that stays inrolled for a long time, pale yellow to ochre-yellow, crowded gills and a pale brown stem, often with darker pits. It grows from June to November in mixed woods, often in mountain regions on acid, grassy soil, and is very rare. The key difference from the rufous milkcap is the smell of chicory and stock seasoning, because the rufous milkcap has a resinous smell. This species is inedible and highly endangered in Germany."
+entwurf = true
 weitereNamen = ["Fleischroter Milchling"]
 synonyme = ["Lactarius curtus"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }

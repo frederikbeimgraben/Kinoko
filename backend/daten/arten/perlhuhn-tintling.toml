@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als ungenießbar und verdächtig. Nicht essen."
+beschreibung = "Kleiner Tintling mit weißgrauem bis graubraunem, später dunkelbraunem, glockigem Hut mit sparrigen, abwischbaren, grauweißen Schuppen, erst weißlichen, dann grauen und zuletzt schwarz zerfließenden Lamellen und weißem, hohlem Stiel ohne Ring. Er wächst von März bis November als Folgezersetzer auf Totholz, vergrabenem Holz oder verrotteten Baumwurzeln. Vom Faltentintling unterscheiden ihn vor allem die sparrigen Schuppen auf dem Hut und das dichte, dunkelbraune Myzel an der Stielbasis, denn der Faltentintling hat einen grauen, stark längsgefalteten Hut ohne Schuppen. Der Perlhuhn-Tintling ist ungenießbar."
+beschreibungEn = "A small inkcap with a white-grey to grey-brown, later dark brown, bell-shaped cap with raised, grey-white scales that rub off, gills that are whitish at first, then grey and finally dissolve into black ink, and a white, hollow stem without a ring. It grows from March to November as a saprobe on dead wood, buried wood or rotten tree roots. The key difference from the common inkcap is the raised scales on the cap and the dense, dark brown mycelium at the stem base, because the common inkcap has a grey, strongly pleated cap without scales. This species is inedible."
+entwurf = true
 synonyme = ["Coprinus strossmayeri"]
 fruchtschicht = { art = "lamellen" }
 hutform = { von = "glockig" }

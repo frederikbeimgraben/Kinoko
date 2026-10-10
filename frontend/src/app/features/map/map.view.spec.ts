@@ -4,7 +4,14 @@ import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { NOW } from '../../core/tiles/now';
 import { TileService } from '../../core/tiles/tile.service';
 import { SpeciesStore } from '../species/species.store';
-import { BUNDLE_ITEMS, RAW_LAYERS, RAW_MANIFEST, answerManifest } from '../../testing/map-doubles';
+import {
+  BUNDLE_ITEMS,
+  RAW_LAYERS,
+  RAW_MANIFEST,
+  answerManifest,
+  answerMissing,
+  answerNoReply,
+} from '../../testing/map-doubles';
 import type { SpeciesEntry } from '../../core/api/models';
 import { CombinationStore } from './combination.store';
 import { MapStore } from './map.store';
@@ -53,8 +60,11 @@ const CREDIT_LAYERS = {
 async function view(
   manifest: unknown = RAW_MANIFEST,
   layers: unknown = RAW_LAYERS,
+  answer: () => void = () => {
+    answerManifest(manifest, layers);
+  },
 ): Promise<{ view: MapView; state: MapStore; combination: CombinationStore; tiles: TileService }> {
-  answerManifest(manifest, layers);
+  answer();
   TestBed.configureTestingModule({
     providers: [
       provideHttpClient(),
@@ -95,7 +105,7 @@ describe('MapView', () => {
   });
 
   it('zeigt statt des Skeletts einen Fehler, wenn beide Manifeste ausbleiben, und versucht es neu', async () => {
-    const { view: model, tiles } = await view(null, null);
+    const { view: model, tiles } = await view(null, null, answerNoReply);
 
     expect(model.failed()).toBe(true);
     expect(model.loading()).toBe(false);
@@ -107,6 +117,69 @@ describe('MapView', () => {
       expect(tiles.layers()).not.toBeNull();
     });
     expect(model.loading()).toBe(false);
+  });
+
+  it('meldet „noch keine Vorhersage“, wenn der Server beide Manifeste nicht hat', async () => {
+    const { view: model } = await view(null, null, answerMissing);
+
+    expect(model.empty()).toBe(true);
+    expect(model.noForecast()).toBe(true);
+    expect(model.failed()).toBe(false);
+    expect(model.loading()).toBe(false);
+  });
+
+  it('bietet einen neuen Versuch, wenn ein Manifest fehlt und der Server zum anderen nicht antwortet', async () => {
+    const missing = new Response(null, { status: 404 });
+    vi.stubGlobal('fetch', (path: string) =>
+      path === '/layers.json' ? Promise.resolve(missing) : Promise.reject(new TypeError('Failed to fetch')),
+    );
+    const { view: model } = await view(null, null, () => undefined);
+
+    expect(model.failed()).toBe(true);
+    expect(model.empty()).toBe(false);
+    expect(model.loading()).toBe(false);
+  });
+
+  it('zeigt ohne Vorhersage der Art die Ebenen, aber auf dem Reiter Vorhersage den leeren Zustand', async () => {
+    vi.stubGlobal('fetch', (path: string) =>
+      Promise.resolve(
+        path === '/layers.json'
+          ? new Response(JSON.stringify(RAW_LAYERS), { headers: { 'content-type': 'application/json' } })
+          : new Response(null, { status: 404 }),
+      ),
+    );
+    const { view: model, state } = await view(null, null, () => undefined);
+
+    expect(model.empty()).toBe(false);
+    expect(model.forecastMissing()).toBe(true);
+    expect(model.noForecast()).toBe(true);
+    expect(model.loading()).toBe(false);
+
+    state.setView('layer');
+    expect(model.noForecast()).toBe(false);
+    expect(model.layer()).not.toBeNull();
+  });
+
+  it('bietet bei einem fehlgeschlagenen Katalog einen neuen Versuch statt „noch keine Vorhersage“', async () => {
+    vi.stubGlobal('fetch', () => Promise.reject(new TypeError('Failed to fetch')));
+    const { view: model } = await view(null, null, () => undefined);
+    const reload = vi.fn();
+    const catalogue = TestBed.inject(SpeciesStore) as unknown as {
+      species: () => readonly SpeciesEntry[];
+      failed: () => boolean;
+      bundle: () => unknown;
+      reload: () => void;
+    };
+    catalogue.species = () => [];
+    catalogue.failed = () => true;
+    catalogue.bundle = () => null;
+    catalogue.reload = reload;
+
+    expect(model.forecastMissing()).toBe(false);
+    expect(model.noForecast()).toBe(false);
+    expect(model.failed()).toBe(true);
+    model.retry();
+    expect(reload).toHaveBeenCalled();
   });
 
   it('bietet nur Arten mit Vorhersage zur Wahl', async () => {

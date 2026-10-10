@@ -13,7 +13,9 @@ describe('LicencesComponent', () => {
 
     expect(screen.getByText('Kartendaten')).toBeInTheDocument();
     expect(screen.getByText('123pilzsuche.de')).toBeInTheDocument();
-    expect(screen.getByText('CC BY 4.0, CC BY-SA 4.0, eigene')).toBeInTheDocument();
+    expect(
+      screen.getByText('Wikimedia Commons · CC0, CC BY, CC BY-SA, gemeinfrei · eigene'),
+    ).toBeInTheDocument();
 
     await userEvent.click(screen.getByRole('button', { name: 'Zurück' }));
 

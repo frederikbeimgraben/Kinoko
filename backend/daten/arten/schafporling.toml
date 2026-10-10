@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Besonders geschützt. Roh löst er Unverträglichkeiten aus: durchgaren und Kostproben wieder ausspucken."
+beschreibung = "Porling mit weißem, später gelblichem bis graugelbem, filzigem Hut, der im Alter aufreißt, weißen bis grünlich weißen Poren, die auf Druck gilben, und weißlichem Stiel mit graubraunen Flecken. Er wächst vom Sommer bis zum Spätherbst im Mischwald, überwiegend bei Nadelbäumen und gern bei Fichte, oft zusammen mit dem Semmelporling. Vom ähnlichen Semmelporling unterscheidet ihn vor allem die Hutfarbe, denn der Semmelporling hat einen semmelgelben bis orangebraunen Hut und einen kürzeren Stiel."
+beschreibungEn = "A polypore with a white, felty cap that later turns yellowish to grey-yellow and cracks with age, white to greenish-white pores that turn yellow when pressed and a whitish stem with grey-brown spots. It grows from summer to late autumn in mixed woods, mostly with conifers and often with spruce, frequently together with Albatrellus confluens. The key difference from the similar Albatrellus confluens is the cap colour, because that species has a buff-yellow to orange-brown cap and a shorter stem."
+entwurf = true
 weitereNamen = ["Schofferl", "Echter Schafporling", "Schafeuter", "Schafsporling"]
 synonyme = ["Scutiger ovinus", "Polyporus limonius", "Polyporus lutescens", "Caloporus ovinus", "Albatrellus albidus"]
 fruchtschicht = { art = "poren" }

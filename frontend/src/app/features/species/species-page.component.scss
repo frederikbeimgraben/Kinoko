@@ -57,6 +57,15 @@
   border-radius: 20px;
 }
 
+// The hint under a description that nobody has reviewed.
+.species__draft {
+  margin: -4px 0 0;
+  padding: 0 4px;
+  font-size: var(--fs-13);
+  line-height: 1.4;
+  color: var(--text-var);
+}
+
 .species__missing {
   flex: 1;
 }

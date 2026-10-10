@@ -10,7 +10,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// The cases follow modell/tests/test_pyramid.py.
+// The test cases of the tile pyramid.
 
 func codes(vals ...float64) []uint8 {
 	out := make([]uint8, len(vals))
@@ -114,7 +114,7 @@ func TestCoarsenBuildsLowerLevels(t *testing.T) {
 
 func TestBlockGridAndFloorDiv(t *testing.T) {
 	if floorDiv(-3, 2) != -2 || floorDiv(3, 2) != 1 || floorDiv(-4, 2) != -2 {
-		t.Fatal("floorDiv is not Python //")
+		t.Fatal("floorDiv is not floor division")
 	}
 	box := BlockBox(1, 2, 10, 4)
 	want := geo.TileBox(4, 8, 7, 11, 10)

@@ -10,6 +10,9 @@ baeume = []
 karte = "pfifferling"
 speisewertHinweis = "Besonders geschützt. Nur kleine Mengen für den Eigenbedarf sammeln."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner bis mittelgroßer, blassgelber bis dottergelber Leistling mit trichterförmigem Hut, weit am Stiel herablaufenden, gegabelten und aderig verbundenen Leisten und gelbem, festem, vollem Stiel. Er wächst von März bis November im Mischwald und ist regional oft sehr häufig. Vom Falschen Pfifferling unterscheiden ihn vor allem die Leisten, die fest mit dem Fleisch verwachsen sind, denn der Falsche Pfifferling ist leuchtend orange und hat echte, gegabelte Lamellen, die sich ablösen lassen. Der Echte Pfifferling ist in Deutschland besonders geschützt."
+beschreibungEn = "A small to medium-sized, pale yellow to egg-yellow chanterelle with a funnel-shaped cap, forked and veined ridges that run far down the stem, and a yellow, firm, solid stem. It grows from March to November in mixed woods and is often very common in some regions. The key difference from the false chanterelle is the ridges, which are firmly attached to the flesh, because the false chanterelle is bright orange and has true, forked gills that come off. The chanterelle is specially protected in Germany."
+entwurf = true
 weitereNamen = ["Pfifferling", "Eierschwamm", "Rehgeiserl", "Reherl", "Gemeiner Pfifferling", "Eierleistling", "Eierpilz"]
 fruchtschicht = { art = "leisten" }
 hutform = { von = "trichterfoermig" }

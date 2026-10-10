@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er wird für den Mehlräsling gehalten, riecht aber nicht nach Mehl, sondern muffig süßlich bis parfümiert. Weiße Trichterlinge gelten als Muscarinträger; weiße Pilze aus Wald und Garten gehören nicht in den Korb."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer weißer Trichterling mit flach gewölbtem, schimmelartig bereiftem Hut, weißen bis cremefarbenen, etwas herablaufenden Lamellen und weißlichem, zähem Stiel, der an der Basis in ein weißes Myzelgeflecht ausläuft. Er wächst von Juni bis November meist im Nadelwald, seltener im Laubwald, oft in Hexenringen, und ist häufig. Vom Mehlräsling unterscheidet ihn vor allem der Geruch, denn er riecht süßlich bis parfümiert und nicht nach Mehl. Der Bleiweiße Firnistrichterling ist tödlich giftig."
+beschreibungEn = "A medium-sized white funnel with a flat, convex cap with a frosty, mould-like bloom, white to cream, slightly decurrent gills and a whitish, tough stem that ends in a white mycelium at the base. It grows from June to November mostly in coniferous woods, less often in broadleaf woods, often in fairy rings, and is common. The key difference from the miller is the smell, because it smells sweetish to perfumed and not of flour. The frosty funnel is deadly poisonous."
+entwurf = true
 weitereNamen = ["Bleiweißer Trichterling", "Laubfreundtrichterling", "Streuliebender Trichterling", "Fichtentrichterling"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutform = { von = "gewoelbt" }

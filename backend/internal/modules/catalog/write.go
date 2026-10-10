@@ -13,6 +13,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/db"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/enums"
 	"github.com/frederikbeimgraben/kinoko/backend/internal/core/problem"
+	"github.com/frederikbeimgraben/kinoko/backend/internal/fn"
 )
 
 type colourIn struct {
@@ -34,6 +35,7 @@ type speciesWrite struct {
 	Frequency        *enums.Frequency      `json:"frequency"`
 	RedList          *enums.RedListStatus  `json:"redList"`
 	Description      *string               `json:"description"`
+	DescriptionEn    *string               `json:"descriptionEn"`
 	EdibilityNote    *string               `json:"edibilityNote"`
 	Protection       enums.Protection      `json:"protection"`
 	ProtectionNote   *string               `json:"protectionNote"`
@@ -49,6 +51,7 @@ type speciesWrite struct {
 	GillEdge         *enums.GillEdge       `json:"gillEdge"`
 	CapShapeYoung    *enums.CapShape       `json:"capShapeYoung"`
 	CapShapeOld      *enums.CapShape       `json:"capShapeOld"`
+	RingShape        *enums.RingShape      `json:"ringShape"`
 	Names            []NameEntry           `json:"names"`
 	Measurements     []MeasurementGroup    `json:"measurements"`
 	PartNotes        []PartNote            `json:"partNotes"`
@@ -106,7 +109,7 @@ func headValues(b speciesWrite) []any {
 	return []any{b.Name, b.ScientificName, b.TaxonID, b.Group, b.Edibility, b.Marketable, b.Frequency,
 		b.RedList, b.Description, b.EdibilityNote, b.Protection, b.ProtectionNote, b.PeriodStartMonth,
 		b.PeriodEndMonth, peakMonth, b.SmellText, b.TasteText, b.HymeniumType, b.GillAttachment,
-		b.GillSpacing, b.GillEdge, b.CapShapeYoung, b.CapShapeOld, b.PeriodPeakWeek}
+		b.GillSpacing, b.GillEdge, b.CapShapeYoung, b.CapShapeOld, b.PeriodPeakWeek, b.RingShape}
 }
 
 // weekMonth gives the month of the Thursday of a calendar week; week 53 gives December.
@@ -118,7 +121,7 @@ func weekMonth(week int) int {
 const headCols = `name, latin_name, taxon_id, group_key, edibility, marketable, frequency, red_list,
 	description, edibility_note, protection, protection_note, period_start_month, period_end_month,
 	period_peak_month, smell_text, taste_text, hymenium_type, gill_attachment, gill_spacing, gill_edge,
-	cap_shape_young, cap_shape_old, period_peak_week`
+	cap_shape_young, cap_shape_old, period_peak_week, ring_shape`
 
 // uniqueConflict turns a broken UNIQUE constraint of name or latin name into 409.
 func uniqueConflict(err error) error {
@@ -130,16 +133,17 @@ func uniqueConflict(err error) error {
 
 func insertSpecies(ctx context.Context, tx *sql.Tx, id db.ID, slug string, b speciesWrite, user db.ID, now db.Time) error {
 	args := append([]any{id, slug}, headValues(b)...)
-	args = append(args, false, now, user)
+	args = append(args, fn.Deref(b.DescriptionEn, ""), false, now, user)
 	_, err := tx.ExecContext(ctx, "INSERT INTO species (id, slug, "+headCols+
-		", forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
+		", description_en, forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
 	return uniqueConflict(err)
 }
 
 func updateSpecies(ctx context.Context, tx *sql.Tx, id db.ID, b speciesWrite, user db.ID, now db.Time) error {
 	sets := strings.Join(strings.FieldsFunc(headCols, func(r rune) bool { return r == ',' }), " = ?,") + " = ?"
-	args := append(headValues(b), now, user, id)
-	_, err := tx.ExecContext(ctx, "UPDATE species SET "+sets+", updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
+	args := append(headValues(b), b.DescriptionEn, now, user, id)
+	_, err := tx.ExecContext(ctx, "UPDATE species SET "+sets+
+		", description_en = coalesce(?, description_en), updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
 	return uniqueConflict(err)
 }
 
@@ -321,7 +325,7 @@ func pairIndex(pairs []wantedPair, other db.ID) int {
 	return -1
 }
 
-// upsertPair keeps the first position of a slug and the last text, as a Python dict does.
+// upsertPair keeps the first position of a slug and the last text.
 func upsertPair(pairs []wantedPair, p wantedPair) []wantedPair {
 	if i := pairIndex(pairs, p.other); i >= 0 {
 		out := append([]wantedPair{}, pairs...)

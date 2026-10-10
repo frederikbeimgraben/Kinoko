@@ -12,7 +12,7 @@ import (
 	"path/filepath"
 	"slices"
 
-	// The decoders register their formats. The Python service reads each format that Pillow reads.
+	// The decoders register their formats.
 	_ "image/gif"
 	_ "image/png"
 
@@ -184,7 +184,7 @@ func Fit(width, height, edge int) (int, int) {
 }
 
 // roundAspect picks floor or ceil of number by the smaller key. The floor
-// wins a tie, as in Python's min.
+// wins a tie.
 func roundAspect(number float64, key func(float64) float64) int {
 	low, high := math.Floor(number), math.Ceil(number)
 	chosen := low

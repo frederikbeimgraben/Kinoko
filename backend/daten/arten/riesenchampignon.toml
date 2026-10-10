@@ -8,6 +8,9 @@ marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Gilbende Champignons reichern Cadmium an, einige Mykologen raten deshalb von großen Mengen ab. Riecht ein Champignon nach Karbol, Tinte oder Medizinschrank, gehört er nicht in den Korb."
+beschreibung = "Großer Champignon mit braunen Schuppen auf weißlichem bis hell bräunlichem, auf Druck gilbendem Hut, freien, blassrosa bis graurosa, im Alter braunen Lamellen und kräftigem Stiel mit breitem, dickem Ring, unterhalb davon braunschuppig. Er wächst von Juni bis November als Folgezersetzer im Mischwald und in Parks auf humusreichem Boden. Vom Perlhuhnegerling unterscheidet ihn vor allem der Geruch nach Anis und Bittermandeln, denn der Perlhuhnegerling riecht nach Karbol oder Tinte und ist fein grau bis schwarzbraun geschuppt."
+beschreibungEn = "A large mushroom with brown scales on a whitish to light brownish cap that turns yellow when pressed, free, pale pink to grey-pink gills that turn brown with age, and a stout stem with a broad, thick ring and brown scales below it. It grows from June to November as a saprobe in mixed woods and parks on humus-rich soil. The key difference from the inky mushroom is the smell of aniseed and bitter almonds, because the inky mushroom smells of carbolic acid or ink and has fine grey to black-brown scales."
+entwurf = true
 weitereNamen = ["Braunschuppiger Riesenegerling"]
 synonyme = ["Agaricus augustus var. perrarus", "Psalliota subrufescens"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

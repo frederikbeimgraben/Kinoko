@@ -16,7 +16,7 @@ type Rows struct {
 	Label []int8
 }
 
-// PriorColumns holds the four prior columns of PriorNames. A row outside the fold is NaN, as in Python.
+// PriorColumns holds the four prior columns of PriorNames. A row outside the fold is NaN.
 type PriorColumns struct {
 	RateCell  []float32
 	NCell     []float32
@@ -46,7 +46,7 @@ type yearKey struct {
 	year int
 }
 
-// Prior is prior_columns of final_model.py: the prior of the training rows and the test rows of one fold.
+// Prior gives the prior of the training rows and the test rows of one fold.
 // A training row reads the totals of the training rows without its own year (leave-year-out).
 // A test row reads the totals of all training rows. A rate without rows is NaN.
 func Prior(r Rows, train, test []int) PriorColumns {
@@ -77,7 +77,7 @@ func priorOf(keys []string, r Rows, train, test []int) (rate, n []float32) {
 
 func add(c count, label int8) count { return count{c.n + 1, c.pos + int(label)} }
 
-// rateOf computes the rate in float64 and stores it as float32, as the float32 columns in Python do.
+// rateOf computes the rate in float64 and stores it as float32.
 func rateOf(n, pos int) (float32, float32) {
 	if n <= 0 {
 		return float32(math.NaN()), float32(n)
@@ -93,7 +93,7 @@ func nanColumn(n int) []float32 {
 	return out
 }
 
-// PriorTables is prior_tables of final_model.py over rows: the rate and count of each cell and each block.
+// PriorTables gives the rate and count of each cell and each block over rows.
 // The keys are in lexical order, as a pandas groupby on a string column sorts them.
 func PriorTables(r Rows, rows []int) bundle.Prior {
 	return bundle.Prior{Cell: priorTable(r.Cell, r.Label, rows), Block: priorTable(r.Block, r.Label, rows)}

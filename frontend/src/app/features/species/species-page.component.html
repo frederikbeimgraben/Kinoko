@@ -47,8 +47,11 @@
         @if (otherNames(); as names) {
           <p class="species__names">{{ names }}</p>
         }
-        @if (one.description; as text) {
-          <p class="note desc">{{ text }}</p>
+        @if (description(); as shown) {
+          <p class="note desc" [attr.lang]="shown.lang">{{ shown.text }}</p>
+          @if (one.descriptionDraft) {
+            <p class="species__draft">{{ 'species.descriptionDraft' | t }}</p>
+          }
         }
       </div>
     </ng-template>
@@ -59,7 +62,11 @@
       <app-species-taxonomy [species]="one" />
     </ng-template>
     <ng-template #sizes>
-      <app-species-size [groups]="one.measurements" [notes]="one.partNotes ?? []" />
+      <app-species-size
+        [groups]="one.measurements"
+        [notes]="one.partNotes ?? []"
+        [ringShape]="one.ringShape ?? null"
+      />
     </ng-template>
     <ng-template #traits>
       <app-species-traits [species]="one" />
@@ -72,6 +79,9 @@
     </ng-template>
     <ng-template #period>
       <app-species-time [species]="one" />
+    </ng-template>
+    <ng-template #forecast>
+      <app-species-forecast [species]="one" />
     </ng-template>
     <ng-template #senses>
       <app-species-senses [species]="one" />
@@ -110,6 +120,7 @@
             <ng-container [ngTemplateOutlet]="colours" />
             <ng-container [ngTemplateOutlet]="reactionRows" />
             <ng-container [ngTemplateOutlet]="period" />
+            <ng-container [ngTemplateOutlet]="forecast" />
             <ng-container [ngTemplateOutlet]="senses" />
             <ng-container [ngTemplateOutlet]="hymenium" />
             <ng-container [ngTemplateOutlet]="sources" />
@@ -126,6 +137,7 @@
           <ng-container [ngTemplateOutlet]="colours" />
           <ng-container [ngTemplateOutlet]="reactionRows" />
           <ng-container [ngTemplateOutlet]="period" />
+          <ng-container [ngTemplateOutlet]="forecast" />
           <ng-container [ngTemplateOutlet]="senses" />
           <ng-container [ngTemplateOutlet]="hymenium" />
           <ng-container [ngTemplateOutlet]="lookalikes" />

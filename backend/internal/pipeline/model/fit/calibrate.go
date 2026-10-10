@@ -9,16 +9,16 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/numeric"
 )
 
-// splitSeed is random_state of train_test_split in final_model.py.
+// splitSeed is the seed of the split into fit and calibration rows.
 const splitSeed = 0
 
-// calibrated is the result of fit_calibrated: a model with its isotonic curve and its ceiling.
+// calibrated is the result of fitCalibrated: a model with its isotonic curve and its ceiling.
 type calibrated struct {
 	booster *lgbm.Booster
 	horizon bundle.Horizon
 }
 
-// fitCalibrated is fit_calibrated of final_model.py: train on fit, calibrate on cal.
+// fitCalibrated trains on fit and calibrates on cal.
 func (tr *trainer) fitCalibrated(features []string, s train.Setting, fit, cal []int) (calibrated, error) {
 	prior := train.Prior(tr.rows, fit, cal)
 	b, err := tr.fit(features, s, prior, fit)
@@ -51,7 +51,7 @@ type OOF struct {
 	Scores     train.OOFScores
 }
 
-// outOfFold calibrates inside each year fold and predicts its test part, as final_model.main.
+// outOfFold calibrates inside each year fold and predicts its test part.
 func (tr *trainer) outOfFold(features []string, s train.Setting, year []train.Fold) (OOF, error) {
 	raw, cal := nanSlice(tr.t.N), nanSlice(tr.t.N)
 	for _, fold := range year {

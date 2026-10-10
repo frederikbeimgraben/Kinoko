@@ -43,7 +43,7 @@ func TestLogWithAMissingFileIsEmpty(t *testing.T) {
 	}
 }
 
-func TestSplitLinesAgreesWithPython(t *testing.T) {
+func TestSplitLinesAgreesWithGolden(t *testing.T) {
 	cases := map[string][]string{
 		"":             {},
 		"a":            {"a"},

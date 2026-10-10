@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "In südlichen Ländern gibt es den sehr giftigen Wohlriechenden Trichterling, der nach Jasmin riecht. Auf den Geruch achten."
 haeufigkeit = "haeufig"
+beschreibung = "Kleiner bis mittelgroßer Trichterling mit hellbraunem, blass lederfarbenem bis cremeockerfarbenem, trichterförmigem Hut, der jung meist einen kleinen stumpfen Buckel hat, weißen bis cremefarbenen, herablaufenden Lamellen und hellbraunem, zähem Stiel. Er wächst von Juni bis November als Folgezersetzer in Mischwäldern, Parks und Hecken, meist bei Laubbäumen, und ist häufig. Vom Mönchskopf unterscheidet ihn vor allem die Größe, denn der Mönchskopf ist deutlich größer und hat einen warzenartigen Buckel in der Hutmitte."
+beschreibungEn = "A small to medium-sized funnel with a light brown, pale leather-coloured to cream-ochre, funnel-shaped cap that mostly has a small, blunt umbo when young, white to cream, decurrent gills and a light brown, tough stem. It grows from June to November as a saprobe in mixed woods, parks and hedges, mostly with broadleaf trees, and is common. The key difference from the trooping funnel is the size, because the trooping funnel is much larger and has a wart-like umbo at the centre of the cap."
+entwurf = true
 weitereNamen = ["Ockertrichterling"]
 synonyme = ["Clitocybe gibba", "Agaricus gibbus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

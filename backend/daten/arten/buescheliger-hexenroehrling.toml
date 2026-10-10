@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["herbst", "winter", "fruehling"]
 baeume = ["eiche"]
 haeufigkeit = "sehrSelten"
+beschreibung = "Mittelgroßer Röhrling mit kupfer-, kirsch- bis braunrotem Hut mit kleinen, dunkleren Schuppen, der bei Verletzung schwarzblau wird, roten Röhren und gelblichem Stiel mit rötlichem Netz. Er wächst im Mittelmeergebiet von September bis Mai im Laubwald, meist bei Eichen wie Stein- und Korkeiche, und ist außerhalb davon extrem selten. Sein gelbes Fleisch blaut nur wenig."
+beschreibungEn = "A medium-sized bolete with a copper-red, cherry-red to brownish-red cap with small darker scales that turns black-blue where damaged, red tubes and a yellowish stem with a reddish net. In the Mediterranean region it grows from September to May in broadleaf woods, mostly with oaks such as holm oak and cork oak; outside this region it is extremely rare. Its yellow flesh turns only slightly blue."
+entwurf = true
 synonyme = ["Boletus permagnificus", "Exsudoporus permagnificus"]
 fruchtschicht = { art = "roehren" }
 

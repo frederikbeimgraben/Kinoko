@@ -1,9 +1,10 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ImageCreditComponent } from '../image-credit/image-credit.component';
 import { LevelPillComponent } from '../level-pill/level-pill.component';
 import { PrivateImageComponent } from '../private-image/private-image.component';
-import { photoPath, type Photo } from '../../core/api/models';
+import { photoCaption, photoPath, type Photo } from '../../core/api/models';
 
 /** An image tile with a cover badge and a credit line. */
 @Component({
@@ -14,10 +15,14 @@ import { photoPath, type Photo } from '../../core/api/models';
   styleUrl: './image-tile.component.scss',
 })
 export class ImageTileComponent {
+  private readonly i18n = inject(I18nService);
+
   readonly image = input.required<Photo>();
   /** Shows the badge when this image is the cover image of the species. */
   readonly lead = input(false);
 
   protected readonly path = computed(() => photoPath(this.image().id, 'list'));
-  protected readonly alt = computed(() => this.image().caption ?? this.image().photographer);
+  protected readonly alt = computed(
+    () => photoCaption(this.image(), this.i18n.locale()) ?? this.image().photographer,
+  );
 }

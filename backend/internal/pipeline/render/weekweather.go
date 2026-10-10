@@ -24,8 +24,7 @@ func (t *weekTable) column(name string, w int) []float32 {
 }
 
 // buildWeekTable derives names for the last weeks of cube, with lead weeks for the lags and windows and
-// forecast empty weeks at the end. The normals come from the whole cube, as region_map.normalwerte and
-// input_layers.wochenwetter. It keeps only the cells that the cube holds.
+// forecast empty weeks at the end. The normals come from the whole cube. It keeps only the cells that the cube holds.
 func buildWeekTable(cube *weather.Cube, cells []geo.CellKey, weeks, forecast int, names []string) (*weekTable, error) {
 	if cube == nil || len(cube.Weeks) == 0 {
 		return nil, fmt.Errorf("render: no weather")
@@ -38,7 +37,7 @@ func buildWeekTable(cube *weather.Cube, cells []geo.CellKey, weeks, forecast int
 	for k := 1; k <= forecast; k++ {
 		all = append(all, observed[len(observed)-1].AddWeeks(k))
 	}
-	// The cut uses week IDs as region_map.py; the jump of the ID at New Year
+	// The cut uses week IDs; the jump of the ID at New Year
 	// only moves the start of the lead weeks.
 	limit := all[len(all)-1].ID() - (weeks + LeadWeeks)
 	first := slices.IndexFunc(all, func(w calendar.Week) bool { return w.ID() > limit })
@@ -82,8 +81,8 @@ func normalsFor(cube *weather.Cube, names []string) (*weather.Normals, error) {
 	return weather.ComputeNormals(cube, bases)
 }
 
-// weatherNames returns the weather columns of region_map.py that the features
-// read: the raw pr, tas and tasmin, the columns of add_lags and the anomalies.
+// weatherNames returns the weather columns that the features
+// read: the raw pr, tas and tasmin, the lag columns and the anomalies.
 func weatherNames(features []string) []string {
 	candidates := slices.Concat(weather.LagVars, weather.LagNames(), weather.AnomalyNames())
 	return slices.DeleteFunc(slices.Clone(candidates), func(n string) bool { return !slices.Contains(features, n) })

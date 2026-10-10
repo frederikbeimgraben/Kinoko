@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["tanne"]
 speisewertHinweis = "Nur ganz junge Fruchtkörper sind essbar; sie werden schnell extrem scharf und dann ungeniessbar."
 haeufigkeit = "haeufig"
+beschreibung = "Großer Porling mit braunen, samtigen, fächerförmig ineinander verwachsenen Hüten aus einem gemeinsamen Strunk, weißen bis gelblichen, herablaufenden Poren und weichem, weißem Fleisch. Er wächst von Juni bis November als Wurzelparasit im Nadelwald, vor allem an Weißtanne. Vom Semmelporling unterscheidet ihn vor allem der braune, samtige Hut, denn der Semmelporling hat einen semmelgelben bis orangebraunen Hut, grünlich weiße Poren und festes, brüchiges Fleisch."
+beschreibungEn = "A large polypore with brown, velvety, fan-shaped caps that grow together from a common base, white to yellowish decurrent pores and soft, white flesh. It grows from June to November as a root parasite in coniferous woods, mainly on silver fir. The key difference from Albatrellus confluens is the brown, velvety cap, because Albatrellus confluens has a bun-yellow to orange-brown cap, greenish-white pores and firm, brittle flesh."
+entwurf = true
 synonyme = ["Bondarzewia montana", "Grifola mesenterica", "Grifola montana", "Cladomeris montanus"]
 fruchtschicht = { art = "poren" }
 hutform = { von = "muschelfoermig" }

@@ -7,11 +7,15 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er schmeckt bitter. Geruch und helle Grundfarbe trennen ihn von den anderen Schüpplingen."
+beschreibung = "Mittelgroßer Schüppling mit fast cremeweißem, feucht schmierigem Hut, der dicht mit dunkleren, spitzen, sparrig abstehenden Schüppchen besetzt ist, jung blassgelben, später gelbbraunen Lamellen und sparrig geschupptem Stiel mit flüchtiger Ringzone. Er wächst von Juni bis November, oft büschelig, an Totholz und ist meist relativ selten. Vom Sparrigen Schüppling unterscheiden ihn vor allem die helle Grundfarbe und der obstartige Geruch nach Fruchtbonbon, denn der Sparrige Schüppling hat einen strohgelben, trockenen Hut und riecht rettichartig."
+beschreibungEn = "A medium-sized scalycap with an almost cream-white cap that is slimy when wet and densely covered with darker, pointed, upturned scales, gills that are pale yellow when young and yellow-brown later, and a scaly stem with a short-lived ring zone. It grows from June to November, often in clusters, on dead wood and is mostly rare. The key difference from the shaggy scalycap is the pale base colour and the fruity smell like fruit sweets, because the shaggy scalycap has a straw-yellow, dry cap and smells of radish."
+entwurf = true
 synonyme = ["Agaricus squarrosoides"]
 haeufigkeit = "selten"
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "eng" }
 hutform = { von = "gewoelbt", nach = "flach" }
 stielmerkmale = ["voll", "ring", "beflockt"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

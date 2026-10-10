@@ -10,6 +10,9 @@ baeume = ["birke"]
 speisewertHinweis = "In Deutschland gefährdet (Rote Liste 3), in der Schweiz verletzlich. Besser stehen lassen."
 haeufigkeit = "selten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer bis großer Schleierling mit gelbockerfarbenem bis rötlichbraunem, feucht schleimigem Hut, cremegrauen Lamellen mit violettem oder rosa Schimmer, die später ockerbraun werden, und weißlichem bis gelbockerfarbenem, zur Basis knollig verdicktem Stiel mit braunfuchsigen Velumbändern. Er wächst von Juni bis November bei Birken im Laubwald sowie in Parks und Gärten und ist selten und in Deutschland gefährdet. Kennzeichnend sind die braunfuchsigen Gürtelbänder am gelblichen Stiel."
+beschreibungEn = "A medium-sized to large webcap with a yellow-ochre to reddish-brown cap that is slimy when wet, cream-grey gills with a violet or pink tint that later turn ochre-brown, and a whitish to yellow-ochre stem with a swollen base and brownish-foxy veil bands. The birch webcap grows from June to November with birch in broadleaf woods and in parks and gardens, and is rare and endangered in Germany. A key feature is the brownish-foxy bands around the yellowish stem."
+entwurf = true
 weitereNamen = ["Gelbfußschleimkopf", "Gelbgegürtelter Schleimkopf"]
 synonyme = ["Cortinarius crocolitus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

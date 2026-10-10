@@ -219,7 +219,7 @@ func ownDelete[T any](m *Module, r *http.Request, k kind[T]) (web.Response, erro
 }
 
 // ownWrite is the shared create and replace flow. values reads the body and
-// gives the columns; it runs before the row is read, as in the Python service.
+// gives the columns; it runs before the row is read.
 func ownWrite[T, O any](m *Module, r *http.Request, k kind[T], replace bool,
 	values func(user db.ID) ([]column, error), out func(T) O,
 ) (web.Response, error) {

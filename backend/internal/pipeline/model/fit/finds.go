@@ -20,7 +20,7 @@ type cellWeek struct {
 	week int
 }
 
-// FindsLayer is the content of write_finds: the positive visits per 5 km cell and ISO week,
+// FindsLayer is the content of the finds layer: the positive visits per 5 km cell and ISO week,
 // on the cell centre in WGS84, rounded to 3 decimals. Rows are [lat, lon, week, n, years].
 func FindsLayer(t *Table) (*pyjson.Obj, error) {
 	n := map[cellWeek]int{}
@@ -53,8 +53,8 @@ func FindsLayer(t *Table) (*pyjson.Obj, error) {
 	return pyjson.O("cell_km", FindsCellKm, "columns", []any{"lat", "lon", "week", "n", "years"}, "rows", rows), nil
 }
 
-// WriteFinds writes the finds layer to <dir>/<slug>.json with the separators (",", ":") of write_finds.
-// Deviation: final_model.py names the file by the chain name; the catalogue slug is what readers look for (bug 1).
+// WriteFinds writes the finds layer to <dir>/<slug>.json with the separators "," and ":".
+// The file name is the catalogue slug, because readers look for it (finding 1).
 func WriteFinds(dir, slug string, t *Table) (string, error) {
 	if slug == "" || filepath.Base(slug) != slug {
 		return "", fmt.Errorf("fit: slug %q is not a plain file name", slug)

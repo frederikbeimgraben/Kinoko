@@ -16,7 +16,9 @@ import (
 const steinpilz = "(SELECT id FROM species WHERE slug = 'boletus-edulis')"
 
 var edits = []string{
-	"UPDATE species SET edibility_note = 'Geprüft: essbar.', description = 'Ein Röhrling.' WHERE slug = 'boletus-edulis'",
+	`UPDATE species SET edibility_note = 'Geprüft: essbar.', description = 'Ein Röhrling.',
+		description_en = 'A bolete.', description_draft = FALSE WHERE slug = 'boletus-edulis'`,
+	"UPDATE species SET ring_shape = 'double' WHERE slug = 'boletus-edulis'",
 	"INSERT INTO species_part_note (species_id, part, description, comment) VALUES (" + steinpilz + ", 'cap', 'Braun.', 'Notiz.')",
 	"UPDATE species_colour SET name = 'dunkelbraun', hex = '#4a2c17' WHERE position = 0 AND part = 'cap' AND species_id = " + steinpilz,
 	"DELETE FROM species_season WHERE season = 'summer' AND species_id = " + steinpilz,
@@ -43,8 +45,12 @@ func TestExportCarriesTheChanges(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if *profile.SpeisewertHinweis != "Geprüft: essbar." || *profile.Beschreibung != "Ein Röhrling." {
+	if *profile.SpeisewertHinweis != "Geprüft: essbar." || *profile.Beschreibung != "Ein Röhrling." ||
+		*profile.BeschreibungEn != "A bolete." || profile.Entwurf {
 		t.Fatalf("species texts: %s", body)
+	}
+	if profile.Ringform == nil || *profile.Ringform != "doppelt" {
+		t.Fatalf("ring shape: %s", body)
 	}
 	if len(profile.Teilnotizen) != 1 || profile.Teilnotizen[0].Key != "hut" || profile.Teilnotizen[0].Kommentar != "Notiz." {
 		t.Fatalf("part notes: %+v", profile.Teilnotizen)
@@ -96,6 +102,7 @@ func reimported(t *testing.T, out string) {
 	for _, query := range []string{
 		"SELECT count(*) FROM species WHERE description = 'Ein Röhrling.' AND edibility_note = 'Geprüft: essbar.'",
 		"SELECT count(*) FROM species_part_note WHERE description = 'Braun.' AND comment = 'Notiz.'",
+		"SELECT count(*) FROM species WHERE ring_shape = 'double' AND slug = 'boletus-edulis'",
 		"SELECT count(*) FROM species_colour WHERE name = 'dunkelbraun' AND species_id = " + steinpilz,
 		"SELECT count(*) FROM species_reaction WHERE reading = 'zuerst gelb, dann olivgrün'",
 		"SELECT count(*) FROM glossary_entry WHERE definition_en = 'A broadleaf tree. Checked.'",

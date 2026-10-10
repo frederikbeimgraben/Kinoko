@@ -7,12 +7,16 @@ marktfaehig = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Roh unverträglich, gut durchgaren. Riesenschirmlinge aus Garten, Kompost oder Gewächshaus stehen lassen; dort wächst der giftige Gerandetknollige Garten-Safranschirmling."
+beschreibung = "Großer Schirmling mit grob bräunlich geschupptem Hut auf cremefarbenem Grund, weißen, freien Lamellen und bräunlich überfasertem Stiel ohne Natterung, mit verschiebbarem, doppeltem Ring und rübenartig verdickter Basis. Er wächst vom Frühsommer bis zum Spätherbst in Gärten, Heiden und an Waldrändern, meist außerhalb der Wälder auf nährstoffreichem Boden. Typisch ist das Fleisch, das bei Verletzung sofort safranrötlich anläuft. Vom ähnlichen Gerandetknolligen Garten-Safranschirmling unterscheidet ihn vor allem die Knolle, die nicht abgesetzt und nicht gerandet ist, denn dieser hat eine deutlich abgesetzte, gerandete Knolle und einen einfachen Ring."
+beschreibungEn = "A large parasol with a cap that has coarse brownish scales on a cream background, white free gills and a stem without a snakeskin pattern, with brownish fibres, a movable double ring and a swollen, turnip-like base. It grows from early summer to late autumn in gardens, heaths and at forest edges, usually outside woods on nutrient-rich soil. A typical feature is the flesh, which turns saffron-red at once when damaged. The key difference from the similar Chlorophyllum brunneum is the bulb, which is not distinct and has no rim, because Chlorophyllum brunneum has a distinct bulb with a rim and a single ring."
+entwurf = true
 weitereNamen = ["Safranschirmling", "Gemeiner Safranschirmling", "Gartenform des Safran-Schirmpilzes", "Safran-Riesenschirmpilz", "Safran-Riesenschirmling", "Rötender Schirmling"]
 synonyme = ["Macrolepiota rhacodes var. hortensis", "Macrolepiota bohemica", "Agaricus rachodes", "Chlorophyllum rhacodes sensu", "Lepiota rhacodes", "Leucocoprinus rhacodes", "Agaricus rhacodes var. candidus", "Lepiota procera var. rhacodes"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutform = { von = "eifoermig", nach = "halbkugelig" }
 hutrand = { von = ["fransig"] }
 stielmerkmale = ["faserig", "ring", "knolle"]
+ringform = "doppelt"
 
 [baeumeAusErfahrung]
 baeume = ["fichte"]

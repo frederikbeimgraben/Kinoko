@@ -7,8 +7,8 @@ import (
 	"testing"
 )
 
-// listingGolden is testdata/listing.json, written by weather/testdata/gen_golden.py
-// with dwd_fetch.listing and dwd_fetch.newest_version on the saved pages in testdata.
+// listingGolden is the golden file testdata/listing.json: the parsed listing and
+// the newest version of the saved pages in testdata.
 type listingGolden map[string]struct {
 	Names  []string           `json:"names"`
 	Newest map[string]*string `json:"newest"`
@@ -36,7 +36,7 @@ func page(t *testing.T, name string) string {
 	return string(b)
 }
 
-func TestParseListingMatchesPython(t *testing.T) {
+func TestParseListingMatchesGolden(t *testing.T) {
 	for name, want := range loadListing(t) {
 		if got := ParseListing(page(t, name)); !slices.Equal(got, want.Names) {
 			t.Errorf("%s: got %v, want %v", name, got, want.Names)
@@ -44,7 +44,7 @@ func TestParseListingMatchesPython(t *testing.T) {
 	}
 }
 
-func TestNewestVersionHyrasMatchesPython(t *testing.T) {
+func TestNewestVersionHyrasMatchesGolden(t *testing.T) {
 	g := loadListing(t)["hyras_precipitation.html"]
 	for year, want := range map[string]int{"2023": 2023, "2024": 2024, "2025": 2025, "2026": 2026} {
 		got := NewestVersion(g.Names, HyrasPattern("pr", want))
@@ -58,12 +58,12 @@ func TestNewestVersionHyrasMatchesPython(t *testing.T) {
 	}
 }
 
-// dwd_fetch.newest_version gives every soil file the version (0, 0), because its
-// pattern requires "_" after the version. It takes the first listed file; Go takes the newest.
+// The golden listing gives every soil file the version (0, 0), because its
+// pattern requires "_" after the version. NewestVersion takes the newest soil file.
 func TestNewestVersionSoilTakesNewest(t *testing.T) {
 	g := loadListing(t)["soil_spruce_2024.html"]
 	if py := *g.Newest["0-30"]; py != "grids_germany_daily_soil_moisture_spruce_2024_0-30_v1-0.nc" {
-		t.Fatalf("python picked %s", py)
+		t.Fatalf("the golden listing picked %s", py)
 	}
 	got := NewestVersion(g.Names, SoilPattern("spruce", 2024, "0-30"))
 	if got != "grids_germany_daily_soil_moisture_spruce_2024_0-30_v1-1.nc" {

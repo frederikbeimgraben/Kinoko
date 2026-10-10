@@ -9,6 +9,9 @@ baeume = ["buche", "tanne"]
 speisewertHinweis = "Selten und in Deutschland auf der Roten Liste. Kleine Mengen nehmen oder den Fund stehen lassen."
 haeufigkeit = "selten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Weißer, korallenartig verzweigter Pilz mit Ästen aus einem gemeinsamen Strunk, an denen die Stacheln jung bärtig abstehen und im Alter herabhängen; alt wird er schmutzig gelb. Er wächst von August bis November an Totholz von Laubbäumen, vor allem an Buche, vereinzelt auch an Tanne, und ist selten. Vom Dornigen Stachelbart unterscheiden ihn vor allem die verzweigten Äste, denn der Dornige Stachelbart besteht aus einzelnen, dachziegelig angeordneten Hüten und gilbt bei Verletzung."
+beschreibungEn = "A white, coral-like branched fungus with branches from a common base, which carry spines that stand out like a beard when young and hang down with age; old fruit bodies become dirty yellow. It grows from August to November on dead wood of broadleaf trees, mainly beech, sometimes also fir, and is rare. The key difference from the tiered tooth is the branches, because the tiered tooth consists of single, overlapping caps and turns yellow where it is damaged."
+entwurf = true
 weitereNamen = ["Buchenstachelbart", "Eiskoralle", "Bartkoralle"]
 synonyme = ["Hericium ramosum = buchenstachelbart"]
 fruchtschicht = { art = "stacheln" }

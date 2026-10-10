@@ -33,6 +33,8 @@ type SpeciesRow struct {
 	Frequency        *string
 	RedList          *string
 	Description      *string
+	DescriptionEn    string
+	DescriptionDraft bool
 	EdibilityNote    *string
 	Protection       string
 	ProtectionNote   *string
@@ -47,6 +49,7 @@ type SpeciesRow struct {
 	GillEdge         *string
 	CapShapeYoung    *string
 	CapShapeOld      *string
+	RingShape        *string
 }
 
 // NameRow is one row of species_name.

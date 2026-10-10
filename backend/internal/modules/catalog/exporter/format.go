@@ -8,8 +8,8 @@ import (
 var canonical = map[string][]string{
 	"": {"name", "lateinisch", "gruppe", "speisewert", "wertigkeit", "marktfaehigSchweiz", "marktfaehig",
 		"sammelbar", "jahreszeiten", "baeume", "warnung", "karte", "speisewertHinweis", "schutzHinweis",
-		"haeufigkeit", "gefaehrdung", "beschreibung", "weitereNamen", "synonyme", "fruchtschicht", "hutform",
-		"hutmerkmale", "hutrand", "stielmerkmale", "baeumeAusErfahrung", "quelle", "reagenzien", "masse",
+		"haeufigkeit", "gefaehrdung", "beschreibung", "beschreibungEn", "entwurf", "weitereNamen", "synonyme", "fruchtschicht", "hutform",
+		"hutmerkmale", "hutrand", "stielmerkmale", "ringform", "baeumeAusErfahrung", "quelle", "reagenzien", "masse",
 		"zeitraum", "farben", "geruch", "geschmack", "schutz", "teilnotizen", "merkmale", "verwechslungen", "links"},
 	"masse": {"hutBreiteCm", "fruchtkoerperBreiteCm", "fruchtkoerperHoeheCm", "stielLaengeCm", "stielDickeCm",
 		"sporenLaengeUm", "sporenBreiteUm"},
@@ -66,6 +66,10 @@ func topLevel(f File) []kv {
 	b.text("haeufigkeit", f.Haeufigkeit)
 	b.text("gefaehrdung", f.Gefaehrdung)
 	b.text("beschreibung", f.Beschreibung)
+	b.text("beschreibungEn", f.BeschreibungEn)
+	if f.Entwurf != nil {
+		b.add("entwurf", *f.Entwurf)
+	}
 	b.list("weitereNamen", f.WeitereNamen)
 	b.list("synonyme", f.Synonyme)
 	if h := f.Fruchtschicht; h != nil {
@@ -91,6 +95,7 @@ func topLevel(f File) []kv {
 		b.add("hutrand", inline(t))
 	}
 	b.list("stielmerkmale", f.Stielmerkmale)
+	b.text("ringform", f.Ringform)
 	sections(&b, f)
 	return b
 }

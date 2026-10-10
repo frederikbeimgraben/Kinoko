@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er enthält Coprin. Zusammen mit Alkohol löst er eine Acetaldehyd-Reaktion aus, auch noch Tage nach der Mahlzeit. 123pilzsuche rät grundsätzlich vom Verzehr ab."
+beschreibung = "Mittelgroßer Tintling mit grauweißem bis graubraunem, gerieftem und faltigem Hut mit braunen Schuppen, weißlichen bis grauen Lamellen, die bald schwarz zerfließen, und weißem, hohlem Stiel mit einer ringartigen Wulst nahe der Basis. Er wächst von März bis November, oft büschelig, an Waldwegen und in Gärten. Vom Spitzkegeligen Tintling unterscheiden ihn vor allem die Größe und der Hut ohne spitzen Scheitel, denn der Spitzkegelige Tintling ist deutlich kleiner, hat einen spitzkegeligen, stark gerieften Hut und keine Ringwulst am Stiel. Der Faltentintling ist giftig, vor allem zusammen mit Alkohol."
+beschreibungEn = "A medium-sized inkcap with a grey-white to grey-brown, grooved and pleated cap with brown scales, whitish to grey gills that soon dissolve into black ink, and a white, hollow stem with a ring-like bulge near the base. The common inkcap grows from March to November, often in clusters, beside forest paths and in gardens. The key difference from Coprinopsis acuminata is the size and the cap without a pointed top, because Coprinopsis acuminata is much smaller, has a pointed conical, strongly grooved cap and no ring bulge on the stem. The common inkcap is poisonous, especially together with alcohol."
+entwurf = true
 weitereNamen = ["Grauer Faltentintling", "Knotentintling"]
 synonyme = ["Coprinus atramentarius", "Agaricus atramentarius"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }

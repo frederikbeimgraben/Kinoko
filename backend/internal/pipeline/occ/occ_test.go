@@ -26,7 +26,7 @@ func readJSON(t *testing.T, path string, v any) {
 	}
 }
 
-// Golden: pandas to_datetime(format="ISO8601", errors="coerce", utc=True) as build_occurrences.add_time uses it.
+// Golden: pandas to_datetime(format="ISO8601", errors="coerce", utc=True).
 func TestParseEventDateMatchesPandas(t *testing.T) {
 	var cases [][2]*string
 	readJSON(t, "testdata/eventdates.json", &cases)
@@ -43,7 +43,7 @@ func TestParseEventDateMatchesPandas(t *testing.T) {
 	}
 }
 
-// Golden: hashlib.blake2s and build_occurrences.observer_hash.
+// Golden: BLAKE2s digests and app observers.
 func TestBlake2sAndAppObserver(t *testing.T) {
 	var g struct {
 		ObserverHash [][2]string `json:"observer_hash"`
@@ -85,8 +85,8 @@ func goldenAppFinds(t *testing.T) []occ.AppFind {
 	return out
 }
 
-// Golden: read_raw, read_app, the class filter, add_time, the error filter and add_grid of build_occurrences.py.
-func TestBuildOccurrencesMatchesPython(t *testing.T) {
+// Golden: the occurrence table after the raw and app read, the class filter, the date, the error filter and the grid.
+func TestBuildOccurrencesMatchesGolden(t *testing.T) {
 	want, err := occtest.Rows("testdata/occurrences.json")
 	if err != nil {
 		t.Fatal(err)
@@ -163,13 +163,13 @@ func TestBuildMergesArchiveAndAPI(t *testing.T) {
 	}
 }
 
-// ReadOccurrences reads the parquet of build_occurrences.py; WriteOccurrences round-trips.
+// ReadOccurrences reads the golden parquet; WriteOccurrences round-trips.
 func TestOccurrencesParquet(t *testing.T) {
 	want, err := occtest.Records("testdata/occurrences.json")
 	if err != nil {
 		t.Fatal(err)
 	}
-	fromPython, err := occ.ReadOccurrences("testdata/occurrences.parquet")
+	fromGolden, err := occ.ReadOccurrences("testdata/occurrences.parquet")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -181,7 +181,7 @@ func TestOccurrencesParquet(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for name, got := range map[string][]occ.Record{"python": fromPython, "round trip": roundTrip} {
+	for name, got := range map[string][]occ.Record{"golden": fromGolden, "round trip": roundTrip} {
 		if len(got) != len(want) {
 			t.Fatalf("%s: %d rows, want %d", name, len(got), len(want))
 		}

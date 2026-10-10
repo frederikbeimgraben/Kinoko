@@ -117,7 +117,7 @@ const (
 	FoldMinPositives = 10
 )
 
-// BlockedFolds is final_model.blocked_folds: one fold per sorted distinct
+// BlockedFolds gives one fold per sorted distinct
 // key, kept when its test part has FoldMinRows rows and FoldMinPositives positives.
 func BlockedFolds(keys []int64, y []int8) []Fold {
 	var folds []Fold

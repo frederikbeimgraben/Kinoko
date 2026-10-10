@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["kastanie", "linde", "birke", "pappel"]
 speisewertHinweis = "Ohne Speisewert, 123pilze gibt die relative Wertigkeit 4. Rötlinge mit rosa Lamellen sehen ähnlich aus und sind zum Teil giftig."
+beschreibung = "Dachpilz mit elfenbein- bis cremeweißem Hut mit dunkleren Faserschuppen am Scheitel, weißen, später rosa bis rotbraunen, freien Lamellen und weißlichem, längsfaserigem Stiel. Er wächst vom Frühling bis zum Herbst auf totem Laubholz, etwa von Rosskastanie, Linde, Birke und Espe. Vom ähnlichen Weißen Dachpilz unterscheiden ihn vor allem die dunkleren Faserschuppen am Scheitel, denn der Weiße Dachpilz ist kleiner und ganz weiß."
+beschreibungEn = "A shield mushroom with an ivory to cream-white cap with darker fibrous scales at the top, free white gills that turn pink to red-brown later, and a whitish, fibrous stem. It grows from spring to autumn on dead broadleaf wood, for example of horse chestnut, lime, birch and aspen. The key difference from the similar Pluteus pellitus is the darker fibrous scales at the top of the cap, because that species is smaller and entirely white."
+entwurf = true
 weitereNamen = ["Schuppigseidiger Dachpilz", "Braunschuppiger Dachpilz"]
 synonyme = ["Pluteus curtisii sensu", "Agaricus cervinus var. patricius", "Pluteus cervinus var. petasatus", "Pluteus patricius", "Agaricus patricius"]
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }

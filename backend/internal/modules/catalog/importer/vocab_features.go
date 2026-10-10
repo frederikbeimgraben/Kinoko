@@ -40,6 +40,17 @@ var CapShape = map[string]string{
 	"zylindrisch":     "cylindrical",
 }
 
+// RingShape maps the German shape of the ring on the stem. The words are the ring
+// forms of the stem checklist of the Swiss mushroom inspectors (VAPKO).
+var RingShape = map[string]string{
+	"haengend":      "pendant",
+	"aufsteigend":   "flaring",
+	"gestiefelt":    "sheathing",
+	"doppelt":       "double",
+	"ringzone":      "zone",
+	"spinnwebartig": "cortina",
+}
+
 // CapFeature maps the German cap feature.
 var CapFeature = map[string]string{
 	"gebuckelt":      "umbonate",

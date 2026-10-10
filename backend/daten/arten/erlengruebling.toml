@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er gilt als giftverdächtig. Zu erkennen an den sehr kurzen, feinen, herablaufenden gelben Poren, die auf Druck grünblau und später schwarzbraun werden, an der grübchenartig vertieften Huthaut und daran, dass er fast nur bei Erlen wächst. Er ist besonders geschützt."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner bis mittelgroßer Röhrling mit gelblichem, olivgelbem bis hellbraunem, feucht etwas schmierigem Hut mit grübchenartig vertiefter Oberfläche, sehr kurzen, feinporigen, gelben, herablaufenden Röhren, die auf Druck grünblau und später schwarzbraun werden, und gelblichem bis hellbraunem, faserigem Stiel. Er wächst von Juni bis November im Laubwald, gern im Auwald, fast nur bei Erlen, und ist sehr selten und besonders geschützt. Von der Ziegenlippe unterscheiden ihn vor allem die herablaufenden Röhren und der grübchenartige Hut, denn die Ziegenlippe hat einen trockenen, samtigen Hut und angewachsene Röhren."
+beschreibungEn = "A small to medium-sized bolete with a yellowish, olive-yellow to light brown cap that is slightly slimy when wet and has a pitted surface, very short, fine-pored, yellow, decurrent tubes that turn green-blue when pressed and later blackish-brown, and a yellowish to light brown, fibrous stem. The alder bolete grows from June to November in broadleaf woods, often in floodplain woods, almost only with alder, and is very rare and specially protected. The key difference from the suede bolete is the decurrent tubes and the pitted cap, because the suede bolete has a dry, velvety cap and attached tubes."
+entwurf = true
 synonyme = ["Boletus chrysenteron var. lividus", "Gyrodon labyrinthicus", "Gyrodon sistotrema var. brachyporus", "Uloporus lividus", "Cladomeris sistotrema", "Boletus lividus var. rubescens"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["vertieft"]

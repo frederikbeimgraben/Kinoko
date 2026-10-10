@@ -5,6 +5,7 @@ import { Router, provideRouter } from '@angular/router';
 import { render, screen } from '@testing-library/angular';
 import userEvent from '@testing-library/user-event';
 import { AccountStore } from '../../core/access/account.store';
+import { I18nService } from '../../core/i18n/i18n.service';
 import { PermissionsStore } from '../../core/access/permissions.store';
 import { noViolations } from '../../testing/axe';
 import { photo } from '../../testing/photos-fixture';
@@ -75,7 +76,8 @@ describe('ImageViewComponent', () => {
 
     expect(screen.getByText('2 von 2')).toBeInTheDocument();
     expect(screen.getByText('Jonas Weber')).toBeInTheDocument();
-    expect(screen.getByText('CC BY-SA 4.0')).toBeInTheDocument();
+    // The credit of the hero and the licence row both name the licence.
+    expect(screen.getAllByText('CC BY-SA 4.0')).toHaveLength(2);
     expect(screen.getByText('6. September 2026')).toBeInTheDocument();
     expect(screen.getByText('48,51 · 9,06 · 1 km')).toBeInTheDocument();
     await noViolations(container);
@@ -93,6 +95,31 @@ describe('ImageViewComponent', () => {
 
     expect(screen.getByText('Bildunterschrift')).toBeInTheDocument();
     expect(screen.getByText('Junge Exemplare im Moos')).toBeInTheDocument();
+  });
+
+  it('shows the English caption in English, else the German caption', async () => {
+    await build([
+      photo({ id: 'zwei', caption: 'Junge Exemplare im Moos', captionEn: 'Young specimens in moss' }),
+    ]);
+    const i18n = TestBed.inject(I18nService);
+    // The English catalogue loads as a module, and the module loader needs the real URL.
+    vi.unstubAllGlobals();
+    i18n.setLocale('en');
+    await screen.findByText('Young specimens in moss');
+
+    i18n.setLocale('de');
+    await screen.findByText('Junge Exemplare im Moos');
+  });
+
+  it('links the credit of the hero to the licence and the source', async () => {
+    const source = 'https://commons.wikimedia.org/wiki/File:Boletus_edulis.jpg';
+    await build([photo({ id: 'zwei', photographer: 'Holger Krisp', licence: 'cc_by_3', source })]);
+
+    expect(screen.getByRole('link', { name: 'Holger Krisp' })).toHaveAttribute('href', source);
+    expect(screen.getByRole('link', { name: 'CC BY 3.0' })).toHaveAttribute(
+      'href',
+      'https://creativecommons.org/licenses/by/3.0/',
+    );
   });
 
   it('shows no actions to a guest', async () => {

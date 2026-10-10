@@ -15,7 +15,7 @@ type Param struct {
 	Value any
 }
 
-// Params is an ordered list of LightGBM parameters, as a Python dict keeps its order.
+// Params is an ordered list of LightGBM parameters.
 type Params []Param
 
 // With returns a copy with key set to value. An existing key keeps its place, as in dict(PARAMS, key=value).
@@ -45,7 +45,7 @@ func (p Params) Get(key string) (any, bool) {
 	return nil, false
 }
 
-// String returns the "key=value key=value" text of the C API, as Python's _param_dict_to_str.
+// String returns the "key=value key=value" text of the C API.
 func (p Params) String() string {
 	parts := make([]string, len(p))
 	for i, item := range p {
@@ -71,7 +71,7 @@ func formatValue(v any) string {
 	}
 }
 
-// pyFloat writes v as Python repr writes a float in the usual range, so 10.0 stays "10.0".
+// pyFloat writes v with the shortest digits and at least one decimal, so 10.0 stays "10.0".
 func pyFloat(v float64) string {
 	if math.IsInf(v, 0) || math.IsNaN(v) {
 		return strconv.FormatFloat(v, 'g', -1, 64)

@@ -49,7 +49,7 @@ func TestCreateComputesArea(t *testing.T) {
 	env := testkit.New(t)
 	anna := makeUser(t, env, "anna")
 	created := env.Post("/zones", aZone("Wald"), anna.Person).Expect(t, http.StatusCreated).Map(t)
-	// The value comes from geometry.area_ha of the Python service.
+	// The value is the fixed reference area of the zone.
 	if created["areaHa"] != 317.1903477050781 {
 		t.Fatal(created)
 	}

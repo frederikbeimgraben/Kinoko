@@ -30,6 +30,8 @@ type File struct {
 	Haeufigkeit        *string
 	Gefaehrdung        *string
 	Beschreibung       *string
+	BeschreibungEn     *string
+	Entwurf            *bool
 	WeitereNamen       []string
 	Synonyme           []string
 	Fruchtschicht      *importer.HymeniumEntry
@@ -37,6 +39,7 @@ type File struct {
 	Hutmerkmale        []string
 	Hutrand            *importer.CapMarginEntry
 	Stielmerkmale      []string
+	Ringform           *string
 	BaeumeAusErfahrung *ExperienceTrees
 	Quelle             importer.SourceEntry
 	Reagenzien         []importer.Reagent
@@ -93,6 +96,8 @@ type rawFile struct {
 	Haeufigkeit        *string                          `toml:"haeufigkeit"`
 	Gefaehrdung        *string                          `toml:"gefaehrdung"`
 	Beschreibung       *string                          `toml:"beschreibung"`
+	BeschreibungEn     *string                          `toml:"beschreibungEn"`
+	Entwurf            *bool                            `toml:"entwurf"`
 	WeitereNamen       []string                         `toml:"weitereNamen"`
 	Synonyme           []string                         `toml:"synonyme"`
 	Fruchtschicht      *importer.HymeniumEntry          `toml:"fruchtschicht"`
@@ -100,6 +105,7 @@ type rawFile struct {
 	Hutmerkmale        []string                         `toml:"hutmerkmale"`
 	Hutrand            *importer.CapMarginEntry         `toml:"hutrand"`
 	Stielmerkmale      []string                         `toml:"stielmerkmale"`
+	Ringform           *string                          `toml:"ringform"`
 	BaeumeAusErfahrung *ExperienceTrees                 `toml:"baeumeAusErfahrung"`
 	Quelle             importer.SourceEntry             `toml:"quelle"`
 	Reagenzien         []importer.Reagent               `toml:"reagenzien"`
@@ -143,10 +149,12 @@ func ParseFile(text, source string) (File, error) {
 		Sammelbar: raw.Sammelbar, Jahreszeiten: present("jahreszeiten", raw.Jahreszeiten),
 		Baeume: present("baeume", raw.Baeume), Warnung: raw.Warnung, Karte: raw.Karte,
 		SpeisewertHinweis: raw.SpeisewertHinweis, SchutzHinweis: raw.SchutzHinweis, Haeufigkeit: raw.Haeufigkeit,
-		Gefaehrdung: raw.Gefaehrdung, Beschreibung: raw.Beschreibung,
+		Gefaehrdung: raw.Gefaehrdung, Beschreibung: raw.Beschreibung, BeschreibungEn: raw.BeschreibungEn,
+		Entwurf:      raw.Entwurf,
 		WeitereNamen: present("weitereNamen", raw.WeitereNamen), Synonyme: present("synonyme", raw.Synonyme),
 		Fruchtschicht: raw.Fruchtschicht, Hutform: raw.Hutform, Hutmerkmale: present("hutmerkmale", raw.Hutmerkmale),
 		Hutrand: raw.Hutrand, Stielmerkmale: present("stielmerkmale", raw.Stielmerkmale),
+		Ringform:           raw.Ringform,
 		BaeumeAusErfahrung: raw.BaeumeAusErfahrung, Quelle: raw.Quelle, Reagenzien: raw.Reagenzien,
 		Zeitraum: raw.Zeitraum, Farben: farben, Geruch: raw.Geruch, Geschmack: raw.Geschmack, Schutz: raw.Schutz,
 		Verwechslungen: raw.Verwechslungen, Links: raw.Links, Orders: orders,

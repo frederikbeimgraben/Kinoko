@@ -8,11 +8,15 @@ marktfaehig = true
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["laerche"]
+beschreibung = "Kleiner bis mittelgroßer Schmierröhrling mit rostbraunem, schuppig filzigem Hut mit lange eingerolltem Rand, gelblichen, wabenartigen, herablaufenden Röhren und hohlem, bräunlich faserigem Stiel mit angedeuteter Ringzone. Er wächst von Juni bis November unter Lärchen. Vom Gelben Hohlfußröhrling unterscheidet ihn vor allem die Hutfarbe, denn diese Form hat einen kanariengelben statt rostbraunen Hut."
+beschreibungEn = "A small to medium-sized slippery bolete with a rust-brown, scaly and felty cap with a margin that stays inrolled for a long time, yellowish, honeycomb-like, decurrent tubes and a hollow, brownish fibrous stem with a faint ring zone. It grows from June to November under larches. The key difference from the yellow form Suillus cavipes var. aereus is the cap colour, because this form has a canary-yellow cap instead of a rust-brown one."
+entwurf = true
 weitereNamen = ["Brauner Hohlfussröhrling"]
 fruchtschicht = { art = "roehren" }
 hutmerkmale = ["gebuckelt"]
 hutrand = { von = ["eingerollt"] }
 stielmerkmale = ["hohl", "faserig", "ring"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

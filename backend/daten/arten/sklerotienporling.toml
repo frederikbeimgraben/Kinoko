@@ -8,6 +8,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur junge Fruchtkörper verwenden, ältere werden zäh. Der leicht bittere Geschmack verliert sich beim Zubereiten."
+beschreibung = "Kleiner Porling mit meist kreisrundem, ockerlichem bis orangebraunem Hut mit dunkleren braunen Schuppen und bewimpertem Rand, weißlichen, eckigen, herablaufenden Poren und überwiegend zentralem, schuppigem Stiel. Er wächst vom Frühling bis zum Herbst meist an umgefallenen, leicht verrotteten Laubholzästen und -stämmen und verursacht Weißfäule. Vom ähnlichen Schuppigen Porling unterscheidet ihn vor allem der Stiel, denn der Schuppige Porling ist größer und hat einen seitlichen Stiel mit schwarzer Basis."
+beschreibungEn = "A small polypore with a mostly circular, ochre to orange-brown cap with darker brown scales and a hairy margin, whitish, angular pores that run down the stem and a mostly central, scaly stem. It grows from spring to autumn mostly on fallen, slightly rotten broadleaf branches and trunks and causes white rot. The key difference from the similar dryad's saddle is the stem, because dryad's saddle is larger and has a lateral stem with a black base."
+entwurf = true
 weitereNamen = ["Kleiner Schuppenporling"]
 fruchtschicht = { art = "poren" }
 hutrand = { von = ["fransig"] }

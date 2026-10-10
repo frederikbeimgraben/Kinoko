@@ -5,6 +5,7 @@ export {
   EDIBILITIES,
   HYMENIUM_TYPES,
   PROTECTIONS,
+  RING_SHAPES,
   TAXON_RANKS,
   TERM_KINDS,
   UNITS,
@@ -20,6 +21,7 @@ export type {
   GillEdge,
   GillSpacing,
   Lookalike,
+  RingShape,
   Speed,
   Term,
   TermCreate,
@@ -100,7 +102,7 @@ export type {
   VersionState,
 } from './data-sources';
 export { MARKER_COLOURS, VISIBILITIES } from './entries';
-export { LICENCES, PHOTO_STATES, photoPath } from './photos';
+export { LICENCES, PHOTO_STATES, photoCaption, photoCaptionLang, photoPath } from './photos';
 export type { OpenFind, ReviewState, SharedFind } from './finds';
 export type {
   Find,

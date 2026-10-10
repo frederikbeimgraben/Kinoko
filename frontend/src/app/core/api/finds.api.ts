@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { map, type Observable } from 'rxjs';
 import type { Viewbox } from '../../map/tile-grid';
-import { ApiClient } from './api-client';
+import { ApiClient, type Silent } from './api-client';
 import type { components } from './contract';
 import { ENTRY_PATHS } from './entry-paths';
 import { openFind, sharedFind } from './entry-reader';
@@ -47,8 +47,9 @@ export class FindsApi {
       .pipe(map((answer) => answer.items.flatMap((entry) => openFind(entry) ?? [])));
   }
 
-  review(id: string, decision: ReviewDecision): Observable<null> {
-    return this.api.post<null>(`${ENTRY_PATHS.find}/${encodeURIComponent(id)}/review`, { decision });
+  /** Sends a decision about a find. With `quiet`, a failure shows no toast: the caller reports it. */
+  review(id: string, decision: ReviewDecision, options?: Silent): Observable<null> {
+    return this.api.post<null>(`${ENTRY_PATHS.find}/${encodeURIComponent(id)}/review`, { decision }, options);
   }
 
   /** Takes back an acceptance or a rejection: the find waits for review again. */

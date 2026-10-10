@@ -28,7 +28,7 @@ type Fetcher struct {
 	Dir       string                          // the cache root of the DWD files
 	Cache     CacheStore                      // no bookkeeping when nil
 	UserAgent string                          // DefaultUserAgent when empty
-	Attempts  int                             // 4 when 0, as dwd_fetch.download
+	Attempts  int                             // 4 when 0
 	Backoff   func(attempt int) time.Duration // the wait before the next attempt
 	Now       func() time.Time                // time.Now when nil
 	Log       Logger                          // no log when nil

@@ -1,4 +1,4 @@
-/** The manifest of a forecast species, as `modell/src/pilze/region_map.py` writes it. */
+/** The manifest of a forecast species, as the backend pipeline writes it. */
 
 import { readHistogram, type Histogram } from './layers';
 import { tileKey } from './tile-paths';

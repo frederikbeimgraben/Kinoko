@@ -9,10 +9,14 @@ baeume = ["eiche", "kastanie", "kiefer"]
 speisewertHinweis = "Zu erkennen an den gelblichen bis grauen flockigen Velumresten auf Hut und Stiel, dem gelb gerandeten gerieften Ring und dem Fleisch, das nicht rötet. Roh ist er unverträglich, deshalb keine Kostversuche."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleiner bis mittelgroßer Wulstling mit gelblichem, braungelbem bis lehmgrauem Hut mit grauen und gelblichen, flockigen Velumresten, weißen, freien Lamellen und weißem Stiel mit gelblichem, flockigem Warzengürtel und gerieftem Ring mit gelblichem Rand. Er wächst von Juni bis November im Mischwald, gern bei Eiche, Esskastanie und Kiefer auf kalkreichem Boden, und ist sehr selten, im Mittelmeerraum häufiger. Vom Grauen Wulstling unterscheiden ihn vor allem die gelblichen statt grauen Velumreste und der gelblich gerandete Ring, denn der Graue Wulstling hat einen rein weißen Ring. Der Gelbflockige Wulstling ist giftig."
+beschreibungEn = "A small to medium-sized amanita with a yellowish, brown-yellow to clay-grey cap with grey and yellowish, flaky veil remnants, white free gills and a white stem with a yellowish, flaky belt of warts and a striate ring with a yellowish edge. It grows from June to November in mixed woods, often with oak, sweet chestnut and pine on calcareous soil, and is very rare, more common in the Mediterranean region. The key difference from the grey spotted amanita is the yellowish instead of grey veil remnants and the ring with a yellowish edge, because the grey spotted amanita has a pure white ring. This species is poisonous."
+entwurf = true
 weitereNamen = ["Rauer Wulstling"]
 synonyme = ["Amanita aspera", "Amanita aspera var. franchetii", "Amanita aspera f. franchetii", "Amanita queletii var. franchetii", "Amanita franchetii var. lactella", "Amanita rubescens f. aspera"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["beflockt", "genattert", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

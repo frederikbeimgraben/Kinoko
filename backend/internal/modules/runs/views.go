@@ -206,7 +206,8 @@ func logTail(path *string, lines int) []string {
 	return all[max(0, len(all)-lines):]
 }
 
-// splitLines splits text at the line ends that Python's str.splitlines knows.
+// splitLines splits text at each Unicode line end (\n, \r, \r\n, \v, \f,
+// \x1c to \x1e, \x85, U+2028 and U+2029).
 // A line end at the end of the text gives no empty last line.
 func splitLines(text string) []string {
 	out := []string{}

@@ -11,7 +11,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// Feature constants of build_dataset.py.
+// Feature constants of the weather features.
 var (
 	Lags        = []int{0, 1, 2, 3, 4, 6, 8}
 	LagVars     = []string{"pr", "tas", "tasmin"}
@@ -19,7 +19,7 @@ var (
 	AnomalyVars = []string{"pr_sum4", "pr_sum8", "tas"}
 )
 
-// LagNames returns the columns of build_dataset.add_lags, in its order.
+// LagNames returns the lag, sum, mean and drop columns, in their order.
 func LagNames() []string {
 	var out []string
 	for _, v := range LagVars {
@@ -37,7 +37,7 @@ func LagNames() []string {
 	return append(out, "tas_drop_2w", "tas_drop_4w")
 }
 
-// AnomalyNames returns the columns of build_dataset.add_anomalies.
+// AnomalyNames returns the anomaly and ratio columns.
 func AnomalyNames() []string {
 	out := make([]string, len(AnomalyVars))
 	for i, v := range AnomalyVars {
@@ -47,7 +47,7 @@ func AnomalyNames() []string {
 }
 
 // Normals holds the mean of each base column per cell and ISO week number over
-// each year of a cube: the normal value of add_anomalies and region_map.normalwerte.
+// each year of a cube: the normal value of the anomalies.
 type Normals struct {
 	index map[geo.CellKey]int
 	bases map[string][][54]float64
@@ -87,7 +87,7 @@ func ComputeNormals(c *Cube, bases []string) (*Normals, error) {
 }
 
 // Derive computes the named features of each cell-week of c, as [w*len(Cells)+c].
-// The anomalies use normals over c itself, as add_anomalies on the same table.
+// The anomalies use normals over c itself.
 func Derive(c *Cube, names []string) (map[string][]float32, error) {
 	n, err := ComputeNormals(c, anomalyBases(names))
 	if err != nil {
@@ -97,7 +97,7 @@ func Derive(c *Cube, names []string) (map[string][]float32, error) {
 }
 
 // DeriveWith is Derive with normals from another cube, for example the full record when c holds only the last
-// weeks (region_map.py). A name is a column of c, "paws" (the mean of PawsVars), <base>_lag<k>, _sum<w>,
+// weeks. A name is a column of c, "paws" (the mean of PawsVars), <base>_lag<k>, _sum<w>,
 // _mean<w>, _mittel<w>, _drop_<k>w, or <base>_anom and _ratio against the normals.
 func DeriveWith(c *Cube, names []string, n *Normals) (map[string][]float32, error) {
 	nc, nw := len(c.Cells), len(c.Weeks)
@@ -170,7 +170,7 @@ var (
 	rollRe = regexp.MustCompile(`^(.+)_(sum|mean|mittel)(\d+)$`)
 )
 
-// cellSeries computes the features of one cell over the weeks, in float64 as pandas does.
+// cellSeries computes the features of one cell over the weeks, in float64.
 type cellSeries struct {
 	c       *Cube
 	i       int
@@ -252,7 +252,7 @@ func (s *cellSeries) raw(name string) []float64 {
 	return out
 }
 
-// pawsMean is the mean of the stands that have a value, rounded to float32 (input_layers.wochenwetter).
+// pawsMean is the mean of the stands that have a value, rounded to float32.
 func (s *cellSeries) pawsMean() ([]float64, error) {
 	out := make([]float64, len(s.c.Weeks))
 	cnt := make([]int, len(out))

@@ -9,11 +9,15 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er wächst gern am Straßenrand und auf gedüngten Weiden. Solche Funde besser stehen lassen."
+beschreibung = "Mittelgroßer Champignon mit weißem, später graubraunem Hut mit großen, bräunlichen, flach anliegenden Schuppen, rosa, später schokoladenbraunen bis schwarzen, freien Lamellen und weißem, brüchigem Stiel ohne Knolle mit schwachem, vergänglichem Ring. Er wächst von Juni bis November auf Wiesen und Weiden, in Gärten, unter Hecken und am Straßenrand. Vom Falschen Wiesenegerling unterscheiden ihn vor allem der angenehme, leicht marzipanartige Geruch und das schwach rötende Fleisch, denn der Falsche Wiesenegerling gilbt an Fleisch und Stielbasis kräftig und riecht unangenehm nach Karbol oder Tinte."
+beschreibungEn = "A medium-sized mushroom with a white cap that turns grey-brown, with large, brownish, flat scales, free gills that are pink first and chocolate-brown to black later, and a white, brittle stem without a bulb and with a weak, short-lived ring. It grows from June to November in meadows and pastures, in gardens, under hedges and at roadsides. The key difference from Agaricus pseudopratensis is the pleasant, slightly marzipan-like smell and the weakly reddening flesh, because Agaricus pseudopratensis turns strongly yellow in the flesh and stem base and smells unpleasantly of carbolic or ink."
+entwurf = true
 weitereNamen = ["Kleinsporiger Wiesenegerling", "Varietät Wiesenchampignon", "Braunschuppiger Wiesenegerling", "Kleinsporiger Weidechampignon", "Feld-Egerling"]
 synonyme = ["Agaricus floccipes", "Agaricus campestris cf. var floccipes", "Psalliota campestris var. floccipes", "Agaricus campestris var. floccipes"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["ueberstehend"] }
 stielmerkmale = ["bruechig", "ring"]
+ringform = "haengend"
 
 [quelle]
 titel = "123pilzsuche"

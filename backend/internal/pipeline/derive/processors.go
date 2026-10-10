@@ -22,7 +22,7 @@ const (
 )
 
 // Config holds what the processors share. A zero Grid is the Germany grid
-// at 500 m; zero FineOptions take the defaults of fine_layers.py.
+// at 500 m; zero FineOptions take the defaults.
 type Config struct {
 	Resolve  sources.Resolver
 	Install  Installer
@@ -150,8 +150,8 @@ func (c Config) renderFine(ctx context.Context, v *sources.Version, in FineInput
 	return artifactsOf(out, rel...)
 }
 
-// writeSite writes site_500m.parquet from the column sets in the order of
-// static_features.py: terrain first, then soil.
+// writeSite writes site_500m.parquet from the column sets: terrain first,
+// then soil.
 func writeSite(dir string, g Grid, dem, soil Columns) (string, error) {
 	t, schema := SiteTable(g, dem, soil)
 	return writeTable(dir, ArtSite, t, schema)

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche", "eiche", "hasel", "fichte"]
 speisewertHinweis = "In Deutschland gefährdet und besonders geschützt. Wenn überhaupt, nur einen Fruchtkörper für den Eigenbedarf."
 gefaehrdung = "gefaehrdet"
+beschreibung = "Kräftiger Röhrling mit ocker- bis rotbraunem, filzigem Hut, gelben Röhren und gelblichem Stiel mit feinem Netz und einem wurzelnden Anhängsel an der verdickten Basis. Er wächst von Juni bis November im Laubwald bei Buche, Eiche und Hasel, vereinzelt bei Fichte, auf kalkreichem Boden und ist in Deutschland gefährdet und besonders geschützt. Vom Falschen Anhängselröhrling unterscheidet ihn vor allem das Blauen: Sein Fleisch blaut leicht, beim Falschen Anhängselröhrling blauen die zitronengelben Röhren nie."
+beschreibungEn = "A stout bolete with an ochre to red-brown, felty cap, yellow tubes and a yellowish stem with a fine net and a rooting appendage at the swollen base. It grows from June to November in broadleaf woods with beech, oak and hazel, sometimes with spruce, on calcareous soil, and is endangered and specially protected in Germany. The key difference from Butyriboletus subappendiculatus is the blueing: its flesh turns slightly blue, while the lemon-yellow tubes of Butyriboletus subappendiculatus never turn blue."
+entwurf = true
 weitereNamen = ["Laubwald Anhängselröhrling", "Gelber Steinpilz", "Gelber Bronzeröhrling", "Gelber Steini"]
 fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend", "scharf"] }

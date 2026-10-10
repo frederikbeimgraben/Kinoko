@@ -10,6 +10,9 @@ baeume = ["birke", "pappel"]
 speisewertHinweis = "Sehr selten und in Deutschland gefährdet. Nur einzelne Fruchtkörper nehmen. Ritzt man den Stiel schon im Wald an, färbt sich die Stelle nach etwa 15 Minuten rötlich und nach ein bis zwei Stunden grau; das erspart die Kostprobe."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Mittelgroßer Täubling mit chromgelbem bis zitronengelbem, feucht glänzendem Hut, weißlichen, später grauenden Lamellen und festem, weißem Stiel, der nach Berührung erst rötet und dann graufleckig wird. Er wächst von Juni bis November auf moorigem, saurem Boden im Laubwald, meist bei Birke, vereinzelt bei Espe und Erle, und ist sehr selten und in Deutschland gefährdet. Vom Ockertäubling unterscheidet ihn vor allem das Fleisch, das bei Verletzung erst rötet und dann grau wird, denn beim Ockertäubling graut es ohne vorheriges Röten; dessen Hut ist außerdem gelbocker und matt."
+beschreibungEn = "A medium-sized brittlegill with a chrome-yellow to lemon-yellow cap that is glossy when wet, whitish gills that later turn grey, and a firm, white stem that turns red first after touch and then gets grey spots. The yellow swamp brittlegill grows from June to November on boggy, acid soil in broadleaf woods, mostly with birch, sometimes with aspen and alder, and is very rare and endangered in Germany. The key difference from the ochre brittlegill is the flesh, which turns red first and then grey where damaged, because the flesh of the ochre brittlegill turns grey without turning red first; its cap is also yellow-ochre and matt."
+entwurf = true
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["vertieft"]
 hutrand = { von = ["gerieft"] }

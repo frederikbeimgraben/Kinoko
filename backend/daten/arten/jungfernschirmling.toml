@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Er verursacht möglicherweise Magen-Darm-Störungen. Zu erkennen am Fleisch, das bei Verletzung nicht rötet, sondern höchstens im Alter etwas grau wird, und am Stiel ohne Natterung."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer Schirmling mit hellbraunem Hut mit gezonten, weichen, wolligen, gelblichen bis braunen Schüppchen und glatter, dunklerer Mitte, weißen, freien Lamellen und schlankem, hellbräunlichem Stiel ohne Natterung mit wattigem, verschiebbarem Ring. Er wächst von Juni bis November als Folgezersetzer im Nadelwald, auch in Bergnadelwäldern, gern auf saurem Boden, und ist selten. Vom Büscheligen Egerlingsschirmling unterscheidet ihn vor allem das Fleisch, das bei Verletzung nicht rötet, denn der Egerlingsschirmling gilbt und rötet stark. Der Jungfernschirmling ist giftig."
+beschreibungEn = "A medium-sized dapperling with a light brown cap with soft, woolly, yellowish to brown scales in zones and a smooth, darker centre, white free gills and a slender, light brownish stem without a snakeskin pattern and with a cottony, movable ring. It grows from June to November as a saprobe in coniferous woods, also in mountain coniferous woods, often on acid soil, and is rare. The key difference from Leucoagaricus americanus is the flesh, which does not turn red when it is damaged, because Leucoagaricus americanus turns strongly yellow and red. This species is poisonous."
+entwurf = true
 weitereNamen = ["Jungfern Riesenschirmling"]
 synonyme = ["Macrolepiota puellaris", "Macrolepiota nympharum"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }

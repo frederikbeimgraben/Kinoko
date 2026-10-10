@@ -13,9 +13,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/pio"
 )
 
-// extractGolden is testdata/extract.json of testdata/gen_golden.py. main and refreshMain are the checkpoints
-// of extract_grids.main (the second with --refresh-from 2021). fixed and refreshFixed are extract_grids.weekly
-// over the days of both files, with NaN for a sum without a value: the values without bug 8 and bug 9.
+// extractGolden is the golden file testdata/extract.json. main and refreshMain are the checkpoints of a full
+// run and of a refresh from 2021. fixed and refreshFixed are the weekly values over the days of both files,
+// with NaN for a sum without a value (findings 8 and 9).
 type extractGolden struct {
 	Main         map[string][][4]any `json:"main"`
 	Fixed        map[string][][4]any `json:"fixed"`
@@ -111,7 +111,7 @@ func extract(t *testing.T, raw, out string, refresh *int) {
 	}
 }
 
-func TestExtractMatchesPython(t *testing.T) {
+func TestExtractMatchesGolden(t *testing.T) {
 	g := loadExtractGolden(t)
 	out := t.TempDir()
 	extract(t, "testdata/raw", out, nil)
@@ -119,7 +119,7 @@ func TestExtractMatchesPython(t *testing.T) {
 		got := readRows(t, out, job.Name)
 		fixed := goldenRows(g.Fixed[job.Name])
 		compareRows(t, job.Name+" (fixed)", got, fixed, nil)
-		// extract_grids.main differs only where the fixes apply.
+		// The golden main run differs only where findings 8 and 9 apply.
 		main := goldenRows(g.Main[job.Name])
 		compareRows(t, job.Name+" (main)", got, main, func(r weekRow) bool {
 			straddle := r.key.year == 2020 && r.key.week == 53 && job.How == Mean
@@ -151,7 +151,7 @@ func TestExtractRefresh(t *testing.T) {
 	extract(t, raw, full, nil)
 	for _, job := range Jobs {
 		got := readRows(t, out, job.Name)
-		// Python keeps the old 2020-W53, although it holds days of 2021; the refresh computes it again.
+		// The golden refresh keeps the old 2020-W53, although it holds days of 2021; the refresh here computes it again.
 		straddle := func(r weekRow) bool { return r.key.year == 2020 && r.key.week == 53 }
 		compareRows(t, job.Name, got, goldenRows(g.RefreshFixed[job.Name]), straddle)
 		compareRows(t, job.Name+" (full)", got, readRows(t, full, job.Name), nil)

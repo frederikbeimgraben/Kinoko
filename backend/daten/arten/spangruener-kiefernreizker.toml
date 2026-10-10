@@ -10,6 +10,9 @@ baeume = ["kiefer"]
 speisewertHinweis = "Sehr selten und in Deutschland gefährdet (Rote Liste 3). Das Fleisch schmeckt herb bis bitterlich."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "gefaehrdet"
+beschreibung = "Reizker mit orangem bis ockerorangem, deutlich gezontem Hut, der später grünlich fleckt, orangeockerfarbenen Lamellen mit grünem Schimmer, orangeroter Milch, die später weinrot wird, und gelblichem bis rötlichem, hohlem Stiel mit flachen Grübchen. Er wächst vom Sommer bis zum Spätherbst bei Kiefern, ist sehr selten und in Deutschland gefährdet. Vom ähnlichen Fichtenreizker unterscheidet ihn vor allem der Standort, denn der Fichtenreizker wächst bei Fichten und hat einen Stiel ohne Grübchen."
+beschreibungEn = "A milkcap with an orange to ochre-orange, clearly zoned cap that later shows greenish spots, orange-ochre gills with a green sheen, orange-red milk that later turns wine-red and a yellowish to reddish, hollow stem with shallow pits. It grows from summer to late autumn with pine, is very rare and is endangered in Germany. The key difference from the similar false saffron milkcap is the habitat, because the false saffron milkcap grows with spruce and has a stem without pits."
+entwurf = true
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen" }
 hutmerkmale = ["gezont", "vertieft"]
 stielmerkmale = ["hohl"]

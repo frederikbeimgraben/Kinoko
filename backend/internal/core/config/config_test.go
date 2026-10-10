@@ -4,12 +4,11 @@ import "testing"
 
 func TestLabelRemovesTheCommitHash(t *testing.T) {
 	cases := map[string]string{
-		"v0.1.0-64-g5896dc4":        "v0.1.0-64",
 		"v2026-10-08-01-3-g65dd41a": "v2026-10-08-01-3",
 		"v2026-10-09+65dd41a":       "v2026-10-09+65dd41a",
-		"v0.1.0":                    "v0.1.0",
-		"v0.1.0+5896dc4":            "v0.1.0+5896dc4",
-		"3.0.0":                     "v3.0.0",
+		"v2026-10-08-01":            "v2026-10-08-01",
+		"2026-10-08-01":             "v2026-10-08-01",
+		"2026-10-08-01-3-g65dd41a":  "v2026-10-08-01-3",
 		"5896dc4":                   "5896dc4",
 		" ":                         "dev",
 		"":                          "dev",
@@ -28,8 +27,8 @@ func TestVersionUsesTheStampOfTheLinker(t *testing.T) {
 	if Version() != "dev" {
 		t.Fatal(Version())
 	}
-	build = "v0.1.0-64-g5896dc4"
-	if Version() != "v0.1.0-64" {
+	build = "v2026-10-08-01-3-g65dd41a"
+	if Version() != "v2026-10-08-01-3" {
 		t.Fatal(Version())
 	}
 }

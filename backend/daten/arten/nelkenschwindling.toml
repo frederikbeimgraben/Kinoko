@@ -6,8 +6,12 @@ wertigkeit = 1
 marktfaehig = true
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = []
+karte = "marasmius_oreades"
 speisewertHinweis = "Roh in größeren Mengen unbekömmlich, er gibt Blausäure ab. Beim Kochen und Trocknen verflüchtigt sie sich. Nur die Hüte nehmen, die Stiele sind zäh."
 haeufigkeit = "sehrHaeufig"
+beschreibung = "Kleiner Schwindling mit hellbraunem bis ocker-rotbraunem, gebuckeltem Hut, der beim Abtrocknen ausblasst, weißlichen bis gelbbraunen, weit entfernt stehenden Lamellen und hellbraunem, zähem, elastischem Stiel. Er wächst in ganz Deutschland von März bis November auf Rasen, Wiesen, in Parks und Gärten, an Waldrändern und Waldwegen, oft in Hexenringen, und ist sehr häufig. Vom tödlich giftigen Rinnigbereiften Trichterling, der auf denselben Wiesen wächst, unterscheiden ihn vor allem die weit entfernten Lamellen, denn der Trichterling hat einen weißlich bereiften Hut, sehr gedrängte Lamellen und einen kurzen, brüchigen Stiel."
+beschreibungEn = "A small Marasmius with a light brown to ochre-red-brown, umbonate cap that fades as it dries, whitish to yellow-brown, very distant gills and a light brown, tough, elastic stem. It grows throughout Germany from March to November on lawns, meadows, in parks and gardens, at forest edges and along forest paths, often in fairy rings, and is very common. The key difference from the deadly poisonous fool's funnel, which grows on the same meadows, is the distant gills, because the fool's funnel has a whitish bloomed cap, very crowded gills and a short, brittle stem."
+entwurf = true
 weitereNamen = ["Feldschwindling", "Suppenpilz", "Hartbeindl", "Herbstmusseron", "Oreadenpilz"]
 synonyme = ["Collybia oreades", "Agaricus coriaceus", "Agaricus pseudomouceron", "Scorteus oreades"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", stand = "weit" }

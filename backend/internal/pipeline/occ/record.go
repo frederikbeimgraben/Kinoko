@@ -1,4 +1,4 @@
-// Package occ builds the occurrence table of the chain (build_occurrences.py):
+// Package occ builds the occurrence table of the pipeline:
 // GBIF records from the cache and the archive import, plus the app finds, in
 // class Agaricomycetes, with an ISO week and a 5 km cell. Subpackages build
 // the visits, the activity fields and the season table from it.
@@ -11,7 +11,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// Constants of build_occurrences.py.
+// Constants of the occurrence table.
 const (
 	// CellSize is CELL_SIZE, the edge of a grid cell in metres.
 	CellSize = 5000
@@ -52,9 +52,9 @@ func (r Record) UncertaintyAtMost(m float64) bool {
 	return math.IsNaN(r.Uncertainty) || r.Uncertainty <= m
 }
 
-// TrainingSet is the record filter of visit_model.main: ISO year from minYear and
-// a coordinate error of at most maxUnc metres. Both the visits and the activity
-// fields must use it; region_map.py used all records (finding 5 of the plan).
+// TrainingSet is the record filter of the training: ISO year from minYear and
+// a coordinate error of at most maxUnc metres. The visits and the activity
+// fields of the training and of the map must use it (finding 5).
 func TrainingSet(records []Record, minYear int, maxUnc float64) []Record {
 	out := make([]Record, 0, len(records))
 	for _, r := range records {

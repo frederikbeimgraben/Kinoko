@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer", "herbst"]
 baeume = ["linde", "buche"]
 speisewertHinweis = "Tödlich giftig. Er erscheint schon im Mai auf denselben Plätzen wie der Maipilz. Sicherstes Zeichen ist das Röten von Fleisch, Stiel und Lamellen zusammen mit dem spermatischen Geruch."
+beschreibung = "Risspilz mit kegelig gebuckeltem, radialfaserigem Hut, der jung weißlich und später gelbbraun bis ziegelrot ist, weißlichen, später rosa bis rötlichen Lamellen und weißem Stiel, der rötlich anläuft. Er wächst vom Frühling bis zum Spätherbst im Laubwald, in Parks, an Waldwegen und auf Ruderalflächen, gern bei Linde und Buche auf kalkreichem Boden, und erscheint schon im Mai an denselben Stellen wie der Maipilz. Vom Maipilz unterscheiden ihn vor allem das rötende Fleisch und der spermatische Geruch, denn der Maipilz hat Lamellen, die weiß bleiben, und riecht stark mehlig. Der Ziegelrote Risspilz ist tödlich giftig."
+beschreibungEn = "A fibrecap with a conical, umbonate, radially fibrous cap that is whitish when young and later yellow-brown to brick-red, whitish gills that turn pink to reddish later and a white stem that turns reddish. It grows from spring to late autumn in broadleaf woods, parks, along forest paths and on waste ground, often with lime and beech on calcareous soil, and appears as early as May at the same places as St George's mushroom. The key difference from St George's mushroom is the flesh that turns red and the spermatic smell, because St George's mushroom has gills that stay white and smells strongly of flour. Inosperma erubescens is deadly poisonous."
+entwurf = true
 synonyme = ["Inocybe erubescens", "Inocybe patouillardii"]
 fruchtschicht = { art = "lamellen" }
 hutform = { von = "kegelig" }

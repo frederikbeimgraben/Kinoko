@@ -11,6 +11,9 @@ baeume = ["buche"]
 speisewertHinweis = "Pfifferlinge sind besonders geschuetzt, diese Art steht zudem in Deutschland auf der Roten Liste. Nur kleine Mengen fuer den Eigenbedarf."
 haeufigkeit = "haeufig"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleiner Pfifferling mit orangem bis orangegelbem, samtigem, trichterförmigem Hut, gelblichen, gegabelten, weit herablaufenden Leisten und gelblichem, vollem Stiel. Er wächst vom Frühsommer bis zum Spätherbst im Laubwald, gern bei Buchen auf kalkarmem Boden, und ist regional häufig. Vom ähnlichen Falschen Pfifferling unterscheidet ihn vor allem die Fruchtschicht, denn der Falsche Pfifferling hat echte, dicht stehende, gegabelte Lamellen statt Leisten."
+beschreibungEn = "A small chanterelle with an orange to orange-yellow, velvety, funnel-shaped cap, yellowish, forked ridges that run far down the stem and a yellowish, solid stem. It grows from early summer to late autumn in broadleaf woods, often with beech on soil low in lime, and is common in some regions. The key difference from the similar false chanterelle is the hymenium, because the false chanterelle has true, crowded, forked gills instead of ridges."
+entwurf = true
 weitereNamen = ["Rötlicher Pfifferling", "Samtleistling", "Fries´scher Pfifferling", "Samtiger Leistling", "Aprikosenpfifferling"]
 fruchtschicht = { art = "leisten" }
 hutform = { von = "trichterfoermig" }

@@ -149,7 +149,7 @@ func TestAcceptReadsPNGAndKeepsColourOfTransparentPixels(t *testing.T) {
 	}
 }
 
-// The sizes come from Pillow's Image.thumbnail in the Python service.
+// The sizes are those of Pillow's Image.thumbnail.
 func TestFitMatchesPillowThumbnail(t *testing.T) {
 	cases := []struct{ w, h, edge, ww, wh int }{
 		{1000, 333, 88, 88, 29}, {1000, 333, 320, 320, 107}, {1000, 333, 1600, 1000, 333},

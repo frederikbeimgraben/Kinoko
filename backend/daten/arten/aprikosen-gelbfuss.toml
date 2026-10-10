@@ -10,9 +10,13 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "eiche"]
 speisewertHinweis = "Auf der Positivliste der DGfM und in der Schweiz marktfähig. Extrem selten, deshalb besser stehen lassen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kleiner bis mittelgroßer Lamellenpilz mit orangebraunem bis rosaviolettem, feucht schmierigem Hut, entfernt stehenden, weit herablaufenden, jung purpurbraunen Lamellen und gelborangem bis purpurrotem Stiel mit hellerer Ringzone. Er wächst von Juni bis November im Kiefern- und Mischwald, vor allem dort, wo Eichen stehen, und ist extrem selten. Vom Spitzgebuckelten Raukopf unterscheiden ihn vor allem die herablaufenden Lamellen und der glatte, schmierige Hut, denn der Raukopf hat einen spitzen Buckel, einen trockenen, radialfaserigen Hut und zimtbraune Lamellen."
+beschreibungEn = "A small to medium-sized gilled mushroom with an orange-brown to pinkish-violet cap that is slimy when wet, widely spaced, deeply decurrent gills that are purple-brown when young, and a yellow-orange to purple-red stem with a paler ring zone. It grows from June to November in pine and mixed woods, mainly where oaks grow, and is extremely rare. The key difference from the deadly webcap is the decurrent gills and the smooth, slimy cap, because the deadly webcap has a pointed umbo, a dry, radially fibrous cap and cinnamon-brown gills."
+entwurf = true
 synonyme = ["Chroogomphus rutilus var. fulmineus", "Gomphidius viscidus var. fulmineus", "Chroogomphus ochraceus subsp. fulmineus"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend", stand = "weit" }
 stielmerkmale = ["ring", "voll"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"

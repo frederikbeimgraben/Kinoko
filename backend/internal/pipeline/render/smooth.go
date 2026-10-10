@@ -8,9 +8,9 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/numeric"
 )
 
-// Smooth is the field filter of region_map.py: a normalised Gaussian with scipy's mode "reflect". The field
-// is float64 and the mask float32, as in numpy, so the threshold 0.08 compares in float32. Without spill, a
-// NaN cell stays NaN. With spill, masked cells next to valid ones get a value, as region_map.py (finding 10).
+// Smooth is the field filter of the species map: a normalised Gaussian with scipy's mode "reflect". The field
+// is float64 and the mask float32, so the threshold 0.08 compares in float32. Without spill, a NaN cell stays
+// NaN. With spill, masked cells next to valid ones get a value (finding 10).
 func Smooth(field []float64, ny, nx int, sigma float64, spill bool) []float64 {
 	if sigma <= 0 {
 		return field

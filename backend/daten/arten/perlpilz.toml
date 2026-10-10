@@ -7,10 +7,15 @@ marktfaehigSchweiz = true
 marktfaehig = true
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+karte = "amanita_rubescens"
 speisewertHinweis = "Roh giftig. Mindestens fünf Minuten garen, bis 90 °C Kerntemperatur erreicht sind. Nur junge Fruchtkörper nehmen, alte verderben schnell. Der stark geriefte Ring und das Röten sind Pflichtmerkmale; wer den Pantherpilz nicht sicher trennt, lässt ihn stehen."
+beschreibung = "Mittelgroßer bis großer Wulstling mit rotbraunem, fleischrötlichem bis braunrotem Hut mit grauen, leicht abwischbaren Schüppchen, weißen, im Alter rötlich fleckenden, freien Lamellen und weißlichem bis hell braunrosa Stiel mit häutigem, stark gerieftem Ring und rübenförmiger Knolle ohne Scheide. Er wächst in ganz Deutschland von Juni bis November im Mischwald bei Nadel- und Laubbäumen. Vom tödlich giftigen Pantherpilz unterscheiden ihn vor allem das Fleisch, das an Druck- und Fraßstellen rötet, und der stark geriefte Ring, denn der Pantherpilz rötet nie, hat einen ungerieften Ring und rein weiße Flöckchen."
+beschreibungEn = "A medium-sized to large amanita with a red-brown, flesh-red to brown-red cap with grey scales that rub off easily, white free gills that get reddish spots with age, and a whitish to light brown-pink stem with a membranous, strongly striate ring and a turnip-shaped bulb without a volva. It grows throughout Germany from June to November in mixed woods with conifers and broadleaf trees. The key difference from the deadly poisonous panther cap is the flesh, which turns red where it is pressed or eaten by animals, and the strongly striate ring, because the panther cap never turns red, has a smooth ring and pure white flakes."
+entwurf = true
 weitereNamen = ["Rötender Knollenblätterpilz", "Rötender Wulstling", "Perlen-Wulstling"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 stielmerkmale = ["knolle", "genattert", "wurzelnd", "ring"]
+ringform = "haengend"
 
 [baeumeAusErfahrung]
 baeume = ["buche", "fichte", "eiche"]

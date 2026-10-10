@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche", "esche", "fichte", "tanne"]
 speisewertHinweis = "Nur junge Fruchtkörper taugen. Der Stielbereich bleibt zu zäh und gehört weg."
 haeufigkeit = "selten"
+beschreibung = "Mittelgroßer bis großer Seitling mit grauem bis hellbraunem, filzigem Hut mit dunkelbräunlichen Schüppchen und jung mit Velumresten am Rand, weißen bis blassgelben, herablaufenden Lamellen und weißlichem Stiel mit flüchtigem Ring. Er wächst von Juni bis November an Stämmen von Laubbäumen, gern an Eiche, Buche und Esche, ausnahmsweise an Fichte oder Tanne, und ist meist selten. Vom Lungenseitling unterscheidet ihn vor allem der Ring am Stiel, denn der Lungenseitling hat keinen Ring und einen milchweißen bis cremeweißen Hut."
+beschreibungEn = "A medium-sized to large oyster mushroom with a grey to light brown, felty cap with dark brownish scales and veil remnants at the margin when young, white to pale yellow decurrent gills and a whitish stem with a short-lived ring. It grows from June to November on trunks of broadleaf trees, often oak, beech and ash, rarely on spruce or fir, and is mostly rare. The key difference from the pale oyster is the ring on the stem, because the pale oyster has no ring and a milk-white to cream-white cap."
+entwurf = true
 weitereNamen = ["Eichenseitling"]
 synonyme = ["Lentodiopsis dryina", "Pleurotus corticatus var. albertinii"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["fruehling", "sommer"]
 baeume = ["pappel", "weide", "linde", "eiche"]
 speisewertHinweis = "Giftig und halluzinogen. Das Grünen an Stiel und Fleisch ist das sicherste Merkmal."
+beschreibung = "Kleiner Risspilz mit strohgelbem bis braunem, radial rissigem und faserigem Hut, grauweißlichen, später graubraunen Lamellen und hellem Stiel, der von unten her blaugrün anläuft. Er wächst von März bis August bei Laubbäumen wie Pappel, Weide, Linde und Eiche, gern auf feuchtem, sandigem Boden in Mischwäldern, Parks und Gärten. Sein sicherstes Merkmal ist das Grünen an Stiel und Fleisch. Der Grünende Risspilz ist giftig und wirkt halluzinogen."
+beschreibungEn = "A small fibrecap with a straw-yellow to brown, radially cracked and fibrous cap, grey-white gills that later become grey-brown and a pale stem that turns blue-green from the base upwards. It grows from March to August with broadleaf trees such as poplar, willow, lime and oak, often on damp, sandy soil in mixed woods, parks and gardens. Its most reliable feature is the green colour on the stem and the flesh. This species is poisonous and hallucinogenic."
+entwurf = true
 weitereNamen = ["Grünlichverfärbender Risspilz"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutrand = { von = ["wellig"] }

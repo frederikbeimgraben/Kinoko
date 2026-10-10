@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 haeufigkeit = "sehrSelten"
 gefaehrdung = "vomAussterbenBedroht"
+beschreibung = "Großer, stielloser Stachelpilz aus dachziegelartig übereinanderstehenden, weißlichen bis strohfarbenen Hüten mit rauhaariger Oberseite und gleichfarbigen Stacheln auf der Unterseite. Er wächst von Juni bis November als Parasit an Laubbäumen und verursacht Weißfäule. Vom Igelstachelbart unterscheiden ihn vor allem die übereinanderstehenden Hüte, denn der Igelstachelbart hat keinen Hut und lange, herabhängende Stacheln. Der Nördliche Stachelseitling ist ungenießbar und in Deutschland vom Aussterben bedroht."
+beschreibungEn = "A large, stemless tooth fungus made of overlapping, whitish to straw-coloured caps with a hairy upper side and spines of the same colour on the underside. It grows from June to November as a parasite on broadleaf trees and causes white rot. The key difference from the lion's mane is the overlapping caps, because the lion's mane has no cap and long, hanging spines. This species is inedible and critically endangered in Germany."
+entwurf = true
 fruchtschicht = { art = "stacheln" }
 
 [quelle]

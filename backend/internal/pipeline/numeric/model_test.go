@@ -8,7 +8,7 @@ import (
 	"github.com/frederikbeimgraben/kinoko/backend/internal/pipeline/core/geo"
 )
 
-// Golden values: pilze.coarse_inputs.CoarseSampler.sample (testdata/gen_golden.py).
+// Golden values: the coarse sampler.
 func TestCoarseSampler(t *testing.T) {
 	var g struct {
 		Cells   [][2]int32
@@ -34,7 +34,7 @@ func TestCoarseSampler(t *testing.T) {
 }
 
 // Golden values: sklearn IsotonicRegression(out_of_bounds="clip").fit and
-// predict (testdata/gen_golden.py).
+// predict.
 func TestIsotonic(t *testing.T) {
 	var cases []struct {
 		X    floats  `json:"x"`
@@ -59,7 +59,7 @@ func TestIsotonic(t *testing.T) {
 }
 
 // Golden values: sklearn roc_auc_score, average_precision_score and
-// brier_score_loss (testdata/gen_golden.py).
+// brier_score_loss.
 func TestMetrics(t *testing.T) {
 	var cases []struct {
 		Y              []int8
@@ -111,7 +111,7 @@ func TestRandom(t *testing.T) {
 	}
 }
 
-// Golden values: np.nanpercentile(v, list) and np.sum (testdata/gen_golden.py).
+// Golden values: np.nanpercentile(v, list) and np.sum.
 func TestStats(t *testing.T) {
 	var g struct {
 		Percentile []struct{ V, Q, F32, F64 floats }
@@ -134,7 +134,7 @@ func TestStats(t *testing.T) {
 	}
 }
 
-// Golden values: pilze.final_model.blocked_folds for the year and space schemes.
+// Golden values: the blocked folds of the year and space schemes.
 func TestBlockedFolds(t *testing.T) {
 	var g struct {
 		YearKey  []int64 `json:"year_key"`

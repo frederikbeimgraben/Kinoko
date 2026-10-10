@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Roh unverträglich und rasch bitter. Nur ganz junge Fruchtkörper verwenden. In Deutschland gefährdet."
 gefaehrdung = "gefaehrdet"
+beschreibung = "Porling mit semmelgelbem bis orangebraunem, glattem, mattem Hut, grünweißlichen, später gelben Poren und weißlichem, strunkartigem Stiel; oft sind mehrere Stiele miteinander verwachsen. Er wächst vom Sommer bis zum Spätherbst meist im Nadelwald auf saurem Boden, im Mischwald auch zusammen mit dem Schafporling, und ist in Deutschland gefährdet. Vom ähnlichen Schafporling unterscheidet ihn vor allem die Hutfarbe, denn der Schafporling hat einen weißen, später gelblichen Hut und einen längeren Stiel."
+beschreibungEn = "A polypore with a buff-yellow to orange-brown, smooth, matt cap, greenish-white pores that turn yellow later and a whitish, stump-like stem; often several stems are fused together. It grows from summer to late autumn mostly in coniferous woods on acid soil, in mixed woods also together with the sheep polypore, and is endangered in Germany. The key difference from the similar sheep polypore is the cap colour, because the sheep polypore has a white cap that turns yellowish later and a longer stem."
+entwurf = true
 weitereNamen = ["Schofferl"]
 synonyme = ["Scutiger confluens"]
 fruchtschicht = { art = "poren" }

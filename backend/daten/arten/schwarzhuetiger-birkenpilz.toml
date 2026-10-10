@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["birke"]
 speisewertHinweis = "Guter Speisepilz, als Raufußröhrling aber besonders geschützt. Nur wenige Stücke für den Eigenbedarf nehmen."
 haeufigkeit = "selten"
+beschreibung = "Raufußröhrling mit dunkel schwarzbraunem bis graubraunem, feinsamtigem Hut, weißlichen, später grauen Röhren und schmutzig weißem Stiel mit schwarzbraunen Schuppen und oft schwarzer Basis. Er wächst vom Sommer bis zum Spätherbst bei Birken und ist selten. Vom ähnlichen Rötenden Birkenpilz unterscheidet ihn vor allem das Fleisch, denn beim Rötenden Birkenpilz rötet es im Schnitt deutlich, vor allem im Stiel."
+beschreibungEn = "A rough-stemmed bolete with a dark black-brown to grey-brown, finely velvety cap, whitish tubes that turn grey later and a dirty white stem with black-brown scales and an often black base. It grows from summer to late autumn with birch and is rare. The key difference from the similar Leccinum oxydabile is the flesh, because in that species it turns clearly red when cut, especially in the stem."
+entwurf = true
 weitereNamen = ["Schwarzhütiger Birkenpilz"]
 synonyme = ["Leccinum scabrum var. melaneum", "Krombholzia scabra f. melanea", "Krombholziella melanea", "Boletus melaneus", "Boletus scaber var. melaneus"]
 fruchtschicht = { art = "roehren" }

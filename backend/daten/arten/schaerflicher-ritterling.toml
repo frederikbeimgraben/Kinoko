@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["buche"]
 speisewertHinweis = "Giftig. Kennzeichen sind der graubraune, wie bei einem Risspilz radial einreißende Hut, die alt schwärzenden Lamellenschneiden und der nach kurzem Kauen brennend scharfe Geschmack."
+beschreibung = "Ritterling mit graubraunem, radialfaserigem, gebuckeltem Hut, der wie bei einem Risspilz radial einreißt, weißlichen Lamellen mit im Alter schwärzenden Schneiden und grauweißem, faserigem Stiel. Er wächst vom Sommer bis zum Spätherbst im Laubwald, gern bei Buchen. Vom ähnlichen Tigerritterling unterscheidet ihn vor allem die Größe, denn der Tigerritterling ist größer und kräftiger und hat dachziegelig angeordnete dunkelgraue Schuppen. Der Schärfliche Ritterling ist giftig."
+beschreibungEn = "A knight with a grey-brown, radially fibrous, umbonate cap that splits radially like a fibrecap, whitish gills with edges that turn black with age and a grey-white, fibrous stem. It grows from summer to late autumn in broadleaf woods, often with beech. The key difference from the similar tiger tricholoma is the size, because the tiger tricholoma is larger and stouter and has dark grey scales that overlap like roof tiles. Tricholoma sciodes is poisonous."
+entwurf = true
 synonyme = ["Tricholoma virgatum var. sciodes", "Tricholoma sciodes var. sciodes", "Agaricus murinaceus"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet", schneide = "gesaegt" }
 hutform = { von = "flach" }

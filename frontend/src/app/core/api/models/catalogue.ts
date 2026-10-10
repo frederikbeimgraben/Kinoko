@@ -27,6 +27,7 @@ export type Speed = components['schemas']['Speed'];
 export type GillAttachment = components['schemas']['GillAttachment'];
 export type GillSpacing = components['schemas']['GillSpacing'];
 export type GillEdge = components['schemas']['GillEdge'];
+export type RingShape = components['schemas']['RingShape'];
 export type TermRef = components['schemas']['TermRef'];
 export type Term = components['schemas']['Term'];
 export type TermCreate = components['schemas']['TermCreate'];
@@ -74,6 +75,16 @@ export const CAP_SHAPES: readonly CapShape[] = [
   'pear',
   'club',
   'cylindrical',
+];
+
+/** The ring shapes, from the full ring to its trace on the stem. */
+export const RING_SHAPES: readonly RingShape[] = [
+  'pendant',
+  'flaring',
+  'sheathing',
+  'double',
+  'zone',
+  'cortina',
 ];
 
 export const TAXON_RANKS: readonly TaxonRank[] = ['division', 'class', 'order', 'family', 'genus'];

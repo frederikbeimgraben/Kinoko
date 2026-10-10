@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur leicht giftig, dazu bitter. Er verrät sich durch den Geruch nach Seifenlauge und das rötende Fleisch, vor allem an der Stielbasis."
+beschreibung = "Ritterling mit sehr vielgestaltigem, grauem, gelbem bis schwarzbraunem, meist feinschuppigem Hut, schmutzig weißlichen bis gelblichen, ausgebuchtet angewachsenen Lamellen und oft spindelig verdrehtem Stiel. Er wächst vom Sommer bis zum Spätherbst im Mischwald, einzeln oder teils büschelig. Typisch sind der Geruch nach Seifenlauge und das Fleisch, das an verletzten Stellen rötet, vor allem an der Stielbasis. Der Seifenritterling ist giftig."
+beschreibungEn = "A knight with a very variable, grey, yellow to black-brown, mostly finely scaly cap, dirty whitish to yellowish gills with a notched attachment and an often spindle-shaped, twisted stem. It grows from summer to late autumn in mixed woods, single or sometimes in clusters. Typical features are the smell of soapy water and the flesh, which turns red where it is damaged, especially at the stem base. The soapy knight is poisonous."
+entwurf = true
 weitereNamen = ["Waschküchenritterling", "Seifen-Ritterling"]
 synonyme = ["Gyrophila saponacea", "Agaricus fusiformis", "Agaricus atrovirens"]
 fruchtschicht = { art = "lamellen", ansatz = "ausgebuchtet" }

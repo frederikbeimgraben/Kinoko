@@ -53,7 +53,7 @@ var finds = kind[findRow]{
 	inserted: []column{{"review_state", enums.ReviewStateOpen}},
 }
 
-// findOut is a find, with the fields in the order of the Python schema.
+// findOut is a find, with the fields in the order of the API schema.
 type findOut struct {
 	ID           db.ID             `json:"id"`
 	OwnerID      db.ID             `json:"ownerId"`

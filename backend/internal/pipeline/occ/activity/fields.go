@@ -1,4 +1,4 @@
-// Package activity holds visit_model.ActivityFields: the share of observer-days
+// Package activity holds the activity fields: the share of observer-days
 // that found a target taxon on 25 km blocks, in windows that end the day before a date.
 package activity
 

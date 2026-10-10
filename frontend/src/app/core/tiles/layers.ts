@@ -1,4 +1,4 @@
-/** The manifest of the input layers, as `modell/src/pilze/input_layers.py` writes it. */
+/** The manifest of the input layers (`layers.json`), as the backend pipeline writes it. */
 
 import { decimal } from '../i18n/numbers';
 

@@ -71,6 +71,39 @@ describe('SectionPartComponent', () => {
     expect(body.partNotes).toEqual([]);
   });
 
+  it('zeigt beim Ring die Form und schreibt die gewählte Form', async () => {
+    const { http } = await build('ring', { ringShape: 'pendant' });
+    await screen.findByRole('heading', { name: 'Ring' });
+
+    const shapes = screen.getByRole('group', { name: 'Form' });
+    expect(screen.getByRole('button', { name: 'hängend' })).toHaveAttribute('aria-pressed', 'true');
+    expect(shapes.querySelectorAll('app-filter-chip')).toHaveLength(6);
+
+    await userEvent.click(screen.getByRole('button', { name: 'doppelt' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const body = http.expectOne('/api/species/boletus-edulis').request.body as { ringShape: string | null };
+    expect(body.ringShape).toBe('double');
+  });
+
+  it('löscht die Form, wenn die gewählte Form wieder abgewählt ist', async () => {
+    const { http } = await build('ring', { ringShape: 'zone' });
+    await screen.findByRole('heading', { name: 'Ring' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Ringzone' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const body = http.expectOne('/api/species/boletus-edulis').request.body as { ringShape: string | null };
+    expect(body.ringShape).toBeNull();
+  });
+
+  it('zeigt bei anderen Teilen keine Form', async () => {
+    await build('cap', { ringShape: 'pendant' });
+    await screen.findByRole('heading', { name: 'Hut' });
+
+    expect(screen.queryByRole('group', { name: 'Form' })).toBeNull();
+  });
+
   it('zeigt bei einem deutschen Teilnamen den Zustand nicht gefunden', async () => {
     await build('hut');
 

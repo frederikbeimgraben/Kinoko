@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "buche"]
 haeufigkeit = "selten"
+beschreibung = "Flach konsolen- bis fächerförmiger Porling mit rostbraunem bis gelbbraunem, alt fast schwarzbraunem, rauhaarig filzigem Hut mit hellerem Rand, sehr feinen, jung schillernden, gelben bis graugelben Poren und weichem, schwammigem Fleisch. Er wächst von Juni bis November an lebenden alten Laubbäumen, meist an Eiche und Buche, und ist meist selten. Vom Eichenfeuerschwamm unterscheidet ihn vor allem das weiche, schwammige Fleisch, denn der Eichenfeuerschwamm ist hart, holzig und mehrjährig."
+beschreibungEn = "A flat, bracket- to fan-shaped polypore with a rust-brown to yellow-brown cap that becomes almost blackish-brown with age, with a rough-hairy, felty surface and a paler margin, very fine, yellow to grey-yellow pores that shimmer when young, and soft, spongy flesh. It grows from June to November on living old broadleaf trees, mostly oak and beech, and is mostly rare. The key difference from Fomitiporia robusta is the soft, spongy flesh, because Fomitiporia robusta is hard, woody and perennial."
+entwurf = true
 weitereNamen = ["Ankerhaariger Buchen-Schillerporling", "Blasser Schillerporling"]
 fruchtschicht = { art = "poren" }
 hutform = { von = "muschelfoermig" }

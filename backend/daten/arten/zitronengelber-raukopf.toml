@@ -7,6 +7,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Tödlich giftig, niemals probieren: die Inhaltsstoffe können Nieren und Leber schädigen. Er ist der einzige Raukopf mit ausbleichender Huthaut und hat einen zitronengelben Stiel mit gelben Velumresten."
+beschreibung = "Schleierling mit gelblichem bis fuchsrotem, kahlem, ausbleichendem Hut ohne spitzen Buckel, gelblichen bis gelborangen, später rostgelben Lamellen und zitronengelbem Stiel mit gelben Velumresten. Er wächst vom Sommer bis zum Spätherbst im moosigen, feuchten Nadelwald, gern bei Fichte auf sauren, mageren Böden zwischen Torfmoosen und Heidelbeeren. Vom ebenfalls tödlich giftigen Spitzgebuckelten Raukopf unterscheidet ihn vor allem der Hut, denn der Spitzgebuckelte Raukopf hat einen spitz gebuckelten, nicht ausbleichenden Hut und zimtbraune Lamellen. Der Zitronengelbe Raukopf ist tödlich giftig."
+beschreibungEn = "A webcap with a yellowish to fox-red, smooth cap that fades and has no pointed umbo, yellowish to yellow-orange gills that turn rust-yellow later and a lemon-yellow stem with yellow veil remnants. It grows from summer to late autumn in mossy, moist coniferous woods, often with spruce on acid, nutrient-poor soil among peat moss and bilberries. The key difference from Cortinarius rubellus, which is also deadly poisonous, is the cap, because that species has a cap with a pointed umbo that does not fade and cinnamon-brown gills. Cortinarius limonius is deadly poisonous."
+entwurf = true
 weitereNamen = ["Löwengelber Raukopf"]
 synonyme = ["Agaricus limonius", "Cortinarius callisteus sensu", "Gomphos limonius", "Telamonia limonia", "Flammula limonia", "Cortinarius luteus", "Cortinarius limonius f. hydrolimonius"]
 fruchtschicht = { art = "lamellen" }

@@ -9,6 +9,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Auf der Positivliste der DGfM, in der Schweiz nicht marktfähig. Er ist einer der wenigen essbaren Röhrlinge mit Netzzeichnung am Stiel."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer Röhrling mit graubraunem, filzigem Hut, chromgelben Röhren und schlankem, gelblichem Stiel mit bräunlicher Netzzeichnung und gelbem Myzel an der Basis. Er wächst von Juni bis November im Mischwald, besonders gern bei Fichte, und ist häufig. Vom Rotfußröhrling unterscheidet ihn vor allem das bräunliche Netz am Stiel, denn der Rotfußröhrling hat einen rötlich punktierten Stiel ohne Netz und ist unter der Huthaut rot."
+beschreibungEn = "A medium-sized bolete with a grey-brown, felty cap, chrome-yellow tubes and a slender, yellowish stem with a brownish net and yellow mycelium at the base. It grows from June to November in mixed woods, especially with spruce, and is common. The key difference from the red cracking bolete is the brownish net on the stem, because the red cracking bolete has a stem with reddish dots and no net and is red under the cap skin."
+entwurf = true
 weitereNamen = ["Filziger Röhrling", "Braune Ziegenlippe"]
 fruchtschicht = { art = "roehren" }
 stielmerkmale = ["genetzt"]

@@ -5,6 +5,7 @@ import { noViolations } from '../../testing/axe';
 import { catalogueProviders, catalogueReady } from '../../testing/catalogue-double';
 import { EMPTY_CATALOG, noGermanText } from '../../testing/i18n';
 import { speciesEntry, speciesBundle } from '../../testing/species-fixture';
+import { FORECAST_VALUE } from './facets';
 import { SpeciesFilterPanelComponent } from './filter-panel.component';
 import { SpeciesFilterStore } from './filter.store';
 
@@ -36,13 +37,14 @@ describe('SpeciesFilterPanelComponent', () => {
     localStorage.removeItem('pilzkarte.speciesfilter');
   });
 
-  it('zeigt die fünf Gruppen des Bretts flach in einer Spalte', async () => {
+  it('zeigt die Gruppen des Bretts und die Vorhersage flach in einer Spalte', async () => {
     const { container } = await build();
 
     expect(screen.getByRole('button', { name: 'Speisewert' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Hutform' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Fruchtschicht' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Zeitraum' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Vorhersage' })).toBeInTheDocument();
     expect(container.querySelector('app-species-filter-colour')).not.toBeNull();
     await noViolations(container);
   });
@@ -53,6 +55,14 @@ describe('SpeciesFilterPanelComponent', () => {
     await userEvent.click(await screen.findByRole('button', { name: 'essbar' }));
 
     expect([...filter.chosenIn('edibility')]).toEqual(['edible']);
+  });
+
+  it('wählt die Arten mit Vorhersage über das Zeichen "Mit Vorhersage"', async () => {
+    const { filter } = await build();
+
+    await userEvent.click(await screen.findByRole('button', { name: 'Mit Vorhersage' }));
+
+    expect([...filter.chosenIn('forecast')]).toEqual([FORECAST_VALUE]);
   });
 
   it('bleibt ohne deutsches Wort bei leerem Katalog', async () => {

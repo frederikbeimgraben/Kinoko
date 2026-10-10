@@ -21,9 +21,7 @@ type grid struct {
 	maps map[uint64][]int32
 }
 
-// pixelMap returns the pixel map of a file grid. extract_grids.py builds one map
-// from the reference file of the year Start and builds a new map only when the
-// size differs. Each map here comes from the coordinates of its own file; for equal grids that is the same map.
+// pixelMap returns the pixel map of a file grid. Each map comes from the coordinates of its own file.
 func (g *grid) pixelMap(x, y []float64, soil bool) ([]int32, error) {
 	key := gridKey(x, y, soil)
 	g.mu.Lock()

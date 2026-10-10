@@ -67,9 +67,9 @@ func (p modelBundles) speciesOf(ctx context.Context, folder string, b *bundle.Bu
 	}{
 		{"SELECT id, slug FROM species WHERE slug = ?", []any{folder}},
 		{"SELECT s.id, s.slug FROM species s JOIN species_forecast f ON f.species_id = s.id WHERE f.chain_key = ?", []any{folder}},
-		{"SELECT id, slug FROM species WHERE lower(latin_name) IN (" + db.Placeholders(len(b.Species)) + ") LIMIT 1",
-			fn.Map(b.Species, func(n string) any { return strings.ToLower(n) })},
 		{"SELECT id, slug FROM species WHERE slug = ?", []any{b.Slug}},
+		{"SELECT id, slug FROM species WHERE lower(latin_name) IN (" + db.Placeholders(len(b.Species)) + ") ORDER BY slug LIMIT 1",
+			fn.Map(b.Species, func(n string) any { return strings.ToLower(n) })},
 	}
 	for _, q := range queries {
 		if len(q.args) == 0 {

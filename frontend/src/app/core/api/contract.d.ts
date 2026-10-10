@@ -1136,6 +1136,7 @@ export interface components {
             oidcName: string;
             oidcClientId: string;
             origin: string;
+            /** @description Version of the build, the release tag (vYYYY-MM-DD-NN) and the count of later commits. "dev" without a version. */
             version: string;
         };
         Me: {
@@ -1243,6 +1244,8 @@ export interface components {
         /** @enum {string} */
         CapShape: "hemispherical" | "convex" | "flat" | "depressed" | "funnel" | "conical" | "bell" | "egg" | "spherical" | "shell" | "pear" | "club" | "cylindrical";
         /** @enum {string} */
+        RingShape: "pendant" | "flaring" | "sheathing" | "double" | "zone" | "cortina";
+        /** @enum {string} */
         CapFeature: "umbonate" | "hygrophanous" | "zoned" | "sunken" | "irregular" | "navelled";
         /** @enum {string} */
         CapMargin: "inrolled" | "wavy" | "striate" | "cracked" | "fringed" | "incurved" | "overhanging" | "sharp" | "lobed";
@@ -1261,7 +1264,7 @@ export interface components {
         /** @enum {string} */
         TraitKey: "fruitbody" | "cap" | "tubes" | "gills" | "folds" | "spines" | "pores" | "milk" | "stem" | "flesh" | "smell" | "taste" | "spore_print" | "reagents" | "habitat" | "season" | "edibility" | "protection";
         /** @enum {string} */
-        Licence: "own" | "cc0" | "cc_by_4" | "cc_by_sa_4" | "public_domain";
+        Licence: "own" | "cc0" | "cc_by_4" | "cc_by_sa_4" | "public_domain" | "cc_by_3" | "cc_by_sa_3" | "cc_by_2_5" | "cc_by_sa_2_5" | "cc_by_2" | "cc_by_sa_2";
         /** @enum {string} */
         PhotoSize: "thumb" | "list" | "full";
         /** @enum {string} */
@@ -1387,7 +1390,10 @@ export interface components {
             marketable?: boolean;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
+            /** @description The German description. */
             description?: string | null;
+            /** @description The English description. Without the field, a create stores an empty text and an update keeps the old one. */
+            descriptionEn?: string;
             edibilityNote?: string | null;
             protection: components["schemas"]["Protection"];
             protectionNote?: string | null;
@@ -1404,6 +1410,7 @@ export interface components {
             gillEdge?: components["schemas"]["GillEdge"] | null;
             capShapeYoung?: components["schemas"]["CapShape"] | null;
             capShapeOld?: components["schemas"]["CapShape"] | null;
+            ringShape?: components["schemas"]["RingShape"] | null;
             names?: components["schemas"]["SpeciesNameEntry"][];
             measurements?: components["schemas"]["MeasurementGroup"][];
             partNotes?: components["schemas"]["PartNote"][];
@@ -1424,7 +1431,12 @@ export interface components {
         Species: components["schemas"]["SpeciesSummary"] & {
             /** @description The name of the person who made the last change. */
             updatedByName?: string | null;
+            /** @description The German description. */
             description?: string | null;
+            /** @description The English description. Empty if nobody has written it. */
+            descriptionEn?: string;
+            /** @description True when nobody has reviewed the description. */
+            descriptionDraft?: boolean;
             marketable?: boolean;
             frequency?: components["schemas"]["Frequency"] | null;
             redList?: components["schemas"]["RedListStatus"] | null;
@@ -1442,6 +1454,7 @@ export interface components {
             gillEdge?: components["schemas"]["GillEdge"] | null;
             capShapeYoung?: components["schemas"]["CapShape"] | null;
             capShapeOld?: components["schemas"]["CapShape"] | null;
+            ringShape?: components["schemas"]["RingShape"] | null;
             names: components["schemas"]["SpeciesNameEntry"][];
             measurements: components["schemas"]["MeasurementGroup"][];
             partNotes?: components["schemas"]["PartNote"][];
@@ -1710,6 +1723,8 @@ export interface components {
             photographer: string;
             licence: components["schemas"]["Licence"];
             caption?: string;
+            /** @description The English caption. Without the field, the photo has no English caption. */
+            captionEn?: string;
             source?: string | null;
             /** Format: date */
             takenOn?: string;
@@ -1726,6 +1741,8 @@ export interface components {
             ownerName: string;
             licence: components["schemas"]["Licence"];
             caption?: string | null;
+            /** @description The English caption. Empty if nobody has written it. */
+            captionEn: string;
             source?: string | null;
             takenOn?: string | null;
             lat?: number | null;

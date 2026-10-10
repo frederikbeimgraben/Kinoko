@@ -9,6 +9,9 @@ sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "Nur essbar, solange das Innere rein weiß ist; später wird es gelb und ungenießbar. Jeden Fruchtkörper aufschneiden, um junge Knollenblätterpilze auszuschließen."
+beschreibung = "Rundlicher, weißer bis grauweißer Bauchpilz mit netzartig fleckiger Oberfläche, teils mit stielartigem Teil, dessen Inneres zuerst weiß und später gelb bis gelbbraun ist. Er wächst vom Frühsommer bis zum Herbst an warmen Stellen in Mischwäldern, Hecken, Parks, Steppen und Heiden, ist im Mittelmeerraum häufiger und in Europa sonst extrem selten. Vom tödlich giftigen Weißen Knollenblätterpilz im Eistadium unterscheidet ihn vor allem das Innere, denn im Längsschnitt des Knollenblätterpilzes zeigen sich Hut, Lamellen und Stiel, während der Stäubling innen gleichmäßig ist."
+beschreibungEn = "A round, white to grey-white puffball with a surface with net-like spots, sometimes with a stem-like part, whose interior is white at first and turns yellow to yellow-brown later. It grows from early summer to autumn in warm places in mixed woods, hedges, parks, steppes and heaths, is more common in the Mediterranean region and otherwise extremely rare in Europe. The key difference from the deadly poisonous white form of the death cap in the egg stage is the interior, because a lengthwise cut through the death cap shows a cap, gills and a stem, while the puffball is uniform inside."
+entwurf = true
 synonyme = ["Langermannia candida", "Lycoperdon candidum", "Aussereuropäische form: calvatia craniiformis"]
 hutform = { von = "kugelig" }
 

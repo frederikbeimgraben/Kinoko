@@ -6,6 +6,9 @@ marktfaehig = false
 sammelbar = false
 jahreszeiten = ["sommer", "herbst"]
 baeume = []
+beschreibung = "Mittelgroßer bis großer Champignon mit braunem bis gelbbraunem, breitschuppigem Hut auf hellem Grund mit jung fransigem Rand, freien, erst blass rosa und später schwarzbraunen Lamellen und Stiel mit dünnem, doppelkantigem Ring. Er wächst von Juni bis November als Folgezersetzer in Parks und Gärten, auf Kompost und auf nährstoffreichem Boden. Vom Rebhuhnchampignon unterscheidet ihn vor allem das Fleisch, das im Schnitt rötet, denn der Rebhuhnchampignon gilbt chromgelb an der Stielbasis und riecht schwach nach Karbol."
+beschreibungEn = "A medium-sized to large mushroom with a brown to yellow-brown cap with broad scales on a pale background and a fringed margin when young, free gills that are pale pink at first and later black-brown, and a stem with a thin ring with two edges. It grows from June to November as a saprobe in parks and gardens, on compost and on nutrient-rich soil. The key difference from Agaricus phaeolepidotus is the flesh, which turns red when cut, because Agaricus phaeolepidotus turns chrome-yellow at the stem base and has a weak smell of carbolic acid."
+entwurf = true
 weitereNamen = ["Brauner Riesenchampignon", "Schmutziger Riesenchampignon"]
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutrand = { von = ["fransig", "eingerollt"] }

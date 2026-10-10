@@ -82,6 +82,33 @@ app-object-sheet {
   z-index: 1;
 }
 
+// Without a forecast map, a card in the free strip tells why the map is empty.
+// The strip starts below the layers and location buttons and ends at the top of the sheet.
+.map__empty {
+  position: absolute;
+  inset-block: calc(var(--top-bar-height, 0px) + 16px + 2 * (var(--size-floating) + 12px))
+    var(--pilz-sheet-inset, 0px);
+  inset-inline: 16px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+:host-context(.shell--column) .map__empty {
+  inset-block: 24px;
+}
+
+.map__empty-card {
+  flex: none;
+  inline-size: min(100%, 360px);
+  pointer-events: auto;
+  background: var(--sheet);
+  border-radius: var(--r-sheet);
+  box-shadow: var(--shadow-float);
+}
+
 // Without a connection, the map is grey: it shows the last known data.
 .map__grey {
   position: absolute;

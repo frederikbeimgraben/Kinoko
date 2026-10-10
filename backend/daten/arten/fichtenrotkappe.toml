@@ -10,6 +10,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["fichte"]
 speisewertHinweis = "Raufußröhrlinge sind in Deutschland besonders geschützt. Die Art ist sehr selten; nur wenige Fruchtkörper für den Eigenbedarf nehmen oder den Fund stehen lassen."
 haeufigkeit = "sehrSelten"
+beschreibung = "Kräftiger Röhrling mit braunrotem bis orangebraunem, feinfilzigem Hut mit überstehender, eingerollter Huthaut, weißlich grauen bis gelbbraunen Röhren und weißlichem Stiel mit schwarzen, faserigen Schüppchen. Die Fichtenrotkappe wächst von Juni bis November bei Fichten, gern zwischen Heidelbeeren, und ist sehr selten. Von den anderen Rotkappen unterscheidet sie vor allem der Standort bei Fichte; ihr weißes Fleisch wird im Schnitt erst rötlich und später violett."
+beschreibungEn = "A stout bolete with a brownish-red to orange-brown, finely felty cap with an overhanging, inrolled cap skin, whitish-grey to yellow-brown tubes and a whitish stem with black, fibrous scales. Leccinum piceinum grows from June to November with spruce, often among bilberries, and is very rare. The key difference from the other orange-capped Leccinum species is the spruce habitat; its white flesh turns reddish first and violet later when cut."
+entwurf = true
 synonyme = ["Krombholziella piceina", "Leccinum piceinum pilát", "Boletus piceinus"]
 fruchtschicht = { art = "roehren" }
 hutrand = { von = ["ueberstehend", "eingerollt"] }

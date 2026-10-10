@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = []
 speisewertHinweis = "123pilzsuche führt ihn als giftig, mindestens aber als sehr verdächtig. Saftlinge sind besonders geschützt und werden nicht gesammelt."
 haeufigkeit = "selten"
+beschreibung = "Kleiner Saftling mit gelbem bis orangem oder schmutzig rotgelbem Hut mit dunklen graubraunen Schüppchen und trichterförmig vertiefter Mitte, weißlich gelben, etwas herablaufenden Lamellen und glänzend gelbem bis orangegelbem, hohlem Stiel. Er wächst von Juni bis November auf Wiesen und Bergwiesen, in moosigen Wäldern, in feuchtem Torfmoos und auf sandigem Boden und ist selten. Kennzeichnend sind die dunklen Schüppchen auf dem gelben bis orangen Hut. Der Flämmige Saftling ist giftig; Saftlinge sind besonders geschützt."
+beschreibungEn = "A small waxcap with a yellow to orange or dirty reddish-yellow cap with dark grey-brown scales and a funnel-shaped centre, whitish-yellow, slightly decurrent gills and a glossy yellow to orange-yellow, hollow stem. It grows from June to November in meadows and mountain meadows, in mossy woods, in damp peat moss and on sandy soil, and is rare. A key feature is the dark scales on the yellow to orange cap. Hygrocybe turunda is poisonous; waxcaps are specially protected."
+entwurf = true
 weitereNamen = ["Schuppiger Saftling", "Grobschuppiger Moorsaftling", "Rußigflockiger Saftling"]
 synonyme = ["Flammiger saftling = hygrocybe turunda var. sphagnophila"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

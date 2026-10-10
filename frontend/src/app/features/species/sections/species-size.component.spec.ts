@@ -36,6 +36,38 @@ describe('SpeciesSizeComponent', () => {
     expect(screen.getByText('Selten bis 30 cm')).toBeInTheDocument();
   });
 
+  it('zeigt die Ringform in der Karte des Rings', async () => {
+    const ring: MeasurementGroup = {
+      part: 'ring',
+      measurements: [{ dimension: 'width', unit: 'mm', low: 5, high: 10 }],
+    };
+    const { container } = await render(SpeciesSizeComponent, {
+      inputs: { groups: [GROUPS[0], ring], ringShape: 'pendant' },
+    });
+
+    const card = container.querySelectorAll('app-measurement-group')[1];
+    expect(card.querySelector('.group__head')?.textContent).toBe('Ring');
+    expect(card.querySelector('.group__fact-label')?.textContent).toBe('Form');
+    expect(card.querySelector('.group__fact-value')?.textContent).toBe('hängend');
+    await noViolations(container);
+  });
+
+  it('zeigt einen Ring ohne Maß mit seiner Form an seinem Platz im Körper', async () => {
+    const { container } = await render(SpeciesSizeComponent, {
+      inputs: { groups: [GROUPS[0], { part: 'flesh', measurements: [] }], ringShape: 'double' },
+    });
+
+    const heads = [...container.querySelectorAll('.group__head')].map((head) => head.textContent);
+    expect(heads).toEqual(['Hut', 'Ring', 'Fleisch']);
+    expect(screen.getByText('doppelt')).toBeInTheDocument();
+  });
+
+  it('zeigt die Form nur beim Ring', async () => {
+    const { container } = await render(SpeciesSizeComponent, { inputs: { groups: GROUPS } });
+
+    expect(container.querySelector('.group__fact')).toBeNull();
+  });
+
   it('zeigt ohne Maß keine Karte', async () => {
     const { container } = await render(SpeciesSizeComponent, { inputs: { groups: [] } });
 

@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// The cases of modell/tests/test_day_measures.py. A field is [day][cell].
+// The test cases of the day measures. A field is [day][cell].
 
 func f32s(v ...float64) []float32 {
 	out := make([]float32, len(v))

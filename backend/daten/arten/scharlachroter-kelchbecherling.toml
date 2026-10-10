@@ -9,6 +9,9 @@ jahreszeiten = ["winter", "fruehling"]
 baeume = ["weide", "pappel"]
 speisewertHinweis = "Ohne Speisewert, 123pilze gibt die relative Wertigkeit 5. In Deutschland gefährdet, darum stehen lassen."
 gefaehrdung = "gefaehrdet"
+beschreibung = "Becherförmiger Schlauchpilz mit zinnoberroter Innenseite, blasserer, rötlich weißer und unten weiß filziger Außenseite und kurzem, weißlichem Stiel. Er wächst vom Winter bis zum Mai an Laubholzästen und vergrabenem Holz, meist bei Erle, Weide und Espe, gern auf kalkreichem, sandigem Boden, und ist in Deutschland gefährdet. Vom sehr ähnlichen Österreichischen Kelchbecherling ist er nur mit dem Mikroskop sicher zu trennen."
+beschreibungEn = "A cup fungus with a cinnabar-red inner surface, a paler, reddish-white outer surface that is white and felty at the bottom, and a short, whitish stem. It grows from winter to May on broadleaf branches and buried wood, mostly with alder, willow and aspen, often on calcareous, sandy soil, and is endangered in Germany. It can be separated from the very similar Sarcoscypha austriaca reliably only with a microscope."
+entwurf = true
 weitereNamen = ["Zinnoberroter Kelchbecherling", "Gemeiner Kelchbecherling", "Blutroter Prachtbecherling", "Scharlachroter Prachtbecherling"]
 hutform = { von = "trichterfoermig" }
 

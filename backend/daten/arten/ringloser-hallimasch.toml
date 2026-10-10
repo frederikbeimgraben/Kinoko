@@ -11,6 +11,9 @@ baeume = ["eiche", "kastanie"]
 speisewertHinweis = "Roh giftig, nur nach besonderer Vorbehandlung essbar. Die DGfM meldet haeufig Magen-Darm-Beschwerden. Er ist sehr selten und steht in Deutschland auf der Roten Liste."
 haeufigkeit = "sehrSelten"
 gefaehrdung = "unbekanntesAusmass"
+beschreibung = "Kleiner Hallimasch mit rotbraunem Hut voller abwischbarer Schüppchen, weißlichen, später hell rotbraunen, herablaufenden Lamellen und zähem, längsfaserigem Stiel ohne Ring. Er wächst vom Sommer bis zum Spätherbst als Parasit und Folgezersetzer an Laubbäumen, gern an Eiche und Edelkastanie, und ist in Deutschland sehr selten. Vom ähnlichen Dunklen Hallimasch unterscheidet ihn vor allem der fehlende Ring, denn der Dunkle Hallimasch hat einen deutlichen häutigen Ring."
+beschreibungEn = "A small honey fungus with a red-brown cap full of scales that wipe off, whitish gills that turn light red-brown later and run down the stem, and a tough, fibrous stem without a ring. It grows from summer to late autumn as a parasite and decomposer on broadleaf trees, often on oak and sweet chestnut, and is very rare in Germany. The key difference from the similar dark honey fungus is the missing ring, because the dark honey fungus has a distinct membranous ring."
+entwurf = true
 synonyme = ["Armillaria tabescens", "Agaricus tabescens"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }
 hutrand = { von = ["gerieft"] }

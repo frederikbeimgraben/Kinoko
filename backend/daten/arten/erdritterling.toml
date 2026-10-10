@@ -7,6 +7,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["kiefer", "fichte", "tanne", "douglasie"]
 warnung = "123pilzsuche führt den Erdritterling als tödlich giftig. Die grauen Ritterlinge sind untereinander kaum zu trennen, und einige schädigen die Muskulatur. Er steht hier, weil die Kette ihn zählt, nicht weil man ihn sammeln soll."
 speisewertHinweis = "123pilzsuche führt ihn als tödlich giftig. Er galt lange als Speisepilz; die grauen Ritterlinge sind untereinander kaum zu trennen und einige schädigen die Muskulatur. Stehen lassen."
+beschreibung = "Kleiner bis mittelgroßer Ritterling mit hell silbergrauem bis graubraunem, trockenem, filzig feinschuppigem Hut mit kleinem Buckel, grauweißlichen Lamellen und weißem bis grauweißem Stiel. Er wächst von Juni bis November, im Herbst häufiger, bei Nadelbäumen wie Kiefer, Fichte, Tanne und Douglasie auf nährstoffreichen, oft kalkhaltigen Böden, auch auf Wiesen und in Parks. Vom Gilbenden Erdritterling unterscheiden ihn vor allem die Lamellen, die beim Reiben nicht gilben; die grauen Ritterlinge sind untereinander aber kaum sicher zu trennen. Der Gemeine Erdritterling ist tödlich giftig."
+beschreibungEn = "A small to medium-sized knight with a light silver-grey to grey-brown, dry, felty and finely scaly cap with a small umbo, grey-whitish gills and a white to grey-white stem. The grey knight grows from June to November, more often in autumn, with conifers such as pine, spruce, fir and Douglas fir on rich, often calcareous soil, also in meadows and parks. The key difference from the yellowing knight is the gills, which do not turn yellow when rubbed; but the grey knights are hard to separate with certainty. The grey knight is deadly poisonous."
+entwurf = true
 weitereNamen = ["Erdritterling", "Silber Erdritterling"]
 fruchtschicht = { art = "lamellen", schneide = "gesaegt" }
 hutmerkmale = ["gebuckelt"]

@@ -8,6 +8,9 @@ jahreszeiten = ["sommer", "herbst"]
 baeume = ["eiche", "kastanie"]
 speisewertHinweis = "Sehr giftig. Er verursacht heftige Brechdurchfälle nach 15 Minuten bis 4 Stunden, meist durch Iludin; Leberschäden sind nicht ausgeschlossen. Er hat echte, ablösbare Lamellen statt Leisten, und Myzel und Lamellen leuchten nachts."
 haeufigkeit = "haeufig"
+beschreibung = "Mittelgroßer, büschelig wachsender Pilz mit leuchtend orangem bis fuchsigbraunem, später trichterförmig vertieftem Hut, leuchtend goldgelben, herablaufenden Lamellen und leuchtend orangem Stiel. Er wächst von Juni bis November als Parasit oder Folgezersetzer an Laubholz wie Ölbaum, Eiche und Edelkastanie, liebt Wärme und kommt in Europa überwiegend im Mittelmeerraum vor, sonst ist er sehr selten. Von Pfifferlingen wie dem Samtpfifferling unterscheiden ihn vor allem die echten, ablösbaren Lamellen, denn Pfifferlinge haben Leisten, die fest mit dem Fleisch verbunden sind. Der Ölbaumpilz ist giftig."
+beschreibungEn = "A medium-sized mushroom that grows in clusters, with a bright orange to foxy-brown cap that later becomes funnel-shaped, bright golden-yellow, decurrent gills and a bright orange stem. It grows from June to November as a parasite or saprobe on broadleaf wood such as olive, oak and sweet chestnut, likes warmth and in Europe occurs mostly in the Mediterranean region, while elsewhere it is very rare. The key difference from chanterelles such as Cantharellus friesii is the true gills that come off, because chanterelles have ridges that are firmly attached to the flesh. The jack-o'-lantern mushroom is poisonous."
+entwurf = true
 weitereNamen = ["Ölbaumtrichterling", "Orangefarbener Ölbaumtrichterling", "Dunkler Ölbaumtrichterling"]
 synonyme = ["Omphalotus illudens"]
 fruchtschicht = { art = "lamellen", ansatz = "herablaufend" }

@@ -23,9 +23,9 @@ type golden struct {
 	Horizons map[string]map[string][]*float64 `json:"horizons"`
 }
 
-// Golden: visit_model.ActivityFields(records, ["Boletus edulis"]).sample(x, y, dates, h) for
+// Golden: the activity fields of "Boletus edulis", sampled for
 // h = 0..4 at the visits and at probes before the first day, past the last day, outside the blocks and at NaT.
-func TestSampleMatchesPython(t *testing.T) {
+func TestSampleMatchesGolden(t *testing.T) {
 	records, err := occtest.Records("../testdata/occurrences.json")
 	if err != nil {
 		t.Fatal(err)

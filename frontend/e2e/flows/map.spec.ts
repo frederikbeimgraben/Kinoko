@@ -110,3 +110,21 @@ test('Das Ebenen-Blatt folgt seiner Liste bis zur Höchsthöhe', async ({ page }
   if (box === null) throw new Error('Blatt ohne Fläche.');
   expect(box.height).toBeLessThanOrEqual(SHEET_MAX);
 });
+
+test('Ohne Manifeste zeigt die Karte „Noch keine Vorhersage“', async ({ page }) => {
+  await mockApi(page, REPLIES);
+  await mockMap(page);
+  // A fallback rule of the origin sends the app page with status 200 for each file that is not there.
+  await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
+    await route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><html></html>' });
+  });
+  await page.goto('/karte');
+
+  const empty = page.locator('.map__empty').getByRole('status');
+  await expect(empty).toBeVisible();
+  await expect(empty).toContainText('Noch keine Vorhersage');
+  await expect(empty).toContainText('Die Karten erscheinen nach dem nächsten Lauf der Datenpipeline.');
+  await expect(page.locator('.map__skeleton')).toHaveCount(0);
+  await expect(page.locator('app-error-state')).toHaveCount(0);
+  await expect(page.locator('app-timeline')).toHaveCount(0);
+});

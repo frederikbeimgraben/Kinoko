@@ -8,6 +8,9 @@ jahreszeiten = ["fruehling"]
 baeume = ["pappel", "kiefer"]
 speisewertHinweis = "Tödlich giftig, roh in jedem Fall. Nicht kosten. Die zipfelmützenartig hochgestülpte Kappe wirkt wie aus zwei Teilen zusammengeklebt und hat eine helle Verbindungsnaht; Morcheln haben dagegen einen wabig gekammerten Hut."
 gefaehrdung = "extremSelten"
+beschreibung = "Lorchel mit bräunlichem, aderigem, zipfelmützenartig hochgestülptem Hut, der wie aus zwei Teilen zusammengeklebt wirkt und eine helle Naht hat, und weißlichem Stiel. Sie wächst von März bis Mai im Auwald, gern bei Pappel, an morschen Stümpfen, Totholz und Rindenmulch in Gärten und Parks, seltener bei Kiefer, und ist in Deutschland extrem selten. Von der Speisemorchel unterscheidet sie vor allem der Hut, denn die Speisemorchel hat einen wabig gekammerten Hut, und Hut und Stiel sind bei ihr durchgehend hohl. Die Zipfellorchel ist tödlich giftig."
+beschreibungEn = "A false morel with a brownish, veined cap that is turned up like a pointed hood, looks as if it were glued together from two parts and has a pale seam, and a whitish stem. It grows from March to May in floodplain woods, often with poplar, on rotten stumps, dead wood and bark mulch in gardens and parks, less often with pine, and is extremely rare in Germany. The key difference from the common morel is the cap, because the common morel has a cap with honeycomb chambers, and its cap and stem form one continuous cavity. Discina fastigiata is deadly poisonous."
+entwurf = true
 synonyme = ["Gyromitra fastigiata", "Gyromitra fastigiata var. brunnea", "Gyromitra brunnea var. fastigiata", "Discina brunnea"]
 
 [quelle]
