@@ -44,6 +44,17 @@ terms of the source before you publish or share the data.
 | Texts (`texte.json`) | Written for this project | Licence of the repository |
 | Lead photos (`fotos.json`) | Wikimedia Commons, https://commons.wikimedia.org/. English captions: the English names of GBIF from the UK Species Inventory and the IUCN Red List | Per photo: CC0, public domain, CC BY or CC BY-SA. Each entry gives the author and the licence. Show both with the photo |
 
+## Known data problems
+
+The work on the descriptions found these problems in the species files. Check
+them first in an expert review:
+
+- `rotgelber-stoppelpilz.toml` has the features, the source and the other names of the Semmelstoppelpilz. Only its description describes *Hydnum rufescens*.
+- The file of the lookalike of the Käppchenmorchel gives a feature of the Fingerhutverpel.
+- `roetender-birkenpilz.toml` and `vielverfaerbender-birkenpilz.toml` disagree on how the flesh changes colour.
+- `tigerritterling.toml` has `speisewert = "toedlichGiftig"`. Usually the species counts as poisonous, but not deadly.
+- `ringloser-butterpilz.toml` names spruce as a host tree.
+
 ## Correct the data
 
 Do not edit the seed files by hand while a database holds newer data. Use

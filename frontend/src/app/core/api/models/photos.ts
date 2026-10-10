@@ -16,6 +16,11 @@ export function photoCaption(photo: Pick<Photo, 'caption' | 'captionEn'>, locale
   return locale !== 'de' && photo.captionEn !== '' ? photo.captionEn : (photo.caption ?? null);
 }
 
+/** The language of the caption that `photoCaption` gives: 'de' for the German fallback in another UI language, else null. */
+export function photoCaptionLang(photo: Pick<Photo, 'caption' | 'captionEn'>, locale: string): 'de' | null {
+  return locale !== 'de' && photo.captionEn === '' && photo.caption ? 'de' : null;
+}
+
 /** The path to one size of a photo. The client makes it only here. */
 export function photoPath(id: string, size: PhotoSize): string {
   return `/photos/${encodeURIComponent(id)}/${size}`;

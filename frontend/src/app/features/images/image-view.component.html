@@ -14,7 +14,7 @@
       />
       @if (caption(); as text) {
         <app-section [label]="'image.field.caption' | t">
-          <p class="note">{{ text }}</p>
+          <p class="note" [attr.lang]="captionLang()">{{ text }}</p>
         </app-section>
       }
       <app-section [label]="'image.section.image' | t">

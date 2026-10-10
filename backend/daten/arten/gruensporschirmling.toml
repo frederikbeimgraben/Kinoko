@@ -14,6 +14,7 @@ weitereNamen = ["Grünsporiger Riesenschirmling", "Falscher Parasol"]
 fruchtschicht = { art = "lamellen" }
 hutmerkmale = ["gezont"]
 stielmerkmale = ["ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

@@ -16,6 +16,7 @@ weitereNamen = ["Riesenschirmling", "Riesenschirmpilz", "Paukenschläger", "Pauk
 fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gezont"]
 stielmerkmale = ["genattert", "faserig", "ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

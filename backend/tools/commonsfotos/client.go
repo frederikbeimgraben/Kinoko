@@ -43,7 +43,18 @@ func (c *client) getJSON(ctx context.Context, base string, query url.Values, out
 			return err
 		}
 		if status == http.StatusOK {
-			return json.Unmarshal(body, out)
+			code, err := apiError(body)
+			if err != nil {
+				return err
+			}
+			if code == "" {
+				return json.Unmarshal(body, out)
+			}
+			// MediaWiki sends maxlag with status 200: the replicas are behind, so try again later.
+			if code != "maxlag" {
+				return fmt.Errorf("GET %s: API error %s", address, code)
+			}
+			status = http.StatusTooManyRequests
 		}
 		if (status != http.StatusTooManyRequests && status < 500) || try == maxTries {
 			return fmt.Errorf("GET %s: status %d", address, status)
@@ -53,6 +64,22 @@ func (c *client) getJSON(ctx context.Context, base string, query url.Values, out
 		c.sleep(delay)
 		wait *= 2
 	}
+}
+
+// apiError gives the code of a MediaWiki error answer, or "" for an answer without error.
+func apiError(body []byte) (string, error) {
+	var answer struct {
+		Error *struct {
+			Code string `json:"code"`
+		} `json:"error"`
+	}
+	if err := json.Unmarshal(body, &answer); err != nil {
+		return "", err
+	}
+	if answer.Error == nil {
+		return "", nil
+	}
+	return answer.Error.Code, nil
 }
 
 func (c *client) fetch(ctx context.Context, address string) (int, time.Duration, []byte, error) {

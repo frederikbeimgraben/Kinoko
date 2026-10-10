@@ -3,7 +3,7 @@ import { NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { AccountStore } from '../../core/access/account.store';
 import { PermissionsStore } from '../../core/access/permissions.store';
-import { photoCaption, photoPath } from '../../core/api/models';
+import { photoCaption, photoCaptionLang, photoPath } from '../../core/api/models';
 import type { PhotoQuery } from '../../core/api/photos.api';
 import { longDate } from '../../core/i18n/dates';
 import { coarsePlace } from '../../core/i18n/places';
@@ -89,6 +89,12 @@ export class ImageViewComponent {
   protected readonly caption = computed(() => {
     const held = this.photo();
     return held === null ? null : photoCaption(held, this.i18n.locale());
+  });
+
+  /** The language of a German fallback caption, so that a screen reader reads it in German. */
+  protected readonly captionLang = computed(() => {
+    const held = this.photo();
+    return held === null ? null : photoCaptionLang(held, this.i18n.locale());
   });
 
   protected readonly licence = computed(() => {

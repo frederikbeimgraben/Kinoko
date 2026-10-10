@@ -14,6 +14,7 @@ fruchtschicht = { art = "lamellen", ansatz = "frei" }
 hutmerkmale = ["gebuckelt", "vertieft"]
 hutrand = { von = ["fransig"] }
 stielmerkmale = ["wurzelnd", "ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

@@ -17,6 +17,7 @@ synonyme = ["Macrolepiota rhodosperma", "Macrolepiota konradii", "Leucocoprinus 
 fruchtschicht = { art = "lamellen", ansatz = "frei", stand = "eng" }
 hutmerkmale = ["gebuckelt"]
 stielmerkmale = ["genattert", "knolle", "faserig", "ring"]
+ringform = "doppelt"
 
 [quelle]
 titel = "123pilzsuche"

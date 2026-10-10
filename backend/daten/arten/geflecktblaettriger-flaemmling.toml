@@ -14,6 +14,7 @@ weitereNamen = ["Gefleckter Flämmling", "Gemeiner Flämmling", "Schupopilz"]
 fruchtschicht = { art = "lamellen", ansatz = "angewachsen", stand = "eng" }
 hutrand = { von = ["gerieft"] }
 stielmerkmale = ["faserig", "ring"]
+ringform = "ringzone"
 
 [quelle]
 titel = "123pilzsuche"
