@@ -199,7 +199,7 @@ species that has one on Wikimedia Commons. The app does not load an image
 from another host, so the photos must be in the photo folder. The service puts
 them there by itself: at each start it runs the steps below in the background,
 beside the API (`PILZE_SEED_PHOTOS=false` turns this off). The species pages show
-the photos as they arrive; a full first run can take up to an hour. The log
+the photos as they arrive; a full first run takes about an hour and a quarter. The log
 names each photo and ends with the line `seed photos` and the counts. A photo
 whose download failed comes again at the next start.
 
