@@ -23,7 +23,7 @@ files into a new database.
 | `taxonomie.json` | The genus, family, order, class and division of each species. |
 | `saison.json` | The season table: visits and finds for each calendar week. |
 | `texte.json` | The texts of the user interface, in German and in English. |
-| `fotos.json` | One lead photo for each species: the file on Wikimedia Commons, the author, the licence, the source page and a caption in German and in English. The file holds no image. `kinoko seed-photos` downloads the images. |
+| `fotos.json` | One lead photo for each species: the file on Wikimedia Commons, the author, the licence, the source page and a caption in German and in English. The file holds no image. The service downloads the images at start (`kinoko seed-photos` does it by hand). |
 
 ## Sources and licences
 

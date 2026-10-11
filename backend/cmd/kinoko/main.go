@@ -62,6 +62,9 @@ func run(args []string) (err error) {
 		if err != nil {
 			return err
 		}
+		if settings.SeedPhotos {
+			go seedPhotosAtStart(ctx, handle, settings)
+		}
 		return serve(ctx, settings.Listen, service.Handler)
 	case "import-catalog":
 		data := os.DirFS(settings.DataDir)
@@ -127,6 +130,28 @@ func seedPhotos(ctx context.Context, handle *sql.DB, settings config.Settings, a
 			strings.Join(report.Failed, ", "))
 	}
 	return nil
+}
+
+// seedPhotosAtStart adds the lead photos of the seed file that the database does not hold. It
+// runs beside the API, so a deploy needs no extra step. A photo that is present costs no
+// download, and a failed download comes again at the next start.
+func seedPhotosAtStart(ctx context.Context, handle *sql.DB, settings config.Settings) {
+	entries, err := photoEntries(settings, "")
+	if err != nil {
+		slog.Error("seed photos", "error", err)
+		return
+	}
+	report, err := photoseed.Run(ctx, handle, entries, photoseed.Options{
+		Photos: settings.Photos, MaxBytes: settings.MaxPhotoBytes, Pause: 2 * time.Second, Out: os.Stdout,
+	})
+	if err != nil {
+		if ctx.Err() == nil {
+			slog.Error("seed photos", "error", err)
+		}
+		return
+	}
+	slog.Info("seed photos", "added", report.Added, "lead", report.Lead, "present", report.Skipped,
+		"failed", strings.Join(report.Failed, ", "), "invalid", strings.Join(report.Invalid, ", "))
 }
 
 // photoEntries reads the photo seed file: --file, else fotos.json of the data folder of the

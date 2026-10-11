@@ -115,11 +115,12 @@ are for local development; they point to `./var/`.
 | `PILZE_OIDC_CLIENT_ID` | `pilze` | `oidc.clientId` | Expected `aud` of the access token |
 | `PILZE_ADMIN_GROUP` | `pilze-admins` | `oidc.adminGroup` | Group in the token. A person in it is an admin, also without a row in the database |
 | `PILZE_PIPELINE` | `true` | `pipeline.enable` | Starts the run queue and the weekly schedule. A boolean |
+| `PILZE_SEED_PHOTOS` | `true` | `seedPhotos` | Adds the missing lead photos of `fotos.json` in the background at each start. A boolean |
 | `PILZE_SCHEDULE` | `Mon 03:30 Europe/Berlin` | `pipeline.schedule` | Weekly start: `<weekday> HH:MM <IANA zone>`. Without a zone, the time is UTC |
 | `PILZE_MAX_PHOTO_BYTES` | `12582912` (12 MiB) | not set | Largest photo upload. A positive integer |
 | `PILZE_DATEN` | empty | not set | Folder of the seed data (`texte.json`, `arten/`, `reaktionen.json`). Empty means the copy of `backend/daten` in the binary |
 
-The service does not start when `PILZE_PIPELINE`, `PILZE_MAX_PHOTO_BYTES` or
+The service does not start when `PILZE_PIPELINE`, `PILZE_SEED_PHOTOS`, `PILZE_MAX_PHOTO_BYTES` or
 `PILZE_SCHEDULE` has a value that it cannot read.
 
 ## Database migration
@@ -195,8 +196,14 @@ because that export would remove each profile.
 
 `backend/daten/fotos.json` gives one freely licensed lead photo for each
 species that has one on Wikimedia Commons. The app does not load an image
-from another host, so the photos must be in the photo folder. The command
-`kinoko seed-photos` puts them there:
+from another host, so the photos must be in the photo folder. The service puts
+them there by itself: at each start it runs the steps below in the background,
+beside the API (`PILZE_SEED_PHOTOS=false` turns this off). The species pages show
+the photos as they arrive; a full first run can take up to an hour. The log
+names each photo and ends with the line `seed photos` and the counts. A photo
+whose download failed comes again at the next start.
+
+The command `kinoko seed-photos` runs the same steps in the foreground:
 
 ```sh
 cd /var/lib/pilze-app
@@ -208,7 +215,7 @@ For each entry the command does these steps:
 
 1. It finds the species with the key of the entry as slug (the latin name as a slug, for example `boletus-edulis`).
 2. If a seed photo (without owner) of the same species with the same source page (`quelle`) is in the database, it does nothing. Thus you can run the command again, for example after a failure. An upload of a person with the same source does not count.
-3. It downloads the file (`bild`, a copy with a width of 1920 pixels, else `url`) with the User-Agent `KinokoBot/0.1`. It waits 2 seconds between two downloads (`--pause`). After the answer 429 it waits as long as `Retry-After` asks, at least 10 seconds.
+3. It downloads the file (`bild`, a thumbnail of a standard width of Commons, mostly 1920 pixels, else `url`) with the User-Agent `KinokoBot/0.1`. It waits 2 seconds between two downloads (`--pause`). After the answer 429 it waits as long as `Retry-After` asks, at least 10 seconds.
 4. It makes the sizes of an upload (`PILZE_MAX_PHOTO_BYTES` applies) and writes the photo row: approved, without owner, with the author (`urheber`), the licence (`lizenz`), the source page and the German and English captions.
 5. If the species has no lead photo, the photo becomes the lead photo.
 
@@ -255,7 +262,7 @@ Do these steps in this order. The host is `https://kinoko.reutlingen.university`
 1. Deploy `main`: the service as in "Deploy" below, then the app with `deploy/frontend.sh`.
 2. Set `oidc.name` (`PILZE_OIDC_NAME`), for example `services.kinoko.oidc.name = "Hochschul-Login";`. Without it, the sign-in button shows the host of the issuer. Restart the service.
 3. Check the config: `curl -s https://kinoko.reutlingen.university/api/config | jq`. `oidcIssuer` and `oidcName` are not empty. `version` has the date-tag form, for example `v2026-10-08-01`. `dev` means a plain `go build`.
-4. Add the lead photos: run `kinoko seed-photos`, as "Seed photos" tells. Then the species pages show a photo with its credit.
+4. Check the lead photos: the service adds them at start, as "Seed photos" tells. When the run ends, the journal shows the line `seed photos` with its counts, and the species pages show a photo with its credit.
 5. Sign in as an admin. Upload the data sources, as "First deploy of the pipeline" tells.
 6. Open Verwaltung → Läufe (`/verwaltung/laeufe`). Push "Lauf anstoßen", select "Vollständig" and push "Anstoßen". The dialog names the inputs that are missing. Then it does not start the run.
 7. Watch the run on its page. The first full run fetches the data from 2014 and can take hours. A failed run shows its error. The full log is in `<stateDir>/runs/<run id>.log`.

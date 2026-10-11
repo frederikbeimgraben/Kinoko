@@ -76,7 +76,7 @@ jobs:
       - name: Start the service
         working-directory: backend
         run: |
-          export PILZE_DB=$RUNNER_TEMP/pilze.sqlite PILZE_PIPELINE=false
+          export PILZE_DB=$RUNNER_TEMP/pilze.sqlite PILZE_PIPELINE=false PILZE_SEED_PHOTOS=false
           nix develop ..#backend -c ./kinoko serve &
           for _ in $(seq 1 60); do
             curl -sf http://127.0.0.1:8111/api/health >/dev/null && exit 0

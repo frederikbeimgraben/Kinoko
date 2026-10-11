@@ -91,6 +91,12 @@ in
       };
     };
 
+    seedPhotos = mkOption {
+      type = types.bool;
+      default = true;
+      description = "Add the missing lead photos of the seed file from Wikimedia Commons at each start.";
+    };
+
     memoryMax = mkOption {
       type = types.str;
       default = "6G";
@@ -136,6 +142,7 @@ in
         PILZE_ADMIN_GROUP = cfg.oidc.adminGroup;
         PILZE_PIPELINE = lib.boolToString cfg.pipeline.enable;
         PILZE_SCHEDULE = cfg.pipeline.schedule;
+        PILZE_SEED_PHOTOS = lib.boolToString cfg.seedPhotos;
         PROJ_DATA = "${pkgs.proj}/share/proj";
         GDAL_DATA = "${pkgs.gdal}/share/gdal";
       }

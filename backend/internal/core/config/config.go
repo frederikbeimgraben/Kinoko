@@ -59,6 +59,8 @@ type Settings struct {
 	DataDir        string
 	DataRoot       string
 	PipelineEnable bool
+	// SeedPhotos adds the missing lead photos of the seed file in the background at start.
+	SeedPhotos bool
 	// Schedule is the weekly start of the fetch and render runs: "<Weekday> HH:MM <IANA zone>".
 	Schedule string
 }
@@ -78,6 +80,7 @@ func Defaults() Settings {
 		RunLogs:        "./var/runs",
 		DataRoot:       "./var/daten",
 		PipelineEnable: true,
+		SeedPhotos:     true,
 		Schedule:       "Mon 03:30 Europe/Berlin",
 	}
 }
@@ -128,6 +131,13 @@ func FromLookup(lookup Lookup) (Settings, error) {
 			return Settings{}, fmt.Errorf("PILZE_PIPELINE: %q is not a boolean", value)
 		}
 		s.PipelineEnable = on
+	}
+	if value, ok := lookup("PILZE_SEED_PHOTOS"); ok {
+		on, err := strconv.ParseBool(value)
+		if err != nil {
+			return Settings{}, fmt.Errorf("PILZE_SEED_PHOTOS: %q is not a boolean", value)
+		}
+		s.SeedPhotos = on
 	}
 	s.DB = DatabasePath(s.DB)
 	if s.OIDCIssuer != "" {
