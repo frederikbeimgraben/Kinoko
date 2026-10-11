@@ -28,6 +28,7 @@
 }
 
 // Board `MapDesktopFindLocation`: a step on the map has no column, the pane starts at the rail.
+// Without any map, the column has nothing to show or to switch either.
 :host-context(.shell--column) .map__pane--full {
   inset-inline-start: var(--size-rail);
 }
