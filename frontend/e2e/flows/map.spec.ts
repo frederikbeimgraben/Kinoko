@@ -127,4 +127,10 @@ test('Ohne Manifeste zeigt die Karte „Noch keine Vorhersage“', async ({ page
   await expect(page.locator('.map__skeleton')).toHaveCount(0);
   await expect(page.locator('app-error-state')).toHaveCount(0);
   await expect(page.locator('app-timeline')).toHaveCount(0);
+  // Without any map, the sheet has no tabs to switch. The card takes its place and stays clear of the add button.
+  await expect(page.getByRole('dialog', { name: 'Karte' })).toHaveCount(0);
+  const card = await empty.boundingBox();
+  const add = await page.getByRole('button', { name: 'Eintragen' }).boundingBox();
+  if (card === null || add === null) throw new Error('Karte oder Knopf ohne Fläche.');
+  expect(card.y + card.height).toBeLessThanOrEqual(add.y);
 });

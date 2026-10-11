@@ -203,3 +203,20 @@ test('Die Marke lässt sich mit der Maus verschieben', async ({ page }) => {
   // The map stays still: the drag belongs to the pin.
   expect(await placeAt(page, CORNERS[1])).toEqual(before);
 });
+
+test('Ohne Manifeste zeigt der Desktop nur die Karte „Noch keine Vorhersage“', async ({ page }) => {
+  await mockApi(page, { '/api/species/bundle': SPECIES_BUNDLE });
+  await mockMap(page);
+  // A fallback rule of the origin sends the app page with status 200 for each file that is not there.
+  await page.route(/\/[a-z0-9_-]+\.json$/, async (route) => {
+    await route.fulfill({ status: 200, contentType: 'text/html', body: '<!doctype html><html></html>' });
+  });
+  await page.goto('/karte');
+
+  await expect(page.locator('.map__empty').getByRole('status')).toBeVisible();
+  // The column has no map to show or to switch: the tabs go away with it, and the pane starts at the rail, as in a step.
+  await expect(page.locator('.map__column')).toHaveCount(0);
+  await expect(page.getByRole('tab', { name: 'Ebene' })).toHaveCount(0);
+  const pane = await page.locator('.map__pane').boundingBox();
+  expect(pane?.x).toBe(RAIL);
+});

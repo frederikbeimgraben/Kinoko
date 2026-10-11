@@ -28,6 +28,7 @@
 }
 
 // Board `MapDesktopFindLocation`: a step on the map has no column, the pane starts at the rail.
+// Without any map, the column has nothing to show or to switch either.
 :host-context(.shell--column) .map__pane--full {
   inset-inline-start: var(--size-rail);
 }
@@ -83,11 +84,11 @@ app-object-sheet {
 }
 
 // Without a forecast map, a card in the free strip tells why the map is empty.
-// The strip starts below the layers and location buttons and ends at the top of the sheet.
+// The strip starts below the layers and location buttons and ends above the add button over the sheet.
 .map__empty {
   position: absolute;
   inset-block: calc(var(--top-bar-height, 0px) + 16px + 2 * (var(--size-floating) + 12px))
-    var(--pilz-sheet-inset, 0px);
+    calc(var(--pilz-sheet-inset, 0px) + 16px + var(--size-floating) + 12px);
   inset-inline: 16px;
   z-index: 1;
   display: flex;
