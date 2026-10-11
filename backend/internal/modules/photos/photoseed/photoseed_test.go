@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"regexp"
 	"strings"
 	"sync"
 	"testing"
@@ -384,6 +385,9 @@ func TestLoadReadsTheSeedFile(t *testing.T) {
 	}
 }
 
+// thumbnail matches a Commons thumbnail of a standard width from 960 pixels.
+var thumbnail = regexp.MustCompile(`^https://(thumb|upload)\.wikimedia\.org/wikipedia/commons/thumb/.+/(960|1280|1920)px-[^/]+$`)
+
 func TestTheSeedFileHoldsOnlyUsableEntries(t *testing.T) {
 	data, err := fs.Sub(backend.Data, "daten")
 	if err != nil {
@@ -404,6 +408,10 @@ func TestTheSeedFileHoldsOnlyUsableEntries(t *testing.T) {
 		}
 		if !strings.HasPrefix(e.Source, "https://commons.wikimedia.org/wiki/File:") || e.Caption == "" || e.CaptionEn == "" {
 			t.Errorf("%s: %+v", slug, e)
+		}
+		// Commons answers 429 to a bot that downloads an original. It serves the thumbnails of the standard widths.
+		if !thumbnail.MatchString(e.Download) {
+			t.Errorf("%s: %s is no thumbnail of a standard width", slug, e.Download)
 		}
 		if other, ok := sources[e.Source]; ok {
 			t.Errorf("%s and %s share the source %s", slug, other, e.Source)

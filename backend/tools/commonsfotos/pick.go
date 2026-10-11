@@ -148,7 +148,7 @@ func toEntry(s species, result found, c candidate) entry {
 	return entry{
 		File:       c.Title,
 		URL:        withoutTracking(c.URL),
-		Download:   withoutTracking(c.ThumbURL),
+		Download:   thumbOf(withoutTracking(c.URL), withoutTracking(c.ThumbURL)),
 		Author:     authorOf(c),
 		Licence:    c.Licence.Name,
 		LicenceURL: c.Licence.URL,
@@ -156,6 +156,21 @@ func toEntry(s species, result found, c candidate) entry {
 		Caption:    s.Name + " (" + s.Latin + ")",
 		CaptionEn:  captionEn,
 	}
+}
+
+// thumbOf gives the thumbnail address of the standard width thumbWidth. The API gives the
+// original as thumbnail when the file is not wider than thumbWidth, and Commons answers 429
+// to a bot that downloads originals.
+func thumbOf(original, thumb string) string {
+	if strings.Contains(thumb, "/commons/thumb/") {
+		return thumb
+	}
+	head, path, ok := strings.Cut(original, "/wikipedia/commons/")
+	if !ok || !strings.HasPrefix(head, "https://") {
+		return thumb
+	}
+	name := path[strings.LastIndex(path, "/")+1:]
+	return fmt.Sprintf("https://thumb.wikimedia.org/wikipedia/commons/thumb/%s/%dpx-%s", path, thumbWidth, name)
 }
 
 // withoutTracking removes the utm_ parameters that the API adds to a file address.

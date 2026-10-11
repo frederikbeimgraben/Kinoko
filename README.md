@@ -45,10 +45,11 @@ go run ./cmd/kinoko serve
 ```
 
 The API listens on `http://127.0.0.1:8111/api`. Set `PILZE_PIPELINE=false` to
-keep the pipeline off. The service reads a file `.env` in its work directory
+keep the pipeline off and `PILZE_SEED_PHOTOS=false` to keep it from downloading
+the lead photos from Wikimedia Commons. The service reads a file `.env` in its work directory
 for more `PILZE_*` settings. The table of settings is in `docs/operations.md`.
 
-The other commands of the binary are `migrate`, `import-catalog` and `version`.
+The other commands of the binary are `migrate`, `import-catalog`, `export-catalog`, `seed-photos` and `version`.
 
 Start the app in a second shell:
 
