@@ -55,6 +55,21 @@
   inline-size: 100%;
 }
 
+// A wide button has a fixed width. A long label (an SSO host name) wraps inside the pill and does not run out of it.
+.wide:not(.shapeless) {
+  block-size: auto;
+  min-block-size: var(--btn-height, 56px);
+  padding-block: 8px;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  overflow-wrap: anywhere;
+
+  .face {
+    min-inline-size: 0;
+  }
+}
+
 .face {
   display: inline-flex;
   align-items: center;

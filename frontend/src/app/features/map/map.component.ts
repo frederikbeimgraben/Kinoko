@@ -130,10 +130,11 @@ export class MapComponent implements OnDestroy {
   /** Only one sheet is over the map at a time. */
   protected readonly overlaid = computed(() => this.addEntry.running() || this.state.object() !== null);
 
-  /** The map sheet of the phone. Each other sheet over the map replaces it. */
-  protected readonly showsMapSheet = computed(
-    () => !this.wide() && !this.overlaid() && !this.covered() && !this.state.layersSheetOpen(),
-  );
+  /** The map sheet of the phone. Each other sheet over the map replaces it. Without any map, the empty card does. */
+  protected readonly showsMapSheet = computed(() => {
+    if (this.wide() || this.overlaid() || this.covered() || this.view.empty()) return false;
+    return !this.state.layersSheetOpen();
+  });
 
   /** The add button. It goes away while its flow runs, and on the phone below a sheet (board `MapCombination`). */
   protected readonly showsAdd = computed(() => {

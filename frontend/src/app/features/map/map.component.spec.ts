@@ -495,6 +495,8 @@ describe('MapComponent', () => {
     expect(container.querySelector('app-error-state')).toBeNull();
     expect(container.querySelector('app-timeline')).toBeNull();
     expect(container.querySelector('app-ramp')).toBeNull();
+    // The sheet has no map to switch between: the tabs go away with it.
+    expect(container.querySelector('.map__sheet')).toBeNull();
     await noViolations(container);
   });
 
