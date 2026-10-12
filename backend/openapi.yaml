@@ -617,6 +617,33 @@ paths:
         "422":
           $ref: "#/components/responses/Validation"
 
+  /taxa:
+    get:
+      operationId: listTaxa
+      tags: [taxa]
+      security: []
+      description: The taxa by latin name. The species editor chooses the taxon of a species from this list.
+      parameters:
+        - name: rank
+          in: query
+          schema:
+            $ref: "#/components/schemas/TaxonRank"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TaxonStep"
+                required: [items]
+        "422":
+          $ref: "#/components/responses/Validation"
+
   /taxa/{rank}/{slug}:
     get:
       operationId: getTaxonPage

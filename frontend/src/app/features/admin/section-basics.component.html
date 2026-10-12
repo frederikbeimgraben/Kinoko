@@ -36,6 +36,13 @@
         (chosen)="picking.set('group')"
       />
       <app-list-row
+        [title]="'species.taxonomy.genus' | t"
+        [plain]="genusName()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="picking.set('taxon')"
+      />
+      <app-list-row
         [title]="'species.field.protection' | t"
         [plain]="protectionName()"
         [chevron]="true"

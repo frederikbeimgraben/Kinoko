@@ -30,6 +30,7 @@ func (m *Module) Routes(r *server.Router) {
 	r.Handle(http.MethodDelete, "/species/{slug}", m.deleteSpecies)
 	r.Handle(http.MethodPut, "/species/{slug}/forecast", m.setForecast)
 	r.Handle(http.MethodGet, "/species/{slug}/counts", m.speciesCounts)
+	r.Handle(http.MethodGet, "/taxa", m.listTaxa)
 	r.Handle(http.MethodGet, "/taxa/{rank}/{slug}", m.taxonPage)
 	r.Handle(http.MethodGet, "/terms", m.listTerms)
 	r.Handle(http.MethodPost, "/terms", m.createTerm)

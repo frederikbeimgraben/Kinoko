@@ -11,8 +11,16 @@ import { SectionBasicsComponent } from './section-basics.component';
 import { SpeciesEditorStore } from './species-editor.store';
 import { SECTION_SPECIES } from './section.testing';
 
+const GENERA = {
+  items: [
+    { id: 'g-1', slug: 'boletus', name: 'Boletus', rank: 'genus' },
+    { id: 'g-2', slug: 'suillus', name: 'Suillus', rank: 'genus' },
+  ],
+};
+
 const WITH_BASICS = {
   ...SECTION_SPECIES,
+  taxonId: 'g-1',
   names: [
     { name: 'Herrenpilz', kind: 'common' },
     { name: 'Boletus bulbosus', kind: 'synonym' },
@@ -38,6 +46,7 @@ async function build(): Promise<{ container: Element; http: HttpTestingControlle
   const http = TestBed.inject(HttpTestingController);
   http.expectOne('/api/species/boletus-edulis').flush(WITH_BASICS);
   http.expectOne('/api/species/boletus-edulis/counts').flush({ records: 1, finds: 0, photos: 0 });
+  http.expectOne('/api/taxa?rank=genus').flush(GENERA);
   return { container, http };
 }
 
@@ -54,6 +63,7 @@ describe('SectionBasicsComponent', () => {
     expect(screen.getByLabelText('Lateinischer Name')).toHaveValue('Boletus edulis');
     expect(screen.getByLabelText('Weitere Namen')).toHaveValue('Herrenpilz');
     expect(screen.getByLabelText('Synonyme')).toHaveValue('Boletus bulbosus');
+    expect(screen.getByRole('button', { name: /Gattung\s*Boletus/ })).toBeInTheDocument();
     expect(screen.getByRole('checkbox', { name: 'Handel erlaubt' })).toBeChecked();
     expect(screen.getByRole('checkbox', { name: 'Beschreibung ist ein Entwurf' })).not.toBeChecked();
     expect(screen.getByRole('button', { name: 'gefährdet' })).toHaveAttribute('aria-pressed', 'true');
@@ -103,6 +113,27 @@ describe('SectionBasicsComponent', () => {
       marketable: false,
       descriptionDraft: true,
     });
+  });
+
+  it('wählt eine andere Gattung und nimmt sie wieder heraus', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Name und Einordnung' });
+
+    await userEvent.click(screen.getByRole('button', { name: /Gattung\s*Boletus/ }));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /Suillus/ }));
+    expect(screen.getByRole('button', { name: /Gattung\s*Suillus/ })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(http.expectOne('/api/species/boletus-edulis').request.body).toMatchObject({ taxonId: 'g-2' });
+  });
+
+  it('schreibt eine Art ohne Gattung', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Name und Einordnung' });
+
+    await userEvent.click(screen.getByRole('button', { name: /Gattung\s*Boletus/ }));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /–/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    expect(http.expectOne('/api/species/boletus-edulis').request.body).toMatchObject({ taxonId: null });
   });
 
   it('schreibt nichts ohne Namen', async () => {

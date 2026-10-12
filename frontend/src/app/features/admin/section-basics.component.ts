@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   EDIBILITIES,
   FREQUENCIES,
@@ -10,10 +11,12 @@ import {
   type Protection,
   type RedListStatus,
 } from '../../core/api/models';
+import { TaxaApi } from '../../core/api/taxa.api';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
+import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
 import { CheckRowComponent } from '../../ui/check-row/check-row.component';
 import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
@@ -28,6 +31,18 @@ import { GROUP_NAME_TEXT, PROTECTION_TEXT } from '../species/labels';
 import { EDIBILITY_SHORT_TEXT } from './labels';
 import { SpeciesEditorStore } from './species-editor.store';
 import { chosen, enumKey, namesFrom, namesLine } from './section-basics.rows';
+
+/** The choices of the sheet. */
+type Picker = 'group' | 'taxon' | 'protection';
+
+const PICKER_TITLE: Readonly<Record<Picker, TranslationKey>> = {
+  group: 'admin.species.field.group',
+  taxon: 'species.taxonomy.genus',
+  protection: 'species.field.protection',
+};
+
+/** The option of the sheet for a species without a genus. */
+const NO_TAXON = 'keine';
 
 /** Name, other names, classification, protection and status of a species, as one page. */
 @Component({
@@ -69,8 +84,11 @@ export class SectionBasicsComponent {
   protected readonly frequency = linkedSignal<Frequency | null>(() => this.held()?.frequency ?? null);
   protected readonly marketable = linkedSignal(() => this.held()?.marketable ?? false);
   protected readonly draft = linkedSignal(() => this.held()?.descriptionDraft ?? false);
+  protected readonly taxonId = linkedSignal<string | null>(() => this.held()?.taxonId ?? null);
+  /** The genera to choose from. Until they load, the row names the genus of the profile. */
+  private readonly genera = toSignal(inject(TaxaApi).list('genus'), { initialValue: [] });
   /** The choice that is open in the sheet. */
-  protected readonly picking = signal<'group' | 'protection' | null>(null);
+  protected readonly picking = signal<Picker | null>(null);
 
   /** A species needs a name and a latin name. */
   protected readonly complete = computed(
@@ -82,23 +100,37 @@ export class SectionBasicsComponent {
     return group === null ? this.i18n.translate('common.none') : this.i18n.translate(GROUP_NAME_TEXT[group]);
   });
 
+  protected readonly genusName = computed(() => {
+    const id = this.taxonId();
+    if (id === null) return this.i18n.translate('common.none');
+    const held = this.held();
+    return this.genera().find((one) => one.id === id)?.name ?? (id === held?.taxonId ? held.genusName : id);
+  });
+
   protected readonly protectionName = computed(() => this.i18n.translate(PROTECTION_TEXT[this.protection()]));
 
   protected readonly pickerTitle = computed(() =>
-    this.i18n.translate(
-      this.picking() === 'protection' ? 'species.field.protection' : 'admin.species.field.group',
-    ),
+    this.i18n.translate(PICKER_TITLE[this.picking() ?? 'group']),
   );
 
-  protected readonly options = computed<OptionSheetOption[]>(() =>
-    this.picking() === 'protection'
-      ? PROTECTIONS.map((id) => ({ id, title: this.i18n.translate(PROTECTION_TEXT[id]) }))
-      : Object.entries(GROUP_NAME_TEXT).map(([id, key]) => ({ id, title: this.i18n.translate(key) })),
-  );
+  protected readonly options = computed<OptionSheetOption[]>(() => {
+    const picking = this.picking();
+    if (picking === 'protection') {
+      return PROTECTIONS.map((id) => ({ id, title: this.i18n.translate(PROTECTION_TEXT[id]) }));
+    }
+    if (picking === 'taxon') {
+      const none = { id: NO_TAXON, title: this.i18n.translate('common.none') };
+      return [none, ...this.genera().map((one) => ({ id: one.id, title: one.name }))];
+    }
+    return Object.entries(GROUP_NAME_TEXT).map(([id, key]) => ({ id, title: this.i18n.translate(key) }));
+  });
 
-  protected readonly pickedValue = computed(() =>
-    this.picking() === 'protection' ? this.protection() : this.group(),
-  );
+  protected readonly pickedValue = computed(() => {
+    const picking = this.picking();
+    if (picking === 'protection') return this.protection();
+    if (picking === 'taxon') return this.taxonId() ?? NO_TAXON;
+    return this.group();
+  });
 
   protected readonly edibilities = computed<SegmentOption[]>(() =>
     EDIBILITIES.map((value) => ({ value, label: this.i18n.translate(EDIBILITY_SHORT_TEXT[value]) })),
@@ -115,7 +147,9 @@ export class SectionBasicsComponent {
   }
 
   protected choose(id: string): void {
-    if (this.picking() === 'protection') this.protection.set(id as Protection);
+    const picking = this.picking();
+    if (picking === 'protection') this.protection.set(id as Protection);
+    else if (picking === 'taxon') this.taxonId.set(id === NO_TAXON ? null : id);
     else this.group.set(id as Group);
     this.picking.set(null);
   }
@@ -140,6 +174,7 @@ export class SectionBasicsComponent {
       name: this.name().trim(),
       scientificName: this.scientificName().trim(),
       names: namesFrom(this.commonNames(), this.synonyms()),
+      taxonId: this.taxonId(),
       group,
       edibility: this.edibility(),
       protection: this.protection(),
