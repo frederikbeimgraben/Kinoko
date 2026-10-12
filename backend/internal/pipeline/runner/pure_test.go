@@ -55,7 +55,8 @@ func TestPlanNamesTheStagesOfEachKind(t *testing.T) {
 		return fn.Map(steps, func(s runner.Step) string { return string(s) })
 	}
 	cases := map[enums.RunKind][]string{
-		enums.RunKindFetch:    {"check inputs", "fetch weather", "fetch occurrences", "fetch site data"},
+		enums.RunKindFetch: {"check inputs", "fetch weather", "fetch occurrences",
+			"fetch outline", "fetch tree map", "fetch elevation model", "fetch soil"},
 		enums.RunKindTraining: {"check inputs", "weather checkpoints", "occurrences", "train models"},
 		enums.RunKindRender:   {"check inputs", "weather checkpoints", "occurrences", "render maps", "render layers", "season table"},
 		enums.RunKindFull: {"check inputs", "weather checkpoints", "occurrences", "train models",

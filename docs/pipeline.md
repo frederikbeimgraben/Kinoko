@@ -138,7 +138,7 @@ versions that it reads and the cache state of each public source.
 
 | Kind | Steps |
 | --- | --- |
-| `fetch` | check inputs, fetch weather, fetch occurrences, fetch site data |
+| `fetch` | check inputs, fetch weather, fetch occurrences, fetch outline, fetch tree map, fetch elevation model, fetch soil |
 | `training` | check inputs, weather checkpoints, occurrences, train models |
 | `render` | check inputs, weather checkpoints, occurrences, render maps, render layers, season table |
 | `full` | check inputs, weather checkpoints, occurrences, train models, render maps, render layers, season table |
@@ -159,7 +159,7 @@ required kind has no active, ready version:
 
 - **fetch weather**: gets the DWD files into the cache by the fetch rules.
 - **fetch occurrences**: gets the GBIF files into the cache by the fetch rules.
-- **fetch site data**: gets the raw uploads `germany-outline`, `tree-species-map`, `dem` and `soilgrids`, in this order, from the sources that `docs/operations.md` names. It skips a kind with an active ready version or with a version in check. Each file becomes a version with the origin `upload`; the step checks, processes and activates it at once. The tiles wait in `cache/sitedata/`, so a stopped fetch continues. The run log shows the count of tiles every 25 tiles.
+- **fetch outline**, **fetch tree map**, **fetch elevation model**, **fetch soil**: each step gets one raw upload, `germany-outline`, `tree-species-map`, `dem` and `soilgrids` in this order, from the sources that `docs/operations.md` names. A failed step stops the run, because the tree map needs the outline and the soil needs the elevation model. A step skips a kind with an active ready version or with a version in check. Each file becomes a version with the origin `upload`; the step checks, processes and activates it at once. The tiles wait in `cache/sitedata/`, so a stopped fetch continues. The run log shows the count of tiles every 25 tiles.
 - **weather checkpoints**: copies a missing checkpoint from an active `weather-checkpoints` version. A copied checkpoint gets the change time 1970-01-01, so each raw file of the cache counts as newer. Then it extracts the weeks again from the oldest year `rf` whose raw file changed. The result is `interim/weekly/<name>.parquet`.
   - The extraction keeps an old week only when it ends before January 1 of `rf`; it computes each later week from the files of `rf-1` on. Without the file of `rf-1`, it keeps more old weeks: up to 63 days after January 1 of the first file. These days cover the week across the turn of the year and the 60-day counter of `days_since_rain`.
 - **occurrences**: builds `interim/occurrences.parquet` from the GBIF cache, the active `gbif-archive` and the app finds. It keeps the class Agaricomycetes and gives each record an ISO week and a 5 km cell. It drops an app find outside latitude 47 to 55.5 and longitude 5.5 to 15.5. It also drops an app find with a day after the day of the run. The run log shows the counts. It drops each record with a latitude outside -90 to 90 or a longitude outside -180 to 180. The activity grid is dense, so one far find would make it too large for the memory.

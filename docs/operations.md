@@ -276,8 +276,9 @@ models and renders the maps. `docs/pipeline.md` describes each data source.
 ### 1. Get the data sources
 
 Open Verwaltung → Datenquellen and push "Daten abrufen", or wait for the
-weekly fetch run. The step "fetch site data" downloads the four raw sources
-below, checks them and activates them. The tree map takes one to three
+weekly fetch run. One step for each of the four raw sources below
+downloads it, checks it and activates it: "fetch outline", "fetch tree map",
+"fetch elevation model" and "fetch soil". The tree map takes one to three
 hours; the other sources take minutes. The run page shows the log while the
 run runs. A kind with an active version stays as it is.
 
