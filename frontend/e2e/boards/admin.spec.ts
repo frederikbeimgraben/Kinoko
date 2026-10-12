@@ -260,7 +260,7 @@ test('Runs', async ({ page }) => {
   guard('Runs', 'phone');
   await page.clock.setFixedTime(new Date(NOW));
   await open(page, '/verwaltung/laeufe', { '/api/pipeline-runs': RUNS });
-  await expect(page.getByText('Woche 3 von 12 · seit 22 Minuten')).toBeVisible();
+  await expect(page.getByText('Art 3 von 12 · seit 22 Minuten')).toBeVisible();
   await expectBoard(page, 'Runs');
 });
 

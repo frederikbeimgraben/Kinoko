@@ -276,16 +276,24 @@ models and renders the maps. `docs/pipeline.md` describes each data source.
 
 ### 1. Upload the data sources
 
-You need the permission `data.manage`. The admin area Verwaltung →
-Datenquellen is the place for these uploads. The frontend does not have that
-page yet. Until it does, use the API below with an access token.
+You need the permission `data.manage`. Upload the files in Verwaltung →
+Datenquellen, with the upload button of each source. The API below does the
+same with an access token.
+
+The script `deploy/sources.sh <folder>` downloads the four raw sources and
+packs each one as the upload expects. It needs bash, curl and zip. The tree
+map takes one to three hours; the other sources take minutes.
 
 Upload in this order:
 
-1. `germany-outline`: a GeoJSON of Germany. The fine tree layers need it.
-2. `tree-species-map`: the Thünen map of dominant tree species. It gives `trees-grid`, `tree-scales` and the fine tree layers.
-3. `dem`: the Copernicus GLO-90 elevation model. It gives the terrain columns and the fine terrain layers.
-4. `soilgrids`: the SoilGrids rasters. It gives `site-grid` with the soil and the terrain columns, and the fine soil layers.
+1. `germany-outline` (Umriss Deutschland): `germany-outline.geojson`, the outline of the BKG through geoBoundaries (https://www.geoboundaries.org, `DEU`, `ADM0`), dl-de/by-2-0. The fine tree layers need it.
+2. `tree-species-map` (Baumartenkarte): `tree-species-map.zip`, tiles of 50 km of the Thünen map of dominant tree species from the WCS https://atlas.thuenen.de/geoserver/ows, coverage `geonode__Dominant_Species_Class`. It gives `trees-grid`, `tree-scales` and the fine tree layers.
+3. `dem` (Höhenmodell): `dem.zip`, the 94 Copernicus GLO-90 tiles of the box N47 to N55, E005 to E015 from https://copernicus-dem-90m.s3.amazonaws.com. It gives the terrain columns and the fine terrain layers.
+4. `soilgrids` (SoilGrids-Böden): `soilgrids.zip`, pH, sand, organic carbon, clay and silt at 0 to 5 cm from the WCS https://maps.isric.org. It gives `site-grid` with the soil and the terrain columns, and the fine soil layers.
+
+The prepared kinds `trees-grid` (Baumraster), `tree-scales` (Baumanteile je
+Maßstab) and `site-grid` come from these uploads; do not upload them. The
+first full run trains the `model-bundle` versions.
 
 The `soilgrids` version joins the terrain columns of the active `dem` version.
 Thus upload `dem` before `soilgrids`. If you upload them in the other order,

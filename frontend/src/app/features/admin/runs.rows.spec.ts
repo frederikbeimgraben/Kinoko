@@ -25,7 +25,7 @@ const TEXTS: Record<string, string> = {
   'unit.second': 's',
   'admin.runs.visits': '{zahl} Begehungen',
   'admin.runs.rendered': '{zahl} Arten gerendert',
-  'admin.runs.week': 'Woche {getan} von {gesamt}',
+  'admin.runs.species': 'Art {getan} von {gesamt}',
   'admin.runs.since': 'seit {zahl} Minuten',
   'admin.run.visitsValue': '{zahl}, davon {app} aus der App',
   'admin.run.brier': 'Brier {wert}',
@@ -84,12 +84,24 @@ describe('runs.rows', () => {
     expect(runSubline(RUN, text, 'de')).toBe('Sonntag · 1 284 Begehungen');
   });
 
-  it('nennt im laufenden Lauf Woche und Laufzeit', () => {
+  it('nennt im laufenden Lauf Arten und Laufzeit', () => {
     const run = { ...RUN, state: 'running' as const, finishedAt: null };
-    expect(activeSubline(run, text, '2026-09-13T19:26:00+02:00')).toBe('Woche 3 von 12 · seit 22 Minuten');
+    expect(activeSubline(run, text, '2026-09-13T19:26:00+02:00')).toBe('Art 3 von 12 · seit 22 Minuten');
     expect(activeSubline({ ...run, startedAt: null }, text, '2026-09-13T19:26:00+02:00')).toBe(
-      'Woche 3 von 12',
+      'Art 3 von 12',
     );
+  });
+
+  it('zeigt am Abrufen keinen Artenzähler, nur die Laufzeit', () => {
+    const run = {
+      ...RUN,
+      kind: 'fetch' as const,
+      state: 'running' as const,
+      finishedAt: null,
+      progressDone: 0,
+    };
+    expect(activeSubline(run, text, '2026-09-13T19:26:00+02:00')).toBe('seit 22 Minuten');
+    expect(runPercent(run)).toBe(0);
   });
 
   it('rechnet den Anteil, ohne Ziel bleibt er null', () => {
@@ -97,10 +109,14 @@ describe('runs.rows', () => {
     expect(runPercent({ ...RUN, progressTotal: 0 })).toBe(0);
   });
 
-  it('zeigt am laufenden Schritt die Woche, sonst die Dauer', () => {
-    expect(stepSubline({ position: 1, name: 'x', state: 'running', durationS: null }, RUN, text)).toBe(
-      'Woche 3 von 12',
-    );
+  it('zeigt am laufenden Schritt die Arten, beim Abrufen nichts, sonst die Dauer', () => {
+    expect(
+      stepSubline({ position: 4, name: 'train models', state: 'running', durationS: null }, RUN, text),
+    ).toBe('Art 3 von 12');
+    const fetch = { ...RUN, kind: 'fetch' as const };
+    expect(
+      stepSubline({ position: 2, name: 'fetch weather', state: 'running', durationS: null }, fetch, text),
+    ).toBe('');
     expect(stepSubline({ position: 1, name: 'x', state: 'finished', durationS: 120 }, RUN, text)).toBe(
       '2 min',
     );
