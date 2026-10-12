@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { DATA_SOURCE_KINDS, type DataSourceKind } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
@@ -54,7 +54,10 @@ interface InputRow {
   kind: DataSourceKind | null;
 }
 
-/** One run: its counts, its inputs, its steps and its output. */
+/** The wait between two loads of a run that is queued or running. */
+export const RUN_REFRESH_MS = 3000;
+
+/** One run: its counts, its inputs, its steps and its output. While it is queued or running, the page loads it again. */
 @Component({
   selector: 'app-run',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -144,6 +147,16 @@ export class RunComponent {
 
   constructor() {
     this.store.load(this.id);
+    effect((onCleanup) => {
+      const state = this.run()?.state;
+      if (state !== 'queued' && state !== 'running') return;
+      const timer = setTimeout(() => {
+        this.store.load(this.id());
+      }, RUN_REFRESH_MS);
+      onCleanup(() => {
+        clearTimeout(timer);
+      });
+    });
   }
 
   protected retry(): void {

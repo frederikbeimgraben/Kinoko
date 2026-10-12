@@ -263,28 +263,31 @@ Do these steps in this order. The host is `https://kinoko.reutlingen.university`
 2. Set `oidc.name` (`PILZE_OIDC_NAME`), for example `services.kinoko.oidc.name = "Hochschul-Login";`. Without it, the sign-in button shows the host of the issuer. Restart the service.
 3. Check the config: `curl -s https://kinoko.reutlingen.university/api/config | jq`. `oidcIssuer` and `oidcName` are not empty. `version` has the date-tag form, for example `v2026-10-08-01`. `dev` means a plain `go build`.
 4. Check the lead photos: the service adds them at start, as "Seed photos" tells. When the run ends, the journal shows the line `seed photos` with its counts, and the species pages show a photo with its credit.
-5. Sign in as an admin. Upload the data sources, as "First deploy of the pipeline" tells.
+5. Sign in as an admin. Get the data sources, as "First deploy of the pipeline" tells.
 6. Open Verwaltung → Läufe (`/verwaltung/laeufe`). Push "Lauf anstoßen", select "Vollständig" and push "Anstoßen". The dialog names the inputs that are missing. Then it does not start the run.
 7. Watch the run on its page. The first full run fetches the data from 2014 and can take hours. A failed run shows its error. The full log is in `<stateDir>/runs/<run id>.log`.
 8. Run `deploy/smoke.sh https://kinoko.reutlingen.university`. All checks must pass. Before the first full run ends, the manifest checks fail, and the map shows "Noch keine Vorhersage".
 
 ## First deploy of the pipeline
 
-The pipeline needs data that it cannot fetch. An admin uploads these data
-once. Then the pipeline fetches the weather and the GBIF records, trains the
+The pipeline needs static site data. The first fetch run gets it. Then the pipeline fetches the weather and the GBIF records, trains the
 models and renders the maps. `docs/pipeline.md` describes each data source.
 
-### 1. Upload the data sources
+### 1. Get the data sources
 
-You need the permission `data.manage`. Upload the files in Verwaltung →
-Datenquellen, with the upload button of each source. The API below does the
-same with an access token.
+Open Verwaltung → Datenquellen and push "Daten abrufen", or wait for the
+weekly fetch run. The step "fetch site data" downloads the four raw sources
+below, checks them and activates them. The tree map takes one to three
+hours; the other sources take minutes. The run page shows the log while the
+run runs. A kind with an active version stays as it is.
 
-The script `deploy/sources.sh <folder>` downloads the four raw sources and
-packs each one as the upload expects. It needs bash, curl and zip. The tree
-map takes one to three hours; the other sources take minutes.
+You can also upload the files yourself, with the permission `data.manage`
+and the upload button of each source; the API below does the same with an
+access token. The script `deploy/sources.sh <folder>` downloads the four
+raw sources and packs each one as the upload expects. It needs bash, curl
+and zip.
 
-Upload in this order:
+The sources, in the order of the fetch and of an upload:
 
 1. `germany-outline` (Umriss Deutschland): `germany-outline.geojson`, the outline of the BKG through geoBoundaries (https://www.geoboundaries.org, `DEU`, `ADM0`), dl-de/by-2-0. The fine tree layers need it.
 2. `tree-species-map` (Baumartenkarte): `tree-species-map.zip`, tiles of 50 km of the Thünen map of dominant tree species from the WCS https://atlas.thuenen.de/geoserver/ows, coverage `geonode__Dominant_Species_Class`. It gives `trees-grid`, `tree-scales` and the fine tree layers.
@@ -296,7 +299,7 @@ Maßstab) and `site-grid` come from these uploads; do not upload them. The
 first full run trains the `model-bundle` versions.
 
 The `soilgrids` version joins the terrain columns of the active `dem` version.
-Thus upload `dem` before `soilgrids`. If you upload them in the other order,
+Thus the fetch gets `dem` before `soilgrids`. Upload them in this order too. If you upload them in the other order,
 reprocess the `soilgrids` version.
 
 These uploads are optional:

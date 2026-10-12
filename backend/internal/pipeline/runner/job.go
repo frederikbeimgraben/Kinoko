@@ -40,6 +40,7 @@ type Trained struct {
 type Stages interface {
 	FetchWeather(ctx context.Context, j *Job) error
 	FetchOccurrences(ctx context.Context, j *Job) error
+	FetchSiteData(ctx context.Context, j *Job) error
 	Weather(ctx context.Context, j *Job) error
 	Occurrences(ctx context.Context, j *Job) error
 	Train(ctx context.Context, j *Job, sp Species) (Trained, error)

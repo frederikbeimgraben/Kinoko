@@ -14,6 +14,7 @@ const (
 	StepInputs           Step = "check inputs"
 	StepFetchWeather     Step = "fetch weather"
 	StepFetchOccurrences Step = "fetch occurrences"
+	StepFetchSiteData    Step = "fetch site data"
 	StepWeather          Step = "weather checkpoints"
 	StepOccurrences      Step = "occurrences"
 	StepTrain            Step = "train models"
@@ -30,10 +31,11 @@ const SourceOccurrences = "gbif-occurrences"
 func (s Step) PerSpecies() bool { return s == StepTrain || s == StepMaps }
 
 // fetchSteps gives the fetch steps of a request. A run without a request
-// refreshes each source that the chain reads.
+// refreshes each source that the chain reads, then gets the site data that
+// has no version yet.
 func fetchSteps(req *sources.FetchRequest) []Step {
 	if req == nil {
-		return []Step{StepFetchWeather, StepFetchOccurrences}
+		return []Step{StepFetchWeather, StepFetchOccurrences, StepFetchSiteData}
 	}
 	switch req.Source {
 	case dwd.SourceHyras, dwd.SourceSoil:
