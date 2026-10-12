@@ -29,6 +29,7 @@ export class HeroComponent {
 
   readonly photo = input<HeroPhoto | null>(null);
   readonly alt = input.required<string>();
+  /** The lowest height of the area. A higher photo makes it grow. */
   readonly height = input(260);
   /** The position in the stack, counted from one, and the number of images. */
   readonly index = input(0);
