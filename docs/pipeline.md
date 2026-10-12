@@ -73,6 +73,7 @@ The table `remote_cache_file` records each cached file with its state.
 - A download goes to a temporary file first. Then the service renames it.
 - An active `gbif-archive` version holds the GBIF years before its cutoff year. The fetch gets the closed years from the cutoff year on, and the weekly years. An archive without a cutoff year holds each closed year.
 - An active `weather-checkpoints` version holds the closed DWD years. The fetch then gets only the weekly years.
+- A GBIF page has 300 records. A page that breaks off halves the page size for the retry and the next pages of the chunk, down to 50 records: on a slow line, GBIF cuts a page of 1.5 MB before it arrives.
 - A request waits at most 2 minutes for the response header. A transfer stops when no bytes come for 3 minutes; then the fetcher tries again. A large download has no total time limit. A DWD directory listing has a limit of 120 s.
 
 `POST /api/remote-sources/{source}/refresh` queues a fetch run for one source.
