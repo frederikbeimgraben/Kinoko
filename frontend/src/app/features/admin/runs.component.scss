@@ -65,3 +65,12 @@
 .runs__active app-progress {
   margin-block-start: 2px;
 }
+
+// Four run kinds do not fit in one row of the dialog: two rows of two.
+.runs__kinds {
+  --seg-columns: repeat(2, 1fr);
+  --seg-flow: row;
+
+  display: block;
+  margin-block-start: 16px;
+}

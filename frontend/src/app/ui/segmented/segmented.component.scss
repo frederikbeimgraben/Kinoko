@@ -1,5 +1,10 @@
+// Equal columns in one row. A host can set `--seg-columns`, for example
+// `repeat(2, 1fr)`, so that more choices than fit in a row wrap.
 .seg {
-  display: flex;
+  display: grid;
+  grid-template-columns: var(--seg-columns, none);
+  grid-auto-columns: 1fr;
+  grid-auto-flow: var(--seg-flow, column);
   gap: 4px;
   padding: 4px;
   background: var(--surface);
