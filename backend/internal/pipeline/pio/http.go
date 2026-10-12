@@ -17,6 +17,11 @@ const (
 	HeaderTimeout = 2 * time.Minute
 	// IdleTimeout limits a transfer that gives no bytes.
 	IdleTimeout = 3 * time.Minute
+	// PingAfter is the quiet time of an HTTP/2 connection after which the client
+	// sends a ping. PingTimeout is the wait for its answer; without one the
+	// connection is closed.
+	PingAfter   = 30 * time.Second
+	PingTimeout = 15 * time.Second
 )
 
 // ErrStalled is the cause of a request that the watchdog stops.
@@ -27,6 +32,9 @@ var ErrStalled = errors.New("pio: no bytes from the server")
 func NewHTTPClient() *http.Client {
 	tr := http.DefaultTransport.(*http.Transport).Clone()
 	tr.ResponseHeaderTimeout = HeaderTimeout
+	// A timeout cancels only the stream, so a dead HTTP/2 connection would stay
+	// in the pool and fail each later request to the host. The ping closes it.
+	tr.HTTP2 = &http.HTTP2Config{SendPingTimeout: PingAfter, PingTimeout: PingTimeout}
 	return &http.Client{Transport: tr}
 }
 

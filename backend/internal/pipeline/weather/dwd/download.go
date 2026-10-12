@@ -202,11 +202,21 @@ func (f *Fetcher) retry(ctx context.Context, try func() error) error {
 			return err
 		}
 		f.logf("  retry %d/%d: %v", attempt, attempts, err)
+		// The next attempt opens a new connection. A timeout leaves the old
+		// HTTP/2 connection in the pool, and it can be dead.
+		f.client().CloseIdleConnections()
 		if err := sleep(ctx, f.backoff(attempt)); err != nil {
 			return err
 		}
 	}
 	return err
+}
+
+func (f *Fetcher) client() *http.Client {
+	if f.HTTP == nil {
+		return http.DefaultClient
+	}
+	return f.HTTP
 }
 
 func (f *Fetcher) backoff(attempt int) time.Duration {

@@ -61,3 +61,16 @@ func TestWatchedStopsMissingHeader(t *testing.T) {
 		t.Fatalf("get gives %v, want ErrStalled", err)
 	}
 }
+
+func TestNewHTTPClientPingsHTTP2(t *testing.T) {
+	tr, ok := NewHTTPClient().Transport.(*http.Transport)
+	if !ok {
+		t.Fatal("the transport is not an *http.Transport")
+	}
+	if tr.ResponseHeaderTimeout != HeaderTimeout {
+		t.Fatalf("header timeout %v, want %v", tr.ResponseHeaderTimeout, HeaderTimeout)
+	}
+	if tr.HTTP2 == nil || tr.HTTP2.SendPingTimeout != PingAfter || tr.HTTP2.PingTimeout != PingTimeout {
+		t.Fatalf("HTTP/2 config %+v, want pings after %v with a timeout of %v", tr.HTTP2, PingAfter, PingTimeout)
+	}
+}
