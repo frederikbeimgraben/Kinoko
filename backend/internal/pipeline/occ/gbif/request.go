@@ -20,10 +20,13 @@ const (
 	FungiTaxonKey = 5
 	// PageLimit is the number of records of one page.
 	PageLimit = 300
-	// MaxOffset is the largest offset that the search API serves.
-	MaxOffset = 100_000
-	// MonthThreshold splits a year into months above this record count.
-	MonthThreshold = 20_000
+	// MaxOffset is the largest offset that the search API serves in time. The API
+	// accepts offsets up to 100,000, but a page at offset 10,000 or more takes about
+	// 60 s, and GBIF resets the connection at that time, so such a page never arrives.
+	MaxOffset = 10_000
+	// MonthThreshold splits a year into months above this record count. It stays
+	// below MaxOffset with room for the records that GBIF adds while a year pages.
+	MonthThreshold = 9_000
 	// Attempts is the number of tries of one request.
 	Attempts = 10
 	// Pause is the wait between two pages.
