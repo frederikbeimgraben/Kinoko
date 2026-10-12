@@ -32,13 +32,21 @@
 }
 
 .hero__image {
-  display: block;
+  // The area takes the aspect ratio of the photo, so nothing is cut off. It is never lower than
+  // the height of the page and never higher than most of the screen; the flex stretch fills it.
+  --private-image-cap: 75dvh;
+
+  display: flex;
   inline-size: 100%;
-  block-size: 100%;
+  min-block-size: var(--hero-min);
+  background: var(--hero-bg);
   border-radius: 28px;
 }
 
 .herofig--bare .hero__image {
+  display: block;
+  block-size: 100%;
+  min-block-size: 0;
   border-radius: 0;
 }
 

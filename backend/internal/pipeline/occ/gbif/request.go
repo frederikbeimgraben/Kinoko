@@ -20,10 +20,13 @@ const (
 	FungiTaxonKey = 5
 	// PageLimit is the number of records of one page.
 	PageLimit = 300
-	// MaxOffset is the largest offset that the search API serves.
-	MaxOffset = 100_000
-	// MonthThreshold splits a year into months above this record count.
-	MonthThreshold = 20_000
+	// MaxOffset is the largest offset that the search API serves in time. The API
+	// accepts offsets up to 100,000, but a page at offset 10,000 or more takes about
+	// 60 s, and GBIF resets the connection at that time, so such a page never arrives.
+	MaxOffset = 10_000
+	// MonthThreshold splits a year into months above this record count. It stays
+	// below MaxOffset with room for the records that GBIF adds while a year pages.
+	MonthThreshold = 9_000
 	// Attempts is the number of tries of one request.
 	Attempts = 10
 	// Pause is the wait between two pages.
@@ -66,13 +69,22 @@ type page struct {
 	Results      []map[string]any
 }
 
+// minPageLimit is the smallest page that a failed transfer halves the page size to.
+const minPageLimit = 50
+
 // get sends one request and retries: after a 429 it waits
 // max(Retry-After, 30 s) times the attempt, after another failure 2 s, doubled each time.
 func (f *Fetcher) get(ctx context.Context, params []param) (page, error) {
-	u := f.base() + "?" + encode(params)
+	return f.getPaged(ctx, func() []param { return params }, nil)
+}
+
+// getPaged is get for a request that build makes with the page size *limit.
+// A transfer that breaks halves *limit for the next try and the next pages:
+// on a slow line, GBIF cuts a page of 1.5 MB before it arrives.
+func (f *Fetcher) getPaged(ctx context.Context, build func() []param, limit *int) (page, error) {
 	delay := firstDelay
 	for attempt := 1; ; attempt++ {
-		p, err := f.getOnce(ctx, u)
+		p, err := f.getOnce(ctx, f.base()+"?"+encode(build()))
 		if err == nil {
 			return p, nil
 		}
@@ -88,6 +100,10 @@ func (f *Fetcher) get(ctx context.Context, params []param) (page, error) {
 		} else {
 			f.logf("    retry %d/%d after %v", attempt, f.attempts(), err)
 			delay *= 2
+			if limit != nil && *limit > minPageLimit && !errors.As(err, &status) {
+				*limit = max(*limit/2, minPageLimit)
+				f.logf("    pages of %d records from now on", *limit)
+			}
 		}
 		if err := f.sleep(ctx, wait); err != nil {
 			return page{}, err
