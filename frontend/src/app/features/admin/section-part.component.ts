@@ -135,8 +135,15 @@ export class SectionPartComponent {
     return shape === null ? [] : [shape];
   });
 
+  /** The cap and the stem have a page for their shape and their features. */
+  protected readonly hasFeatures = computed(() => this.part() === 'cap' || this.part() === 'stem');
+
   constructor() {
     this.state.load(this.slug);
+  }
+
+  protected openFeatures(): void {
+    this.open('merkmale');
   }
 
   /** A size row opens its own dimension. The add row opens the first dimension. */

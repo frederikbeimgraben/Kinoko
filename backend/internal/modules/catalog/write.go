@@ -36,6 +36,7 @@ type speciesWrite struct {
 	RedList          *enums.RedListStatus  `json:"redList"`
 	Description      *string               `json:"description"`
 	DescriptionEn    *string               `json:"descriptionEn"`
+	DescriptionDraft *bool                 `json:"descriptionDraft"`
 	EdibilityNote    *string               `json:"edibilityNote"`
 	Protection       enums.Protection      `json:"protection"`
 	ProtectionNote   *string               `json:"protectionNote"`
@@ -81,6 +82,8 @@ type speciesWrite struct {
 		Slug       string `json:"slug"`
 		Difference string `json:"difference"`
 	} `json:"lookalikes"`
+	// Reactions replaces the reactions. Without the field, the reactions stay.
+	Reactions *[]reactionIn `json:"reactions"`
 }
 
 var (
@@ -133,22 +136,23 @@ func uniqueConflict(err error) error {
 
 func insertSpecies(ctx context.Context, tx *sql.Tx, id db.ID, slug string, b speciesWrite, user db.ID, now db.Time) error {
 	args := append([]any{id, slug}, headValues(b)...)
-	args = append(args, fn.Deref(b.DescriptionEn, ""), false, now, user)
+	args = append(args, fn.Deref(b.DescriptionEn, ""), fn.Deref(b.DescriptionDraft, false), false, now, user)
 	_, err := tx.ExecContext(ctx, "INSERT INTO species (id, slug, "+headCols+
-		", description_en, forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
+		", description_en, description_draft, forecast_enabled, updated_at, updated_by_id) VALUES ("+db.Placeholders(len(args))+")", args...)
 	return uniqueConflict(err)
 }
 
 func updateSpecies(ctx context.Context, tx *sql.Tx, id db.ID, b speciesWrite, user db.ID, now db.Time) error {
 	sets := strings.Join(strings.FieldsFunc(headCols, func(r rune) bool { return r == ',' }), " = ?,") + " = ?"
-	args := append(headValues(b), b.DescriptionEn, now, user, id)
+	args := append(headValues(b), b.DescriptionEn, b.DescriptionDraft, now, user, id)
 	_, err := tx.ExecContext(ctx, "UPDATE species SET "+sets+
-		", description_en = coalesce(?, description_en), updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
+		", description_en = coalesce(?, description_en), description_draft = coalesce(?, description_draft), updated_at = ?, updated_by_id = ? WHERE id = ?", args...)
 	return uniqueConflict(err)
 }
 
 // cleared are the child tables that a write replaces. The cascades remove
-// species_colour and species_colour_change_trigger. Reactions stay.
+// species_colour and species_colour_change_trigger. Reactions change only
+// when the body has them.
 var cleared = []string{
 	"species_name", "species_measurement", "species_part_note", "species_colour_range",
 	"species_colour_change", "species_part_feature", "species_trait", "species_source",
@@ -236,6 +240,11 @@ func replaceChildren(ctx context.Context, tx *sql.Tx, id db.ID, b speciesWrite) 
 	}
 	for _, s := range childStatements(id, b) {
 		if _, err := tx.ExecContext(ctx, s.query, s.args...); err != nil {
+			return err
+		}
+	}
+	if b.Reactions != nil {
+		if err := replaceReactions(ctx, tx, id, *b.Reactions); err != nil {
 			return err
 		}
 	}

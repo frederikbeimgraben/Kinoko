@@ -29,6 +29,16 @@ describe('TaxaApi', () => {
     expect((await answer).path[0].slug).toBe('boletaceae');
   });
 
+  it('holt die Stufen eines Rangs als Liste', async () => {
+    const api = TestBed.inject(TaxaApi);
+    const answer = firstValueFrom(api.list('genus'));
+
+    const request = TestBed.inject(HttpTestingController).expectOne('/api/taxa?rank=genus');
+    request.flush({ items: [taxonStep('genus', 'boletus', 'Boletus')] });
+
+    expect((await answer).map((one) => one.slug)).toEqual(['boletus']);
+  });
+
   it('kodiert einen Slug mit Sonderzeichen für den Weg', () => {
     const api = TestBed.inject(TaxaApi);
     void firstValueFrom(api.page('family', 'a/b'));

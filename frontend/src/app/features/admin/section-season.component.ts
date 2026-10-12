@@ -1,16 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, linkedSignal, signal } from '@angular/core';
+import { SEASONS, type Season } from '../../core/api/models';
 import { I18nService } from '../../core/i18n/i18n.service';
 import { HistoryService } from '../../core/navigation/history.service';
 import { injectRouteParam } from '../../core/navigation/route-param';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import type { TranslationKey } from '../../core/i18n/translations';
 import { ActionBarComponent } from '../../ui/action-bar/action-bar.component';
+import { ChipGroupComponent, type Chip } from '../../ui/chip-group/chip-group.component';
 import { ListRowComponent } from '../../ui/list-row/list-row.component';
 import { OptionSheetComponent, type OptionSheetOption } from '../../ui/option-sheet/option-sheet.component';
 import { PageHeaderComponent } from '../../ui/page-header/page-header.component';
 import { RowGroupComponent } from '../../ui/row-group/row-group.component';
 import { SectionComponent } from '../../ui/section/section.component';
 import { SpeciesEditorStore } from './species-editor.store';
+import { enumKey } from './section-basics.rows';
 import { WEEKS, curvePaths, monthOfWeek, seasonCurve, startWeek } from './section-season.rows';
 
 const FIRST_MONTH = 1;
@@ -51,6 +54,7 @@ interface MonthRow {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ActionBarComponent,
+    ChipGroupComponent,
     ListRowComponent,
     OptionSheetComponent,
     PageHeaderComponent,
@@ -83,6 +87,10 @@ export class SectionSeasonComponent {
   protected readonly curveMonths = computed(() => CURVE_MONTHS.map((month) => this.shortMonth(month)));
   protected readonly curveSize = `0 0 ${String(CURVE_WIDTH)} ${String(CURVE_HEIGHT)}`;
   protected readonly picking = signal<MonthField | null>(null);
+  protected readonly seasons = linkedSignal<readonly string[]>(() => this.state.species()?.seasons ?? []);
+  protected readonly seasonChips = computed<Chip[]>(() =>
+    SEASONS.map((value) => ({ value, label: this.i18n.translate(enumKey('season', value)) })),
+  );
 
   protected readonly fields = computed<MonthRow[]>(() =>
     FIELDS.map((id) => {
@@ -133,6 +141,7 @@ export class SectionSeasonComponent {
       periodEndMonth: this.to(),
       periodPeakMonth: this.peakMonth(),
       periodPeakWeek: this.peak(),
+      seasons: SEASONS.filter((one: Season) => this.seasons().includes(one)),
     });
     this.back();
   }

@@ -1,0 +1,34 @@
+<app-page-header [title]="'admin.species.section.trees' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <app-section [label]="'admin.trees.chosen' | t">
+    <app-chip-group
+      [small]="true"
+      [multiple]="true"
+      [chips]="chips()"
+      [value]="chosen()"
+      [label]="'admin.trees.chosen' | t"
+      (valueChange)="choose($event)"
+    />
+  </app-section>
+
+  @if (chosenChips().length > 0) {
+    <app-section [label]="'admin.trees.fromExperience' | t">
+      <app-chip-group
+        [small]="true"
+        [multiple]="true"
+        [chips]="chosenChips()"
+        [value]="experience()"
+        [label]="'admin.trees.fromExperience' | t"
+        (valueChange)="experience.set($event)"
+      />
+    </app-section>
+  }
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>

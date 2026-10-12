@@ -21,10 +21,12 @@ import { PartPickerComponent } from './part-picker.component';
 import { nameLines } from '../species/species-names';
 import { SpeciesEditorStore } from './species-editor.store';
 import {
+  basicsRow,
   changeRows,
   featureRows,
   lookalikeRows,
   moreRows,
+  reactionRows,
   sourceRows,
   type EditorRow,
   type RowText,
@@ -38,6 +40,9 @@ const MORE_STEP: Readonly<Record<string, readonly string[]>> = {
   zeitraum: ['zeitraum'],
   fruchtschicht: ['fruchtschicht'],
   sinne: ['sinne', 'geruch'],
+  stammdaten: ['stammdaten'],
+  baeume: ['baeume'],
+  texte: ['texte'],
 };
 
 /** The species in edit mode: counts, forecast, texts, sections and source. */
@@ -117,6 +122,8 @@ export class SpeciesEditorComponent {
   protected readonly more = computed(() => this.rows((one) => moreRows(one, this.rowText())));
   protected readonly lookalikes = computed(() => this.rows((one) => lookalikeRows(one, this.i18n.locale())));
   protected readonly sources = computed(() => this.rows(sourceRows));
+  protected readonly basics = computed(() => this.rows((one) => [basicsRow(one, this.rowText())]));
+  protected readonly reactions = computed(() => this.rows((one) => reactionRows(one, this.rowText())));
 
   /** The person who changed the species last, and the day of the change. */
   protected readonly sourceText = computed(() => {
@@ -175,6 +182,14 @@ export class SpeciesEditorComponent {
 
   protected addLookalike(): void {
     this.openLookalike(lookalikeWrites(this.species()).length);
+  }
+
+  protected openReaction(at: number): void {
+    this.open(['reaktion', String(at)]);
+  }
+
+  protected addReaction(): void {
+    this.openReaction(this.species()?.reactions?.length ?? 0);
   }
 
   protected openSource(at: number): void {

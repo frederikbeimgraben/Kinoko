@@ -58,6 +58,19 @@ describe('SectionSeasonComponent', () => {
     expect(call.request.body).toEqual(expect.objectContaining({ periodStartMonth: 6, periodEndMonth: 10 }));
   });
 
+  it('schreibt die gewählten Jahreszeiten in ihrer Reihenfolge', async () => {
+    const { http } = await build();
+    await screen.findByText('Juni');
+
+    const seasons = screen.getByRole('group', { name: 'Jahreszeiten' });
+    await userEvent.click(within(seasons).getByRole('button', { name: 'Herbst' }));
+    await userEvent.click(within(seasons).getByRole('button', { name: 'Sommer' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+
+    const body = http.expectOne('/api/species/boletus-edulis').request.body as { seasons: string[] };
+    expect(body.seasons).toEqual(['summer', 'autumn']);
+  });
+
   it('wählt einen Höhepunkt und nimmt ihn wieder heraus', async () => {
     const { http } = await build();
     await screen.findByText('Juni');

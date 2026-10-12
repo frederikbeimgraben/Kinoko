@@ -290,6 +290,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/taxa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The taxa by latin name. The species editor chooses the taxon of a species from this list. */
+        get: operations["listTaxa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/taxa/{rank}/{slug}": {
         parameters: {
             query?: never;
@@ -1394,6 +1411,8 @@ export interface components {
             description?: string | null;
             /** @description The English description. Without the field, a create stores an empty text and an update keeps the old one. */
             descriptionEn?: string;
+            /** @description True when nobody has reviewed the description. Without the field, a create stores false and an update keeps the old value. */
+            descriptionDraft?: boolean;
             edibilityNote?: string | null;
             protection: components["schemas"]["Protection"];
             protectionNote?: string | null;
@@ -1427,6 +1446,8 @@ export interface components {
                 slug: string;
                 difference: string;
             }[];
+            /** @description The reactions to reagents, in order. The reagent is the slug of a trigger term; its name is not read. A source with a new label, address or year is added. Without the field, the reactions stay. */
+            reactions?: components["schemas"]["SpeciesReaction"][];
         };
         Species: components["schemas"]["SpeciesSummary"] & {
             /** @description The name of the person who made the last change. */
@@ -1468,7 +1489,7 @@ export interface components {
             seasons: components["schemas"]["Season"][];
             terms: components["schemas"]["SpeciesTermEntry"][];
             lookalikes: components["schemas"]["Lookalike"][];
-            /** @description The reactions to reagents, ordered by position. Only the profile has them; a species write keeps them. */
+            /** @description The reactions to reagents, ordered by position. Only the profile has them; a species write without reactions keeps them. */
             reactions?: components["schemas"]["SpeciesReaction"][];
             /** @description The count of reactions. Only the items of the bundle have it. */
             reactionCount?: number;
@@ -2745,6 +2766,31 @@ export interface operations {
             401: components["responses"]["Unauthorized"];
             403: components["responses"]["Forbidden"];
             404: components["responses"]["NotFound"];
+            422: components["responses"]["Validation"];
+        };
+    };
+    listTaxa: {
+        parameters: {
+            query?: {
+                rank?: components["schemas"]["TaxonRank"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        items: components["schemas"]["TaxonStep"][];
+                    };
+                };
+            };
             422: components["responses"]["Validation"];
         };
     };

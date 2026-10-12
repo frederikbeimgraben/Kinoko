@@ -16,6 +16,17 @@
       </app-section>
     }
 
+    @if (hasFeatures()) {
+      <app-row-group>
+        <app-list-row
+          [title]="'admin.features.title' | t"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openFeatures()"
+        />
+      </app-row-group>
+    }
+
     <app-section [label]="'admin.part.section.sizes' | t">
       <app-row-group>
         @for (row of sizes(); track row.dimension) {

@@ -132,3 +132,18 @@ func (m *Module) taxonPage(r *http.Request) (web.Response, error) {
 		SpeciesCount: len(species),
 	}), nil
 }
+
+// listTaxa gives the taxa by latin name, optionally of one rank. The species editor chooses the taxon from it.
+func (m *Module) listTaxa(r *http.Request) (web.Response, error) {
+	query := "SELECT " + taxonCols + " FROM taxon"
+	args := []any{}
+	if rank := lastValue(r.URL.Query(), "rank"); rank != "" {
+		query += " WHERE rank = ?"
+		args = append(args, rank)
+	}
+	rows, err := db.All(r.Context(), m.deps.DB, scanTaxon, query+" ORDER BY latin_name", args...)
+	if err != nil {
+		return nil, err
+	}
+	return web.OK(map[string][]TaxonStep{"items": fn.Map(rows, stepOf)}), nil
+}

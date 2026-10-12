@@ -1,0 +1,134 @@
+<app-page-header [title]="'admin.reaction.title' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <app-section [label]="'admin.reaction.field.reagent' | t">
+    <app-chip-group
+      [small]="true"
+      [chips]="reagents()"
+      [value]="reagentValue()"
+      [label]="'admin.reaction.field.reagent' | t"
+      (valueChange)="chooseReagent($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.reaction.field.reading' | t">
+    <app-form-field
+      [label]="'admin.reaction.field.reading' | t"
+      [hideLabel]="true"
+      [multiline]="true"
+      [value]="reading()"
+      (valueChange)="reading.set($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.reaction.field.result' | t">
+    <app-segmented
+      [options]="results()"
+      [value]="result()"
+      [label]="'admin.reaction.field.result' | t"
+      (valueChange)="chooseResult($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.reaction.field.part' | t">
+    <app-chip-group
+      [small]="true"
+      [chips]="parts()"
+      [value]="partValue()"
+      [label]="'admin.reaction.field.part' | t"
+      (valueChange)="choosePart($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.reaction.field.location' | t">
+    <app-form-field
+      [label]="'admin.reaction.field.location' | t"
+      [hideLabel]="true"
+      [placeholder]="'common.optional' | t"
+      [value]="location()"
+      (valueChange)="location.set($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.reaction.field.colour' | t">
+    <app-row-group>
+      <app-list-row [title]="colourName()" [swatch]="colour()?.hex ?? ''" />
+      @if (colour() !== null) {
+        <app-list-row
+          [title]="'admin.reaction.noColour' | t"
+          [clickable]="true"
+          (chosen)="colour.set(null)"
+        />
+      }
+    </app-row-group>
+    <div class="section__palette">
+      <app-colour-picker
+        [colours]="swatches()"
+        [value]="colour()?.hex ?? ''"
+        [labels]="false"
+        [label]="'admin.reaction.field.colour' | t"
+        (valueChange)="chooseHex($event)"
+      />
+    </div>
+  </app-section>
+
+  <app-row-group>
+    <app-check-row
+      [title]="'admin.reaction.field.contested' | t"
+      [checked]="contested()"
+      (toggled)="contested.set($event)"
+    />
+    <app-check-row
+      [title]="'admin.reaction.field.partlyConfirmed' | t"
+      [checked]="partlyConfirmed()"
+      (toggled)="partlyConfirmed.set($event)"
+    />
+  </app-row-group>
+
+  <app-section [label]="'admin.reaction.field.sources' | t">
+    @for (source of sources(); track $index; let at = $index) {
+      <app-form-field
+        [label]="'admin.reaction.source.label' | t"
+        [value]="source.label"
+        (valueChange)="writeSource(at, 'label', $event)"
+      />
+      <app-form-field
+        [label]="'admin.reaction.source.url' | t"
+        [placeholder]="'common.optional' | t"
+        [value]="source.url ?? ''"
+        (valueChange)="writeSource(at, 'url', $event)"
+      />
+      <app-form-field
+        [label]="'admin.reaction.source.year' | t"
+        [placeholder]="'common.optional' | t"
+        [value]="source.year ?? ''"
+        (valueChange)="writeSource(at, 'year', $event)"
+      />
+      <app-row-group>
+        <app-list-row
+          [title]="'admin.reaction.removeSource' | t"
+          [clickable]="true"
+          (chosen)="removeSource(at)"
+        />
+      </app-row-group>
+    }
+    <app-row-group>
+      <app-add-row
+        [label]="'admin.reaction.addSource' | t"
+        [action]="'admin.reaction.addSource' | t"
+        (pressed)="addSource()"
+      />
+    </app-row-group>
+  </app-section>
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [secondary]="known() ? ('admin.reaction.remove' | t) : undefined"
+    secondaryIcon="trash"
+    [secondaryDanger]="true"
+    [stacked]="true"
+    (primaryClick)="apply()"
+    (secondaryClick)="remove()"
+  />
+</div>

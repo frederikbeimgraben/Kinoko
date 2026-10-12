@@ -2,9 +2,16 @@ import type { BodyPart, ColourGroup, Measurement, SpeciesEntry, TermRef, Unit } 
 import { decimal } from '../../core/i18n/numbers';
 import { DEFAULT_LOCALE, type TranslationKey } from '../../core/i18n/translations';
 import type { NamedColour } from '../species/catalogue-text';
-import { HYMENIUM_TEXT, PART_TEXT, RING_SHAPE_TEXT } from '../species/labels';
+import {
+  EDIBILITY_TEXT,
+  HYMENIUM_TEXT,
+  PART_TEXT,
+  PROTECTION_TEXT,
+  RING_SHAPE_TEXT,
+} from '../species/labels';
 import { nameLines } from '../species/species-names';
 import { heldParts, partDescription } from './species-lists';
+import { TEXT_TRAITS } from './section-texts.rows';
 
 /** A row of a section in edit mode. */
 export interface EditorRow {
@@ -84,7 +91,29 @@ function monthText(month: number | null | undefined, t: RowText): string {
   return month === null || month === undefined ? '' : t.text(`enum.month.${String(month)}` as TranslationKey);
 }
 
-/** The rows of the other features: season, hymenium, smell and taste. Each row opens its own page. */
+/** The row of the name and the classification: latin name, edibility and protection. */
+export function basicsRow(species: SpeciesEntry, t: RowText): EditorRow {
+  return {
+    key: 'stammdaten',
+    title: t.text('admin.species.section.basics'),
+    value: [
+      species.scientificName,
+      t.text(EDIBILITY_TEXT[species.edibility]),
+      t.text(PROTECTION_TEXT[species.protection]),
+    ].join(' · '),
+  };
+}
+
+/** The reaction rows: the reagent and the reading. */
+export function reactionRows(species: SpeciesEntry, t: RowText): EditorRow[] {
+  return (species.reactions ?? []).map((one, at) => ({
+    key: `reaktion-${String(at)}`,
+    title: one.reagent.name === '' ? one.reagent.slug : t.term({ ...one.reagent, id: '', kind: 'trigger' }),
+    value: one.reading,
+  }));
+}
+
+/** The rows of the other features: season, hymenium, smell, taste, trees and the other texts. Each row opens its own page. */
 export function moreRows(species: SpeciesEntry, t: RowText): EditorRow[] {
   const from = monthText(species.periodStartMonth, t);
   const to = monthText(species.periodEndMonth, t);
@@ -104,6 +133,21 @@ export function moreRows(species: SpeciesEntry, t: RowText): EditorRow[] {
       key: 'sinne',
       title: t.text('species.section.senses'),
       value: [species.smellText, species.tasteText].filter(Boolean).join(' · '),
+    },
+    {
+      key: 'baeume',
+      title: t.text('admin.species.section.trees'),
+      value: species.terms
+        .filter((one) => one.term.kind === 'tree')
+        .map((one) => t.term(one.term))
+        .join(', '),
+    },
+    {
+      key: 'texte',
+      title: t.text('admin.species.section.texts'),
+      value: TEXT_TRAITS.filter((one) => species.traits.some((trait) => trait.key === one.key))
+        .map((one) => t.text(one.title))
+        .join(', '),
     },
   ];
 }

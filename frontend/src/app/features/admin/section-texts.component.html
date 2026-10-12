@@ -1,0 +1,23 @@
+<app-page-header [title]="'admin.species.section.texts' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  @for (one of fields(); track one.key) {
+    <app-section [label]="one.title | t">
+      <app-form-field
+        [label]="one.title | t"
+        [hideLabel]="true"
+        [multiline]="true"
+        [placeholder]="'common.optional' | t"
+        [value]="one.text"
+        (valueChange)="write(one.key, $event)"
+      />
+    </app-section>
+  }
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>

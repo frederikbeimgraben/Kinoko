@@ -224,6 +224,43 @@ describe('SpeciesEditorComponent', { timeout: 20_000 }, () => {
     ]);
   });
 
+  it('führt zu Stammdaten, Bäumen, Texten und Reaktionen', async () => {
+    const reaction = {
+      reagent: { slug: 'koh', name: 'Kalilauge' },
+      reading: 'KOH gelb',
+      part: null,
+      location: null,
+      result: 'positive',
+      colour: null,
+      contested: false,
+      partlyConfirmed: false,
+      sources: [],
+    };
+    await build({ ...PROFILE, reactions: [reaction] });
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('button', { name: /Name und Einordnung/ });
+
+    expect(screen.getByText('Boletus edulis · essbar · nicht geschützt')).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: /Name und Einordnung/ }));
+    await userEvent.click(screen.getByRole('button', { name: /^Bäume/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Weitere Texte/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Kalilauge/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Reaktion hinzufügen' }));
+
+    expect(paths).toEqual([
+      '/verwaltung/arten/boletus-edulis/stammdaten',
+      '/verwaltung/arten/boletus-edulis/baeume',
+      '/verwaltung/arten/boletus-edulis/texte',
+      '/verwaltung/arten/boletus-edulis/reaktion/0',
+      '/verwaltung/arten/boletus-edulis/reaktion/1',
+    ]);
+  });
+
   it('speichert Beschreibung und Hinweis mit Speichern', async () => {
     const { http } = await build();
     await screen.findByRole('textbox', { name: 'Beschreibung' });

@@ -26,6 +26,17 @@
     </app-section>
   }
 
+  <app-section [label]="'admin.season.seasons' | t">
+    <app-chip-group
+      [small]="true"
+      [multiple]="true"
+      [chips]="seasonChips()"
+      [value]="seasons()"
+      [label]="'admin.season.seasons' | t"
+      (valueChange)="seasons.set($event)"
+    />
+  </app-section>
+
   <app-action-bar
     [primary]="'common.apply' | t"
     primaryIcon="check"

@@ -1,9 +1,11 @@
 import type { SpeciesEntry } from '../../core/api/models';
 import {
+  basicsRow,
   changeRows,
   featureRows,
   lookalikeRows,
   moreRows,
+  reactionRows,
   sourceRows,
   spanText,
   type RowText,
@@ -25,6 +27,13 @@ const WORDS: Record<string, string> = {
   'enum.unit.cm': 'cm',
   'enum.unit.um': 'µm',
   'common.to': 'bis',
+  'admin.species.section.basics': 'Name und Einordnung',
+  'admin.species.section.trees': 'Bäume',
+  'admin.species.section.texts': 'Weitere Texte',
+  'species.field.habitat': 'Vorkommen',
+  'species.field.milk': 'Milch',
+  'enum.edibility.edible': 'essbar',
+  'enum.protection.personal_use': 'für den Eigenbedarf',
 };
 
 function text(locale = 'de'): RowText {
@@ -40,6 +49,7 @@ function entry(part: Partial<SpeciesEntry>): SpeciesEntry {
     sources: [],
     traits: [],
     partNotes: [],
+    terms: [],
     ...part,
   } as unknown as SpeciesEntry;
 }
@@ -175,12 +185,81 @@ describe('moreRows', () => {
       text(),
     );
 
-    expect(rows.map((one) => one.value)).toEqual(['Juni bis Oktober', 'Lamellen', 'Pilzig. · Mild.']);
-    expect(rows.map((one) => one.key)).toEqual(['zeitraum', 'fruchtschicht', 'sinne']);
+    expect(rows.map((one) => one.value)).toEqual(['Juni bis Oktober', 'Lamellen', 'Pilzig. · Mild.', '', '']);
+    expect(rows.map((one) => one.key)).toEqual(['zeitraum', 'fruchtschicht', 'sinne', 'baeume', 'texte']);
+  });
+
+  it('nennt die Bäume und die Titel der weiteren Texte', () => {
+    const rows = moreRows(
+      entry({
+        terms: [
+          { term: { id: 't-1', slug: 'beech', name: 'Buche', kind: 'tree' }, fromExperience: false },
+          { term: { id: 't-2', slug: 'fruity', name: 'fruchtig', kind: 'smell' }, fromExperience: false },
+          { term: { id: 't-3', slug: 'oak', name: 'Eiche', kind: 'tree' }, fromExperience: true },
+        ],
+        traits: [
+          { key: 'milk', text: 'Weiß.' },
+          { key: 'cap', text: 'Braun.' },
+          { key: 'habitat', text: 'Laubwald.' },
+        ],
+      }),
+      text(),
+    );
+
+    expect(rows[3].value).toBe('Buche, Eiche');
+    expect(rows[4].value).toBe('Vorkommen, Milch');
   });
 
   it('lässt fehlende Werte leer', () => {
-    expect(moreRows(entry({}), text()).map((one) => one.value)).toEqual(['', '', '']);
+    expect(moreRows(entry({}), text()).map((one) => one.value)).toEqual(['', '', '', '', '']);
+  });
+});
+
+describe('basicsRow', () => {
+  it('nennt lateinischen Namen, Speisewert und Schutz', () => {
+    const row = basicsRow(
+      entry({ scientificName: 'Boletus edulis', edibility: 'edible', protection: 'personal_use' }),
+      text(),
+    );
+
+    expect(row).toEqual({
+      key: 'stammdaten',
+      title: 'Name und Einordnung',
+      value: 'Boletus edulis · essbar · für den Eigenbedarf',
+    });
+  });
+});
+
+describe('reactionRows', () => {
+  it('nennt Reagenz und Wortlaut, ohne Namen den Schlüssel', () => {
+    const reaction = {
+      reading: 'KOH gelb',
+      part: null,
+      location: null,
+      result: 'positive' as const,
+      colour: null,
+      contested: false,
+      partlyConfirmed: false,
+      sources: [],
+    };
+    const rows = reactionRows(
+      entry({
+        reactions: [
+          { ...reaction, reagent: { slug: 'koh', name: 'Kalilauge' } },
+          { ...reaction, reagent: { slug: 'feso4', name: '' }, reading: 'FeSO4 grün' },
+        ],
+      }),
+      text(),
+    );
+
+    expect(rows).toEqual([
+      { key: 'reaktion-0', title: 'Kalilauge', value: 'KOH gelb' },
+      { key: 'reaktion-1', title: 'feso4', value: 'FeSO4 grün' },
+    ]);
+  });
+
+  it('gibt ohne Reaktionen keine Zeile', () => {
+    expect(reactionRows(entry({}), text())).toEqual([]);
   });
 });
 
