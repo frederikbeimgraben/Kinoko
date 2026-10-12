@@ -282,6 +282,10 @@ func TestAShutdownFailsTheRunningRun(t *testing.T) {
 		done <- err
 	}()
 	<-f.stages.started
+	if got := f.get(run.ID); got.LogPath == nil {
+		cancel()
+		t.Fatal("the running run has no log path, so its page shows no log")
+	}
 	cancel()
 	if err := <-done; err != nil {
 		t.Fatal(err)

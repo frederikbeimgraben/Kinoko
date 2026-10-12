@@ -271,6 +271,13 @@ func (s *Store) ReportStep(ctx context.Context, runID db.ID, position int, name 
 	})
 }
 
+// SetLog records the log file of a running run, so that its detail shows the
+// log while the run runs.
+func (s *Store) SetLog(ctx context.Context, runID db.ID, logPath string) error {
+	_, err := s.handle.ExecContext(ctx, "UPDATE pipeline_run SET log_path = ? WHERE id = ?", logPath, runID)
+	return err
+}
+
 // Finish sets the end state and the end time of a run. An empty log path
 // and a nil Brier score keep the values that the run has.
 func (s *Store) Finish(ctx context.Context, runID db.ID, state enums.RunState, logPath string, brier *float64) error {

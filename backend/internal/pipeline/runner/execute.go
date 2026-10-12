@@ -49,6 +49,9 @@ func (r *Runner) execute(ctx context.Context, run runs.Run) (err error) {
 	} else {
 		defer func() { err = errors.Join(err, logFile.Close()) }()
 		log = logFile
+		if err := r.runs.SetLog(report, run.ID, logPath); err != nil {
+			r.log.Error("record the run log", "run", run.ID, "err", err)
+		}
 	}
 	job := &Job{Run: run, Now: r.now(), log: log}
 	x := &execution{r: r, job: job, states: map[db.ID]*speciesState{}}
