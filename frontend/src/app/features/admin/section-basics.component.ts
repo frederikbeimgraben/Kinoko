@@ -42,7 +42,7 @@ const PICKER_TITLE: Readonly<Record<Picker, TranslationKey>> = {
 };
 
 /** The option of the sheet for a species without a genus. */
-const NO_TAXON = 'keine';
+const NO_TAXON = 'none';
 
 /** Name, other names, classification, protection and status of a species, as one page. */
 @Component({
