@@ -3327,6 +3327,9 @@ components:
         descriptionEn:
           type: string
           description: The English description. Without the field, a create stores an empty text and an update keeps the old one.
+        descriptionDraft:
+          type: boolean
+          description: True when nobody has reviewed the description. Without the field, a create stores false and an update keeps the old value.
         edibilityNote:
           oneOf:
             - type: string
@@ -3456,6 +3459,13 @@ components:
               difference:
                 type: string
             required: [slug, difference]
+        reactions:
+          description: >-
+            The reactions to reagents, in order. The reagent is the slug of a trigger term; its name is not read.
+            A source with a new label, address or year is added. Without the field, the reactions stay.
+          type: array
+          items:
+            $ref: "#/components/schemas/SpeciesReaction"
       required: [name, scientificName, group, edibility, protection]
 
     Species:
@@ -3602,7 +3612,7 @@ components:
               items:
                 $ref: "#/components/schemas/Lookalike"
             reactions:
-              description: The reactions to reagents, ordered by position. Only the profile has them; a species write keeps them.
+              description: The reactions to reagents, ordered by position. Only the profile has them; a species write without reactions keeps them.
               type: array
               items:
                 $ref: "#/components/schemas/SpeciesReaction"
