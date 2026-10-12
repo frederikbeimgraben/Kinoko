@@ -65,7 +65,7 @@ describe('RunComponent', () => {
     expect(screen.getByText('1 284, davon 42 aus der App')).toBeInTheDocument();
     expect(screen.getByText('Brier 0,061 · besser')).toBeInTheDocument();
     expect(screen.getByText('Karten rendern')).toBeInTheDocument();
-    expect(screen.getByText('Woche 3 von 12')).toBeInTheDocument();
+    expect(screen.getByText('Art 3 von 12')).toBeInTheDocument();
     expect(screen.getByText(/chosen 40 features/)).toBeInTheDocument();
     await noViolations(container);
   });

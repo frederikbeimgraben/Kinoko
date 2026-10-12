@@ -109,12 +109,13 @@ describe('runs.rows', () => {
     expect(runPercent({ ...RUN, progressTotal: 0 })).toBe(0);
   });
 
-  it('zeigt die Arten nur an Training und Karten, sonst die Dauer', () => {
+  it('zeigt am laufenden Schritt die Arten, beim Abrufen nichts, sonst die Dauer', () => {
     expect(
       stepSubline({ position: 4, name: 'train models', state: 'running', durationS: null }, RUN, text),
     ).toBe('Art 3 von 12');
+    const fetch = { ...RUN, kind: 'fetch' as const };
     expect(
-      stepSubline({ position: 2, name: 'fetch weather', state: 'running', durationS: null }, RUN, text),
+      stepSubline({ position: 2, name: 'fetch weather', state: 'running', durationS: null }, fetch, text),
     ).toBe('');
     expect(stepSubline({ position: 1, name: 'x', state: 'finished', durationS: 120 }, RUN, text)).toBe(
       '2 min',

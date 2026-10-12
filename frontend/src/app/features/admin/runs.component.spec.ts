@@ -61,7 +61,7 @@ describe('RunsComponent', () => {
     const { container } = await build();
 
     expect(await screen.findByText('Vollständig')).toBeInTheDocument();
-    expect(screen.getByText(/Woche 3 von 12/)).toBeInTheDocument();
+    expect(screen.getByText(/Art 3 von 12/)).toBeInTheDocument();
     expect(screen.getByText('Training Steinpilz')).toBeInTheDocument();
     expect(screen.getByText('18 min')).toBeInTheDocument();
     await noViolations(container);
