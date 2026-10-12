@@ -249,3 +249,10 @@ func TestPlans(t *testing.T) {
 		t.Errorf("parse %s %d %d %v", c, y, m, ok)
 	}
 }
+
+// A year that the fetch pages whole must end below the offset that GBIF serves in time.
+func TestMonthThresholdBelowMaxOffset(t *testing.T) {
+	if gbif.MonthThreshold >= gbif.MaxOffset {
+		t.Fatalf("MonthThreshold %d must be below MaxOffset %d", gbif.MonthThreshold, gbif.MaxOffset)
+	}
+}
