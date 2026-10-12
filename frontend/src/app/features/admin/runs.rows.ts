@@ -83,9 +83,13 @@ export function runSubline(run: PipelineRun, text: Translate, locale: string): s
   return joined([weekday, runResult(run, text)]);
 }
 
-/** The progress of a run in weeks. */
+/** The steps that count the species of a run. The other steps have no counter. */
+const SPECIES_STEPS: readonly string[] = ['train models', 'render maps'];
+
+/** The progress of a run in species. A fetch run has no species, so it has no progress. */
 export function runProgress(run: PipelineRun, text: Translate): string {
-  return text('admin.runs.week', { getan: run.progressDone, gesamt: run.progressTotal });
+  if (run.kind === 'fetch' || run.progressTotal === 0) return '';
+  return text('admin.runs.species', { getan: run.progressDone, gesamt: run.progressTotal });
 }
 
 /** The sub-line of the running run: the progress and the time since the start. */
@@ -99,12 +103,13 @@ export function activeSubline(run: PipelineRun, text: Translate, now: string): s
 
 /** The share of a run in percent. Without a total, the bar stays empty. */
 export function runPercent(run: PipelineRun): number {
+  if (run.kind === 'fetch') return 0;
   return run.progressTotal === 0 ? 0 : (100 * run.progressDone) / run.progressTotal;
 }
 
-/** The sub-line of a step: the progress while it runs, else the duration. */
+/** The sub-line of a step: the species progress of a species step while it runs, else the duration. */
 export function stepSubline(step: PipelineRunStep, run: PipelineRun, text: Translate): string {
-  if (step.state === 'running') return runProgress(run, text);
+  if (step.state === 'running') return SPECIES_STEPS.includes(step.name) ? runProgress(run, text) : '';
   return step.durationS === null ? '' : shortDuration(step.durationS, text);
 }
 
