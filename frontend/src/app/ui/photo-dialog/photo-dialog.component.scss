@@ -31,7 +31,7 @@
   box-shadow: 0 12px 40px rgb(0 0 0 / 50%);
 }
 
-// The image area of the board: 440 px high on the phone, 560 px on the desktop. The photo fills it, per `kit.css` `.hero`.
+// The image area of the board: 440 px high on the phone, 560 px on the desktop. The whole photo fits in it, on the hero ground.
 .photo__frame {
   position: relative;
   block-size: min(440px, calc(100dvh - 160px));

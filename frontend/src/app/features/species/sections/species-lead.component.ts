@@ -22,7 +22,7 @@ export class SpeciesLeadComponent {
   private readonly i18n = inject(I18nService);
 
   readonly slug = input.required<string>();
-  /** The hero height: 260 px on the phone, 210 px in a desktop column. */
+  /** The lowest hero height: 260 px on the phone, 210 px in a desktop column. */
   readonly height = input(260);
 
   protected readonly lead = this.images.lead;

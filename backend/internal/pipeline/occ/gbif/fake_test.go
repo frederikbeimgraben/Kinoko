@@ -22,6 +22,7 @@ type fakeGBIF struct {
 	mu       sync.Mutex
 	records  map[[2]int][]map[string]any // (year, month)
 	failures []failure                   // used in order, one per request
+	failFrom int                         // the count of requests before the failures start
 	requests []string
 	server   *httptest.Server
 }
@@ -29,6 +30,8 @@ type fakeGBIF struct {
 type failure struct {
 	status     int
 	retryAfter string
+	// cut sends the start of a body and closes the connection.
+	cut bool
 }
 
 func newFake(t *testing.T) *fakeGBIF {
@@ -55,9 +58,16 @@ func (f *fakeGBIF) serve(w http.ResponseWriter, r *http.Request) {
 	f.mu.Lock()
 	defer f.mu.Unlock()
 	f.requests = append(f.requests, r.URL.RawQuery)
-	if len(f.failures) > 0 {
+	if len(f.failures) > 0 && len(f.requests) > f.failFrom {
 		fail := f.failures[0]
 		f.failures = f.failures[1:]
+		if fail.cut {
+			w.Header().Set("Content-Length", "1000")
+			_, _ = w.Write([]byte(`{"count": 3, `))
+			conn, _, _ := w.(http.Hijacker).Hijack()
+			_ = conn.Close()
+			return
+		}
 		if fail.retryAfter != "" {
 			w.Header().Set("Retry-After", fail.retryAfter)
 		}
