@@ -35,6 +35,8 @@
   display: block;
   inline-size: 100%;
   block-size: 100%;
+  // The whole photo shows: `contain` fits it, and the hero ground fills the bars beside it.
+  background: var(--hero-bg);
   border-radius: 28px;
 }
 
