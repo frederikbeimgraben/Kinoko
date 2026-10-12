@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"net/url"
 	"os"
 	"path/filepath"
 	"slices"
@@ -157,7 +158,7 @@ func TestRefreshReplacesAndBootstrapSkips(t *testing.T) {
 func TestRetryWaits(t *testing.T) {
 	f := newFake(t)
 	f.add(2025, 1, 3, "x")
-	f.failures = []failure{{429, "3"}, {500, ""}, {429, "120"}, {503, ""}}
+	f.failures = []failure{{429, "3", false}, {500, "", false}, {429, "120", false}, {503, "", false}}
 	dir, s := t.TempDir(), &sleeps{}
 	if _, err := fetcher(f, dir, s).Fetch(context.Background(), gbif.Plan{Years: []int{2025}}); err != nil {
 		t.Fatal(err)
@@ -165,6 +166,31 @@ func TestRetryWaits(t *testing.T) {
 	want := []time.Duration{30 * time.Second, 2 * time.Second, 360 * time.Second, 4 * time.Second}
 	if !slices.Equal(s.d, want) {
 		t.Errorf("waits %v, want %v", s.d, want)
+	}
+}
+
+// A page that breaks off halves the page size for the retry and the next pages.
+func TestABrokenPageHalvesThePageSize(t *testing.T) {
+	f := newFake(t)
+	f.add(2012, 5, 400, "x")
+	f.failFrom = 1
+	f.failures = []failure{{cut: true}}
+	dir, s := t.TempDir(), &sleeps{}
+	chunks, err := fetcher(f, dir, s).Fetch(context.Background(), gbif.Plan{Years: []int{2012}})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(chunks) != 1 || chunks[0].Records != 400 || chunks[0].Short() {
+		t.Fatalf("chunks %+v", chunks)
+	}
+	var limits []string
+	for _, q := range f.requests[1:] {
+		v, _ := url.ParseQuery(q)
+		limits = append(limits, v.Get("limit")+"@"+v.Get("offset"))
+	}
+	want := []string{"300@0", "150@0", "150@150", "150@300"}
+	if !slices.Equal(limits, want) {
+		t.Errorf("pages %v, want %v", limits, want)
 	}
 }
 

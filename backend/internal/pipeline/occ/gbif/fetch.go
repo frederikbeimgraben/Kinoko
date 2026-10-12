@@ -145,10 +145,13 @@ func (f *Fetcher) fetchChunk(ctx context.Context, year, month, expected int) (*c
 	if err != nil {
 		return nil, c, err
 	}
-	for offset := 0; offset < MaxOffset; offset += PageLimit {
-		extra := append([]param{{"limit", strconv.Itoa(PageLimit)}, {"offset", strconv.Itoa(offset)}},
-			timeParams(year, month)...)
-		p, err := f.get(ctx, f.baseParams(extra...))
+	limit := PageLimit
+	for offset := 0; offset < MaxOffset; {
+		build := func() []param {
+			return f.baseParams(append([]param{{"limit", strconv.Itoa(limit)}, {"offset", strconv.Itoa(offset)}},
+				timeParams(year, month)...)...)
+		}
+		p, err := f.getPaged(ctx, build, &limit)
 		if err != nil {
 			w.abort()
 			return nil, c, err
@@ -162,6 +165,7 @@ func (f *Fetcher) fetchChunk(ctx context.Context, year, month, expected int) (*c
 		if p.EndOfRecords || len(p.Results) == 0 {
 			break
 		}
+		offset += len(p.Results)
 		if err := f.sleep(ctx, f.pause()); err != nil {
 			w.abort()
 			return nil, c, err
