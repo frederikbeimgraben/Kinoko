@@ -91,7 +91,10 @@ export const SpeciesStore = signalStore(
   withMethods((store) => {
     let running: Promise<void> | null = null;
 
+    // Once the catalogue is in memory, the device copy is not newer. A second read gave a new
+    // bundle object on each visit of the list, and every species was worked out again.
     const fromDevice = async (): Promise<void> => {
+      if (store.bundle() !== null) return;
       const known = await store._offline.get<unknown>('catalog', BUNDLE_KEY);
       if (completeBundle(known)) patchState(store, { bundle: known });
     };

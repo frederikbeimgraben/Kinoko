@@ -58,8 +58,12 @@ export class MapSurface {
   private readonly _height = signal(Number.POSITIVE_INFINITY);
   /** The height of the map canvas. The add button needs it to stay clear of the location button. */
   readonly height = this._height.asReadonly();
-  private readonly resized = new ResizeObserver(([entry]) => {
-    this._height.set(entry.contentRect.height);
+  /** On the desktop the canvas starts at the rail and reaches under the column: the width under it.
+   * The canvas keeps its size when the column changes, as a new size draws the full map again. */
+  private readonly _under = signal(0);
+  private readonly resized = new ResizeObserver((entries) => {
+    for (const entry of entries) if (entry.target === this.host) this._height.set(entry.contentRect.height);
+    this.measureUnder();
   });
 
   constructor() {
@@ -72,6 +76,9 @@ export class MapSurface {
   async start(host: HTMLElement, wide: boolean, onMove: () => void): Promise<void> {
     this.host = host;
     this.resized.observe(host);
+    // The pane around the canvas is the visible part of it.
+    if (host.parentElement !== null) this.resized.observe(host.parentElement);
+    this.measureUnder();
     await this.adapter.start(host, {
       style: styleFor(this.state.background(), this.theme.effective()),
       centerPoint: [10.4, 51.2],
@@ -108,7 +115,8 @@ export class MapSurface {
   }
 
   setPadding(detent: Detent, wide: boolean, overlaid: number): void {
-    if (this._ready()) this.adapter.setPadding(this.padding(detent, wide, overlaid));
+    // On the desktop only the column changes the padding: the map stays still when a tab changes.
+    if (this._ready()) this.adapter.setPadding(this.padding(detent, wide, overlaid), wide);
   }
 
   /** Measures the canvas again, after a time hidden in the shell. */
@@ -198,9 +206,16 @@ export class MapSurface {
     return /^#[0-9a-f]{6}$/i.test(value) ? value : MEAN_FALLBACK;
   }
 
+  private measureUnder(): void {
+    const host = this.host;
+    if (host === null) return;
+    const pane = host.parentElement?.offsetWidth ?? host.offsetWidth;
+    this._under.set(Math.max(0, host.offsetWidth - pane));
+  }
+
   /** The free strip of the map: the part that the sheet and the navigation cover. */
   private padding(detent: Detent, wide: boolean, overlaid = 0): Padding {
-    if (wide) return { top: 0, bottom: 0, left: 0, right: 0 };
+    if (wide) return { top: 0, bottom: 0, left: this._under(), right: 0 };
     const height = this.host?.clientHeight ?? 0;
     const sheet = overlaid > 0 ? overlaid : Math.min(DETENTS[detent], height);
     return { top: 0, bottom: Math.round(sheet), left: 0, right: 0 };

@@ -11,6 +11,7 @@ import {
   factsOf,
   isActive,
   judge,
+  nearestColour,
   type Counts,
   type Facts,
   type GroupKey,
@@ -209,5 +210,13 @@ describe('die Zählungen aus dem Bündel', () => {
 
   it('nennt die Teile, für die das Bündel Farben zählt', () => {
     expect(colourParts(counts)).toEqual(['cap']);
+  });
+
+  it('merkt sich die nächste Farbe je Palette', () => {
+    const other = [{ key: 'red', hex: '#c0392b' }];
+
+    expect(nearestColour('#f2eee5', PALETTE)?.key).toBe('white');
+    expect(nearestColour('#f2eee5', PALETTE)?.key).toBe('white');
+    expect(nearestColour('#f2eee5', other)?.key).toBe('red');
   });
 });

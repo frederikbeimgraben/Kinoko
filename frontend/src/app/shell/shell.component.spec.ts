@@ -285,6 +285,22 @@ describe('ShellComponent on the desktop', () => {
     document.documentElement.style.removeProperty('--size-column');
   });
 
+  it('hides the map under a section that covers it and shows it again', async () => {
+    const { navigate, detectChanges, container } = await wideShell();
+    const map = (): Element | null => container.querySelector('app-map');
+
+    expect(map()).not.toHaveClass('shell__map--covered');
+
+    await navigate('/arten');
+    detectChanges();
+    expect(map()).toHaveClass('shell__map--covered');
+
+    await navigate('/eintraege');
+    detectChanges();
+    expect(map()).not.toHaveClass('shell__map--covered');
+    document.documentElement.style.removeProperty('--size-column');
+  });
+
   it('shows no floating avatar, because the rail holds it', async () => {
     const { container } = await wideShell();
 

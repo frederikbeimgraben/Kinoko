@@ -89,6 +89,9 @@ export class ShellComponent {
   /** On the phone, outside the map tab, the map is not visible and does no work. */
   protected readonly mapHidden = computed(() => !this.wide() && !this.onTheMap());
 
+  /** On the desktop a section with its own detail pane covers the map. The covered map is not drawn. */
+  protected readonly mapCovered = computed(() => this.wide() && this.frame().full && !this.mapInFront());
+
   /** On the desktop the rail holds the avatar, so the map shows none (board `MapDesktop`). */
   protected readonly showAvatar = computed(
     () => this.onTheMap() && !this.wide() && !this.addEntry.showsCrosshair(),

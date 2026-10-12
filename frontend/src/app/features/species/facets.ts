@@ -13,8 +13,19 @@ function linear(value: number): number {
   return value <= GAMMA_CUT ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
 }
 
+/** Oklab values by hex. The catalogue has a few hundred tones, and the list converts each on every visit. */
+const OKLAB_CACHE = new Map<string, readonly [number, number, number]>();
+
 /** Converts a colour to the Oklab space. */
-export function oklab(value: string): [number, number, number] {
+export function oklab(value: string): readonly [number, number, number] {
+  const known = OKLAB_CACHE.get(value);
+  if (known !== undefined) return known;
+  const converted = toOklab(value);
+  OKLAB_CACHE.set(value, converted);
+  return converted;
+}
+
+function toOklab(value: string): [number, number, number] {
   const [red, green, blue] = channels(value).map(linear);
   const long = 0.4122214708 * red + 0.5363325363 * green + 0.0514459929 * blue;
   const medium = 0.2119034982 * red + 0.6806995451 * green + 0.1073969566 * blue;
@@ -34,8 +45,23 @@ export function distance(first: string, second: string): number {
   return Math.sqrt(left.reduce((sum, part, at) => sum + ((part - right[at]) * WEIGHTS[at]) ** 2, 0));
 }
 
+/** The nearest standard colour by hex, for each palette. A new bundle brings a new palette. */
+const NEAREST_CACHE = new WeakMap<readonly StandardColour[], Map<string, StandardColour | null>>();
+
 /** The standard colour of the bundle that is nearest to a catalogue colour. */
 export function nearestColour(value: string, palette: readonly StandardColour[]): StandardColour | null {
+  let known = NEAREST_CACHE.get(palette);
+  if (known === undefined) {
+    known = new Map();
+    NEAREST_CACHE.set(palette, known);
+  }
+  if (known.has(value)) return known.get(value) ?? null;
+  const best = nearestIn(value, palette);
+  known.set(value, best);
+  return best;
+}
+
+function nearestIn(value: string, palette: readonly StandardColour[]): StandardColour | null {
   let best: StandardColour | null = null;
   let shortest = Number.POSITIVE_INFINITY;
   for (const colour of palette) {

@@ -6,16 +6,20 @@ import {
   HttpParams,
   type HttpEvent,
 } from '@angular/common/http';
-import { Injectable, inject } from '@angular/core';
-import { catchError, filter, finalize, map, of, share, throwError, type Observable } from 'rxjs';
+import { Injectable, Injector, inject } from '@angular/core';
+import { catchError, filter, finalize, map, of, share, tap, throwError, type Observable } from 'rxjs';
 import { I18nService } from '../i18n/i18n.service';
 import { DEFAULT_LOCALE } from '../i18n/translations';
 import { ConnectionNotice } from '../../ui/banner/connection-notice';
 import { ToastService } from '../../ui/toast/toast.service';
+import { AuthService } from '../auth/auth.service';
 import { API_BASE_URL } from './api.config';
 import { SIGN_IN_REQUIRED, isProblemDetail, type ProblemDetail } from './problem';
 
 const NOT_MODIFIED = 304;
+
+/** The files kept in memory. A list of species shows about 40 photos; this holds several lists. */
+const KEPT_BLOBS = 300;
 
 /**
  * Query values of a URL. `undefined` is dropped. A repeated field (`?wert=a&wert=b`) gives a list.
@@ -59,8 +63,12 @@ export class ApiClient {
   private readonly toasts = inject(ToastService);
   private readonly notice = inject(ConnectionNotice);
   private readonly i18n = inject(I18nService);
+  // The auth service reads the configuration through this client, so it is looked up on use.
+  private readonly injector = inject(Injector);
   /** The file requests that run, by path. */
   private readonly blobs = new Map<string, Observable<Blob>>();
+  /** The loaded files, by person and path, oldest first. */
+  private readonly kept = new Map<string, Blob>();
 
   get<T>(path: string, query?: Query, options?: Silent): Observable<T> {
     return this.http
@@ -119,16 +127,32 @@ export class ApiClient {
    * Gets a file with the token, not `src` on the image, because a photo uses the permissions of its find.
    */
   getBlob(path: string): Observable<Blob> {
-    const running = this.blobs.get(path);
+    // A list that opens again shows its photos at once. The key has the person: after a change
+    // of account, a private photo loads again with the permissions of the new person.
+    const key = `${this.injector.get(AuthService).user()?.sub ?? ''} ${path}`;
+    const known = this.kept.get(key);
+    if (known !== undefined) return of(known);
+    const running = this.blobs.get(key);
     if (running !== undefined) return running;
     // Two images of the same photo on one page, such as a thumb and a strip tile, share one request.
     const shared = this.http.get(this.url(path), { responseType: 'blob' }).pipe(
+      tap((blob) => {
+        this.keep(key, blob);
+      }),
       catchError((failure: unknown) => this.report(failure)),
-      finalize(() => this.blobs.delete(path)),
+      finalize(() => this.blobs.delete(key)),
       share(),
     );
-    this.blobs.set(path, shared);
+    this.blobs.set(key, shared);
     return shared;
+  }
+
+  private keep(key: string, blob: Blob): void {
+    this.kept.delete(key);
+    this.kept.set(key, blob);
+    if (this.kept.size <= KEPT_BLOBS) return;
+    const oldest = this.kept.keys().next().value;
+    if (oldest !== undefined) this.kept.delete(oldest);
   }
 
   put<T>(path: string, body: unknown, options?: Silent): Observable<T> {

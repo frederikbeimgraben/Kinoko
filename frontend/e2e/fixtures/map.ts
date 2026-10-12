@@ -219,9 +219,12 @@ export async function showDesignMap(page: Page, map: DesignMap = {}): Promise<vo
         (below !== null && sheet !== null
           ? sheet.getBoundingClientRect().top + below - frame.top
           : frame.height);
+      // On the desktop the canvas reaches under the column. The surface covers the visible pane only.
+      const pane = host.parentElement?.getBoundingClientRect() ?? frame;
+      const start = `inset-inline-start:${pane.left - frame.left}px;width:${pane.width}px`;
       const surface = document.createElement('div');
       surface.className = 'design-map';
-      surface.setAttribute('style', `${karte};height:${height}px;z-index:${under ? 0 : 1}`);
+      surface.setAttribute('style', `${karte};${start};height:${height}px;z-index:${under ? 0 : 1}`);
       surface.innerHTML = html;
       host.prepend(surface);
     },

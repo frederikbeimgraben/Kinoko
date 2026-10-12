@@ -48,3 +48,18 @@
   outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
+
+// As in the STUPA rail: with a pointer, the pill of a tab tints under the cursor.
+@media (hover: hover) {
+  .navtab__pill {
+    transition: background-color var(--motion-fast) var(--ease-standard);
+  }
+
+  .navtab:hover {
+    color: var(--text);
+  }
+
+  .navtab:not(.navtab--active):hover .navtab__pill {
+    background: var(--surface-high);
+  }
+}
