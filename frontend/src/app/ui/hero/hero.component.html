@@ -1,5 +1,5 @@
 <figure class="herofig" [class.herofig--bare]="bare()">
-  <div class="heroframe" [style.height.px]="height()">
+  <div class="heroframe" [style.--hero-min]="height() + 'px'">
     @if (interactive()) {
       <button
         class="hero__frame tap"
@@ -8,10 +8,22 @@
         [attr.aria-label]="alt()"
         (click)="opened.emit()"
       >
-        <app-private-image class="hero__image" fallback="hero" fit="contain" [path]="path()" [alt]="alt()" />
+        <app-private-image
+          class="hero__image"
+          fallback="hero"
+          [fit]="bare() ? 'cover' : 'natural'"
+          [path]="path()"
+          [alt]="alt()"
+        />
       </button>
     } @else {
-      <app-private-image class="hero__image" fallback="hero" fit="contain" [path]="path()" [alt]="alt()" />
+      <app-private-image
+        class="hero__image"
+        fallback="hero"
+        [fit]="bare() ? 'cover' : 'natural'"
+        [path]="path()"
+        [alt]="alt()"
+      />
     }
     @if (showPrev()) {
       <span class="heronav heronav--l">
