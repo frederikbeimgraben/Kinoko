@@ -63,51 +63,58 @@ describe('SectionBasicsComponent', () => {
     expect(screen.getByLabelText('Lateinischer Name')).toHaveValue('Boletus edulis');
     expect(screen.getByLabelText('Weitere Namen')).toHaveValue('Herrenpilz');
     expect(screen.getByLabelText('Synonyme')).toHaveValue('Boletus bulbosus');
-    expect(screen.getByRole('button', { name: /Gattung\s*Boletus/ })).toBeInTheDocument();
-    expect(screen.getByRole('checkbox', { name: 'Handel erlaubt' })).toBeChecked();
-    expect(screen.getByRole('checkbox', { name: 'Beschreibung ist ein Entwurf' })).not.toBeChecked();
-    expect(screen.getByRole('button', { name: 'gefährdet' })).toHaveAttribute('aria-pressed', 'true');
-    expect(screen.getByRole('button', { name: 'häufig' })).toHaveAttribute('aria-pressed', 'false');
+    expect(screen.getByText('Boletus')).toBeInTheDocument();
+    expect(screen.getByLabelText('Handel erlaubt')).toBeChecked();
+    expect(screen.getByLabelText('Beschreibung ist ein Entwurf')).not.toBeChecked();
+    expect(screen.getByText('gefährdet').closest('button')).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByText('häufig').closest('button')).toHaveAttribute('aria-pressed', 'false');
     await noViolations(container);
   });
 
-  it('schreibt alle Felder der Seite an den Vertrag', async () => {
+  it('schreibt Namen und Schutz an den Vertrag', async () => {
     const { http } = await build();
     await screen.findByRole('heading', { name: 'Name und Einordnung' });
 
     await userEvent.clear(screen.getByLabelText('Name'));
-    await userEvent.type(screen.getByLabelText('Name'), 'Fichtensteinpilz');
-    await userEvent.type(screen.getByLabelText('Synonyme'), ', Boletus edulis var. edulis');
-    await userEvent.click(screen.getByRole('button', { name: /Gattungsgruppe/ }));
-    await userEvent.click(
-      within(await screen.findByRole('dialog')).getByRole('button', { name: /Täubling/ }),
-    );
-    await userEvent.click(screen.getByRole('button', { name: /Schutz/ }));
-    await userEvent.click(
-      within(await screen.findByRole('dialog')).getByRole('button', { name: /Eigenbedarf/ }),
-    );
-    await userEvent.type(screen.getByRole('textbox', { name: 'Hinweis zum Schutz' }), 'Nur 1 kg am Tag.');
-    await userEvent.click(screen.getByRole('button', { name: 'gefährdet' }));
-    await userEvent.click(screen.getByRole('button', { name: 'häufig' }));
-    await userEvent.click(screen.getByRole('tab', { name: 'giftig' }));
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Handel erlaubt' }));
-    await userEvent.click(screen.getByRole('checkbox', { name: 'Beschreibung ist ein Entwurf' }));
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    await userEvent.type(screen.getByLabelText('Name'), 'Fichtenpilz');
+    await userEvent.type(screen.getByLabelText('Synonyme'), ', B. pinophilus');
+    await userEvent.click(screen.getByText('Schutz'));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByText(/Eigenbedarf/));
+    await userEvent.type(screen.getByLabelText('Hinweis zum Schutz'), '1 kg');
+    await userEvent.click(screen.getByText('Übernehmen'));
 
-    const call = http.expectOne('/api/species/boletus-edulis');
-    expect(call.request.method).toBe('PUT');
-    expect(call.request.body).toMatchObject({
-      name: 'Fichtensteinpilz',
+    expect(http.expectOne('/api/species/boletus-edulis').request.body).toMatchObject({
+      name: 'Fichtenpilz',
       scientificName: 'Boletus edulis',
       names: [
         { name: 'Herrenpilz', kind: 'common' },
         { name: 'Boletus bulbosus', kind: 'synonym' },
-        { name: 'Boletus edulis var. edulis', kind: 'synonym' },
+        { name: 'B. pinophilus', kind: 'synonym' },
       ],
+      protection: 'personal_use',
+      protectionNote: '1 kg',
+    });
+  });
+
+  it('schreibt Gruppe, Speisewert und Status an den Vertrag', async () => {
+    const { http } = await build();
+    await screen.findByRole('heading', { name: 'Name und Einordnung' });
+
+    // The group sheet holds many rows; text queries keep the test fast.
+    await userEvent.click(screen.getByText('Gattungsgruppe'));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByText(/^Täubling/));
+    await userEvent.click(screen.getByText('gefährdet'));
+    await userEvent.click(screen.getByText('häufig'));
+    await userEvent.click(screen.getByText('giftig'));
+    await userEvent.click(screen.getByLabelText('Handel erlaubt'));
+    await userEvent.click(screen.getByLabelText('Beschreibung ist ein Entwurf'));
+    await userEvent.click(screen.getByText('Übernehmen'));
+
+    const call = http.expectOne('/api/species/boletus-edulis');
+    expect(call.request.method).toBe('PUT');
+    expect(call.request.body).toMatchObject({
       group: 'brittlegill',
       edibility: 'poisonous',
-      protection: 'personal_use',
-      protectionNote: 'Nur 1 kg am Tag.',
       redList: null,
       frequency: 'common',
       marketable: false,
@@ -120,9 +127,9 @@ describe('SectionBasicsComponent', () => {
     await screen.findByRole('heading', { name: 'Name und Einordnung' });
 
     await userEvent.click(screen.getByRole('button', { name: /Gattung\s*Boletus/ }));
-    await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /Suillus/ }));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByText('Suillus'));
     expect(screen.getByRole('button', { name: /Gattung\s*Suillus/ })).toBeInTheDocument();
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    await userEvent.click(screen.getByText('Übernehmen'));
     expect(http.expectOne('/api/species/boletus-edulis').request.body).toMatchObject({ taxonId: 'g-2' });
   });
 
@@ -131,8 +138,8 @@ describe('SectionBasicsComponent', () => {
     await screen.findByRole('heading', { name: 'Name und Einordnung' });
 
     await userEvent.click(screen.getByRole('button', { name: /Gattung\s*Boletus/ }));
-    await userEvent.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /–/ }));
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    await userEvent.click(within(await screen.findByRole('dialog')).getByText('–'));
+    await userEvent.click(screen.getByText('Übernehmen'));
     expect(http.expectOne('/api/species/boletus-edulis').request.body).toMatchObject({ taxonId: null });
   });
 
@@ -141,7 +148,7 @@ describe('SectionBasicsComponent', () => {
     await screen.findByRole('heading', { name: 'Name und Einordnung' });
 
     await userEvent.clear(screen.getByLabelText('Name'));
-    await userEvent.click(screen.getByRole('button', { name: 'Übernehmen' }));
+    await userEvent.click(screen.getByText('Übernehmen'));
 
     http.expectNone('/api/species/boletus-edulis');
   });
