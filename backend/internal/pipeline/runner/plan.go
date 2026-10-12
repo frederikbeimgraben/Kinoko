@@ -14,7 +14,10 @@ const (
 	StepInputs           Step = "check inputs"
 	StepFetchWeather     Step = "fetch weather"
 	StepFetchOccurrences Step = "fetch occurrences"
-	StepFetchSiteData    Step = "fetch site data"
+	StepFetchOutline     Step = "fetch outline"
+	StepFetchTrees       Step = "fetch tree map"
+	StepFetchDEM         Step = "fetch elevation model"
+	StepFetchSoil        Step = "fetch soil"
 	StepWeather          Step = "weather checkpoints"
 	StepOccurrences      Step = "occurrences"
 	StepTrain            Step = "train models"
@@ -22,6 +25,18 @@ const (
 	StepLayers           Step = "render layers"
 	StepSeason           Step = "season table"
 )
+
+// siteSteps are the steps that fetch the site data, in the order of their
+// processing: the tree map needs the outline, and the soil the elevation model.
+var siteSteps = []Step{StepFetchOutline, StepFetchTrees, StepFetchDEM, StepFetchSoil}
+
+// siteKind gives the kind of site data that a step fetches.
+var siteKind = map[Step]sources.Kind{
+	StepFetchOutline: sources.KindGermanyOutline,
+	StepFetchTrees:   sources.KindTreeSpeciesMap,
+	StepFetchDEM:     sources.KindDEM,
+	StepFetchSoil:    sources.KindSoilGrids,
+}
 
 // SourceOccurrences is the remote source of the GBIF records in remote_cache_file.
 const SourceOccurrences = "gbif-occurrences"
@@ -35,7 +50,7 @@ func (s Step) PerSpecies() bool { return s == StepTrain || s == StepMaps }
 // has no version yet.
 func fetchSteps(req *sources.FetchRequest) []Step {
 	if req == nil {
-		return []Step{StepFetchWeather, StepFetchOccurrences, StepFetchSiteData}
+		return append([]Step{StepFetchWeather, StepFetchOccurrences}, siteSteps...)
 	}
 	switch req.Source {
 	case dwd.SourceHyras, dwd.SourceSoil:

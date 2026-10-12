@@ -2,7 +2,6 @@ package runner
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"path/filepath"
 
@@ -13,56 +12,51 @@ import (
 
 // siteSource is one kind of site data that the service fetches itself.
 type siteSource struct {
-	kind  sources.Kind
 	file  string
 	fetch func(*sitedata.Fetcher, context.Context) (string, error)
 }
 
-// siteSources are in the order of their processing: the tree map renders its
-// fine layers inside the outline, and the soil joins the terrain columns of the DEM.
-var siteSources = []siteSource{
-	{sources.KindGermanyOutline, sitedata.OutlineFile, (*sitedata.Fetcher).Outline},
-	{sources.KindTreeSpeciesMap, sitedata.TreesFile, (*sitedata.Fetcher).Trees},
-	{sources.KindDEM, sitedata.DEMFile, (*sitedata.Fetcher).DEM},
-	{sources.KindSoilGrids, sitedata.SoilFile, (*sitedata.Fetcher).Soil},
+// siteSources are the kinds of site data that the service fetches itself.
+var siteSources = map[sources.Kind]siteSource{
+	sources.KindGermanyOutline: {sitedata.OutlineFile, (*sitedata.Fetcher).Outline},
+	sources.KindTreeSpeciesMap: {sitedata.TreesFile, (*sitedata.Fetcher).Trees},
+	sources.KindDEM:            {sitedata.DEMFile, (*sitedata.Fetcher).DEM},
+	sources.KindSoilGrids:      {sitedata.SoilFile, (*sitedata.Fetcher).Soil},
 }
 
 func (c *Chain) siteDir() string { return filepath.Join(c.Data, "cache", "sitedata") }
 
-// FetchSiteData fetches each kind of site data that has no version yet and
-// installs it as a new active version. The run holds sources.JobLock, so the
-// processing runs here, in order. A failed kind does not stop the next one.
-func (c *Chain) FetchSiteData(ctx context.Context, j *Job) error {
-	f := &sitedata.Fetcher{HTTP: c.HTTP, Dir: c.siteDir(), Log: j.Printf}
-	var errs []error
-	for _, s := range siteSources {
-		wanted, err := c.Sources.Wanted(ctx, s.kind)
-		if err != nil {
-			return err
-		}
-		if !wanted {
-			j.Printf("%s: a version is active or in processing", s.kind)
-			continue
-		}
-		j.Printf("%s: fetching", s.kind)
-		path, err := s.fetch(f, ctx)
-		if err != nil {
-			errs = append(errs, err)
-			j.Printf("%s: %v", s.kind, err)
-			continue
-		}
-		j.Printf("%s: processing %s", s.kind, filepath.Base(path))
-		v, err := c.Sources.AddFile(ctx, s.kind, path, s.file)
-		if err != nil {
-			errs = append(errs, fmt.Errorf("%s: %w", s.kind, err))
-			continue
-		}
-		if v.State == sources.StateFailed {
-			errs = append(errs, fmt.Errorf("%s version %d failed: %s: %s", s.kind, v.Number,
-				fn.Deref(v.ErrorCode, ""), fn.Deref(v.ErrorDetail, "")))
-			continue
-		}
-		j.Printf("%s: version %d is active", s.kind, v.Number)
+// FetchSiteData fetches one kind of site data when it has no version yet and
+// installs it as the new active version. The run holds sources.JobLock, so
+// the processing runs here.
+func (c *Chain) FetchSiteData(ctx context.Context, j *Job, kind sources.Kind) error {
+	s, ok := siteSources[kind]
+	if !ok {
+		return fmt.Errorf("the service does not fetch %s", kind)
 	}
-	return errors.Join(errs...)
+	wanted, err := c.Sources.Wanted(ctx, kind)
+	if err != nil {
+		return err
+	}
+	if !wanted {
+		j.Printf("%s: a version is active or in processing", kind)
+		return nil
+	}
+	f := &sitedata.Fetcher{HTTP: c.HTTP, Dir: c.siteDir(), Log: j.Printf}
+	j.Printf("%s: fetching", kind)
+	path, err := s.fetch(f, ctx)
+	if err != nil {
+		return err
+	}
+	j.Printf("%s: processing %s", kind, filepath.Base(path))
+	v, err := c.Sources.AddFile(ctx, kind, path, s.file)
+	if err != nil {
+		return fmt.Errorf("%s: %w", kind, err)
+	}
+	if v.State == sources.StateFailed {
+		return fmt.Errorf("%s version %d failed: %s: %s", kind, v.Number,
+			fn.Deref(v.ErrorCode, ""), fn.Deref(v.ErrorDetail, ""))
+	}
+	j.Printf("%s: version %d is active", kind, v.Number)
+	return nil
 }

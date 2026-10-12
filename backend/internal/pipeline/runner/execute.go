@@ -153,8 +153,6 @@ func (x *execution) single(ctx context.Context, s Step) error {
 		return st.FetchWeather(ctx, x.job)
 	case StepFetchOccurrences:
 		return st.FetchOccurrences(ctx, x.job)
-	case StepFetchSiteData:
-		return st.FetchSiteData(ctx, x.job)
 	case StepWeather:
 		return st.Weather(ctx, x.job)
 	case StepOccurrences:
@@ -163,6 +161,9 @@ func (x *execution) single(ctx context.Context, s Step) error {
 		return st.RenderLayers(ctx, x.job)
 	case StepSeason:
 		return st.Season(ctx, x.job)
+	}
+	if kind, ok := siteKind[s]; ok {
+		return st.FetchSiteData(ctx, x.job, kind)
 	}
 	return fmt.Errorf("the service cannot run the step %q", s)
 }

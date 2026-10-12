@@ -224,8 +224,8 @@ func (s *stubStages) FetchWeather(_ context.Context, _ *runner.Job) error {
 func (s *stubStages) FetchOccurrences(_ context.Context, _ *runner.Job) error {
 	return s.call("fetch occurrences")
 }
-func (s *stubStages) FetchSiteData(_ context.Context, _ *runner.Job) error {
-	return s.call("fetch site data")
+func (s *stubStages) FetchSiteData(_ context.Context, _ *runner.Job, kind sources.Kind) error {
+	return s.call("fetch " + string(kind))
 }
 
 func (s *stubStages) Weather(ctx context.Context, _ *runner.Job) error {
