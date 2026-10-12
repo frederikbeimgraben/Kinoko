@@ -128,10 +128,9 @@ describe('SpeciesPageComponent', () => {
   it('makes the hero lower without a photo, per SpeciesPageNoPhoto', async () => {
     const container = await build();
 
-    // The binding follows the catalogue in the next change detection, which a slow runner has not run yet.
-    await vi.waitFor(() => {
-      expect(container.querySelector<HTMLElement>('.heroframe')?.style.height).toBe('220px');
-    });
+    expect(container.querySelector<HTMLElement>('.heroframe')?.style.getPropertyValue('--hero-min')).toBe(
+      '220px',
+    );
   });
 
   it('puts the sections in the order of the boards', async () => {
