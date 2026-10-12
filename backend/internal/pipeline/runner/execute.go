@@ -150,6 +150,8 @@ func (x *execution) single(ctx context.Context, s Step) error {
 		return st.FetchWeather(ctx, x.job)
 	case StepFetchOccurrences:
 		return st.FetchOccurrences(ctx, x.job)
+	case StepFetchSiteData:
+		return st.FetchSiteData(ctx, x.job)
 	case StepWeather:
 		return st.Weather(ctx, x.job)
 	case StepOccurrences:

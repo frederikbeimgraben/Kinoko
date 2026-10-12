@@ -6,7 +6,7 @@ import { render, screen } from '@testing-library/angular';
 import { of } from 'rxjs';
 import { noViolations } from '../../testing/axe';
 import { ANY_ROUTE } from '../../testing/routes';
-import { RunComponent } from './run.component';
+import { RUN_REFRESH_MS, RunComponent } from './run.component';
 import { RunStore } from './run.store';
 
 const DETAIL = {
@@ -68,6 +68,26 @@ describe('RunComponent', () => {
     expect(screen.getByText('Art 3 von 12')).toBeInTheDocument();
     expect(screen.getByText(/chosen 40 features/)).toBeInTheDocument();
     await noViolations(container);
+  });
+
+  it('lädt einen laufenden Lauf nach, einen beendeten nicht', async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    try {
+      await build();
+      const http = TestBed.inject(HttpTestingController);
+      expect(await screen.findByText('chosen 40 features, gain 0.0061')).toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(RUN_REFRESH_MS);
+      http
+        .expectOne('/api/pipeline-runs/lauf-training')
+        .flush({ ...DETAIL, state: 'finished', logTail: ['tree map: 25 of 234 tiles'] });
+      expect(await screen.findByText('tree map: 25 of 234 tiles')).toBeInTheDocument();
+
+      await vi.advanceTimersByTimeAsync(RUN_REFRESH_MS * 2);
+      http.expectNone('/api/pipeline-runs/lauf-training');
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('lässt Ergebnis und Ausgabe weg, wenn der Lauf keine trägt', async () => {

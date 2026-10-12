@@ -24,7 +24,7 @@ func TestFetchRunReportsEachStepAndEndsEachSpecies(t *testing.T) {
 	if got.State != enums.RunStateFinished || got.FinishedAt == nil || got.ProgressDone != 2 || got.MetricBrier != nil {
 		t.Fatalf("run = %+v", got)
 	}
-	f.expectSteps(run.ID, "check inputs=finished", "fetch weather=finished", "fetch occurrences=finished")
+	f.expectSteps(run.ID, "check inputs=finished", "fetch weather=finished", "fetch occurrences=finished", "fetch site data=finished")
 	for _, s := range f.steps(run.ID) {
 		if s.Duration == nil {
 			t.Errorf("step %s has no duration", s.Name)
@@ -35,7 +35,7 @@ func TestFetchRunReportsEachStepAndEndsEachSpecies(t *testing.T) {
 			t.Errorf("species %s is %s", sp.Slug, sp.State)
 		}
 	}
-	if calls := f.stages.Calls(); !slices.Equal(calls, []string{"fetch weather", "fetch occurrences"}) {
+	if calls := f.stages.Calls(); !slices.Equal(calls, []string{"fetch weather", "fetch occurrences", "fetch site data"}) {
 		t.Errorf("calls = %v", calls)
 	}
 	if log := f.logOf(run.ID); !strings.Contains(log, "run fetch finished") {

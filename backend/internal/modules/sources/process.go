@@ -80,9 +80,14 @@ func (m *Module) resume(ctx context.Context) error {
 
 // process validates and derives one version, then activates it when asked.
 // A failure goes into the version row, not into the returned error.
-func (m *Module) process(ctx context.Context, id db.ID, activate bool) (err error) {
+func (m *Module) process(ctx context.Context, id db.ID, activate bool) error {
 	JobLock.Lock()
 	defer JobLock.Unlock()
+	return m.processLocked(ctx, id, activate)
+}
+
+// processLocked is process for a caller that holds JobLock.
+func (m *Module) processLocked(ctx context.Context, id db.ID, activate bool) (err error) {
 	v, err := m.files.version(ctx, m.deps.DB, id)
 	if err != nil {
 		return err
