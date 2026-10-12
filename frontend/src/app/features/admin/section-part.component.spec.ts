@@ -147,6 +147,24 @@ describe('SectionPartComponent', () => {
     ]);
   });
 
+  it('führt bei Hut und Stiel zu Form und Merkmalen, bei anderen Teilen nicht', async () => {
+    await build('stem');
+    const router = TestBed.inject(Router);
+    const paths: string[] = [];
+    vi.spyOn(router, 'navigate').mockImplementation((parts: readonly unknown[]) => {
+      paths.push(parts.join('/'));
+      return Promise.resolve(true);
+    });
+    await screen.findByRole('heading', { name: 'Stiel' });
+
+    await userEvent.click(screen.getByRole('button', { name: 'Form und Merkmale' }));
+
+    expect(paths).toEqual(['/verwaltung/arten/boletus-edulis/merkmale/stem']);
+    await build('gills');
+    await screen.findByRole('heading', { name: 'Lamellen' });
+    expect(screen.queryByRole('button', { name: 'Form und Merkmale' })).not.toBeInTheDocument();
+  });
+
   it('behält den getippten Text, während eine Unterseite offen ist', async () => {
     const { fixture } = await buildWithFixture();
     await screen.findByRole('heading', { name: 'Hut' });

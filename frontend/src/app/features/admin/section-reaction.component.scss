@@ -1,0 +1,25 @@
+@use 'section';
+
+:host {
+  @include section.shell;
+}
+
+app-page-header {
+  @include section.flat-header;
+}
+
+.section {
+  @include section.body;
+  @include section.fields;
+}
+
+// The tones sit on a card below the colour row, as on the colour change page.
+.section__palette {
+  --picker-columns: 6;
+  --picker-gap: 10px;
+  --picker-height: 44px;
+
+  padding: 12px 14px;
+  background: var(--surface);
+  border-radius: var(--r-item);
+}

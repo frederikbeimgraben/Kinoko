@@ -265,6 +265,36 @@ export const routes: Routes = [
           import('./features/admin/section-hymenium.component').then((m) => m.SectionHymeniumComponent),
       },
       {
+        path: 'arten/:slug/stammdaten',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-basics.component').then((m) => m.SectionBasicsComponent),
+      },
+      {
+        path: 'arten/:slug/texte',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-texts.component').then((m) => m.SectionTextsComponent),
+      },
+      {
+        path: 'arten/:slug/baeume',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-trees.component').then((m) => m.SectionTreesComponent),
+      },
+      {
+        path: 'arten/:slug/merkmale/:part',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-features.component').then((m) => m.SectionFeaturesComponent),
+      },
+      {
+        path: 'arten/:slug/reaktion/:index',
+        canActivate: [requiresPermission('species.edit')],
+        loadComponent: () =>
+          import('./features/admin/section-reaction.component').then((m) => m.SectionReactionComponent),
+      },
+      {
         path: 'arten/:slug/sinne/:sense',
         canActivate: [requiresPermission('species.edit')],
         loadComponent: () =>

@@ -11,6 +11,15 @@
     }
 
     <app-row-group>
+      @for (row of basics(); track row.key) {
+        <app-list-row
+          [title]="row.title"
+          [subline]="row.value"
+          [chevron]="true"
+          [clickable]="true"
+          (chosen)="openMore(row.key)"
+        />
+      }
       <app-list-row [title]="'admin.species.forecast' | t">
         <app-switch
           trail
@@ -115,6 +124,25 @@
           [label]="'admin.species.addLookalike' | t"
           [action]="'admin.species.addLookalike' | t"
           (pressed)="addLookalike()"
+        />
+      </app-row-group>
+    </app-section>
+
+    <app-section [label]="'admin.species.section.reactions' | t">
+      <app-row-group>
+        @for (row of reactions(); track row.key; let at = $index) {
+          <app-list-row
+            [title]="row.title"
+            [subline]="row.value"
+            [chevron]="true"
+            [clickable]="true"
+            (chosen)="openReaction(at)"
+          />
+        }
+        <app-add-row
+          [label]="'admin.species.addReaction' | t"
+          [action]="'admin.species.addReaction' | t"
+          (pressed)="addReaction()"
         />
       </app-row-group>
     </app-section>

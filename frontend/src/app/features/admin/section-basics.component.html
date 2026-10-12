@@ -1,0 +1,113 @@
+<app-page-header [title]="'admin.species.section.basics' | t" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  <app-section [label]="'admin.species.section.name' | t">
+    <app-form-field
+      [label]="'admin.species.field.name' | t"
+      [value]="name()"
+      (valueChange)="name.set($event)"
+    />
+    <app-form-field
+      [label]="'admin.species.field.scientificName' | t"
+      [value]="scientificName()"
+      (valueChange)="scientificName.set($event)"
+    />
+    <app-form-field
+      [label]="'admin.species.altNamesPlaceholder' | t"
+      [placeholder]="'admin.species.namesHint' | t"
+      [value]="commonNames()"
+      (valueChange)="commonNames.set($event)"
+    />
+    <app-form-field
+      [label]="'admin.species.field.synonyms' | t"
+      [placeholder]="'admin.species.namesHint' | t"
+      [value]="synonyms()"
+      (valueChange)="synonyms.set($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.species.section.classification' | t">
+    <app-row-group>
+      <app-list-row
+        [title]="'admin.species.field.group' | t"
+        [plain]="groupName()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="picking.set('group')"
+      />
+      <app-list-row
+        [title]="'species.field.protection' | t"
+        [plain]="protectionName()"
+        [chevron]="true"
+        [clickable]="true"
+        (chosen)="picking.set('protection')"
+      />
+      <app-check-row
+        [title]="'admin.species.field.marketable' | t"
+        [checked]="marketable()"
+        (toggled)="marketable.set($event)"
+      />
+      <app-check-row
+        [title]="'admin.species.field.descriptionDraft' | t"
+        [checked]="draft()"
+        (toggled)="draft.set($event)"
+      />
+    </app-row-group>
+  </app-section>
+
+  <app-section [label]="'admin.species.field.edibility' | t">
+    <app-segmented
+      [options]="edibilities()"
+      [value]="edibility()"
+      [label]="'admin.species.field.edibility' | t"
+      (valueChange)="chooseEdibility($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.species.field.protectionNote' | t">
+    <app-form-field
+      [label]="'admin.species.field.protectionNote' | t"
+      [hideLabel]="true"
+      [multiline]="true"
+      [placeholder]="'common.optional' | t"
+      [value]="protectionNote()"
+      (valueChange)="protectionNote.set($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.species.field.redList' | t">
+    <app-chip-group
+      [small]="true"
+      [chips]="redLists()"
+      [value]="redListValue()"
+      [label]="'admin.species.field.redList' | t"
+      (valueChange)="chooseRedList($event)"
+    />
+  </app-section>
+
+  <app-section [label]="'admin.species.field.frequency' | t">
+    <app-chip-group
+      [small]="true"
+      [chips]="frequencies()"
+      [value]="frequencyValue()"
+      [label]="'admin.species.field.frequency' | t"
+      (valueChange)="chooseFrequency($event)"
+    />
+  </app-section>
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>
+
+<app-option-sheet
+  [open]="picking() !== null"
+  [title]="pickerTitle()"
+  [options]="options()"
+  [selected]="pickedValue()"
+  (chosen)="choose($event)"
+  (closed)="picking.set(null)"
+/>

@@ -1,0 +1,23 @@
+<app-page-header [title]="title()" [back]="true" (backClick)="back()" />
+
+<div class="section">
+  @for (field of fields(); track field.key) {
+    <app-section [label]="field.title">
+      <app-chip-group
+        [small]="true"
+        [multiple]="field.multiple"
+        [chips]="field.chips"
+        [value]="field.value"
+        [label]="field.title"
+        (valueChange)="choose(field.key, $event)"
+      />
+    </app-section>
+  }
+
+  <app-action-bar
+    [primary]="'common.apply' | t"
+    primaryIcon="check"
+    [stacked]="true"
+    (primaryClick)="apply()"
+  />
+</div>
