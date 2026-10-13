@@ -144,8 +144,12 @@ class MapDouble {
   readonly panned: [number, number][] = [];
   jumped: unknown = null;
 
-  getContainer(): { getBoundingClientRect(): { left: number; top: number } } {
-    return { getBoundingClientRect: () => ({ left: 10, top: 20 }) };
+  getContainer(): {
+    clientWidth: number;
+    clientHeight: number;
+    getBoundingClientRect(): { left: number; top: number };
+  } {
+    return { clientWidth: 1000, clientHeight: 800, getBoundingClientRect: () => ({ left: 10, top: 20 }) };
   }
 
   unproject(point: [number, number]): { lng: number; lat: number } {
@@ -431,6 +435,17 @@ describe('MapLibreAdapter', () => {
 
     expect(map.styles).toEqual(['dunkel']);
     expect(map.sources.has('wert-forecast-b')).toBe(true);
+  });
+
+  it('verschiebt beim stillen Polstern nur den Mittelpunkt, nicht das Bild', async () => {
+    const { adapter: a, map } = await adapter();
+    const padding = { top: 0, bottom: 0, left: 400, right: 0 };
+
+    a.setPadding(padding, true);
+
+    // The new centre is the middle of the visible part: x = 400 + (1000 - 400) / 2, y = 800 / 2.
+    expect(map.jumped).toEqual({ padding, center: { lng: 7, lat: 4 } });
+    expect(map.moved).toEqual([]);
   });
 
   it('passt ein, polstert und liest den Ausschnitt', async () => {

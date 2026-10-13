@@ -95,9 +95,13 @@ describe('PhotoDialogComponent', () => {
     await settle(detectChanges, 'bild-zwei');
     expect(screen.getByRole('img', { name: 'Foto 2' })).toBeInTheDocument();
 
+    // The first photo is still in memory: it shows again without a request.
     await userEvent.keyboard('{ArrowLeft}');
-    await settle(detectChanges, 'bild-eins');
-    expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
+    await vi.waitFor(() => {
+      detectChanges();
+      expect(screen.getByRole('img', { name: 'Foto 1' })).toBeInTheDocument();
+    });
+    TestBed.inject(HttpTestingController).verify();
   });
 
   it('wechselt mit den Pfeilknöpfen das Foto', async () => {

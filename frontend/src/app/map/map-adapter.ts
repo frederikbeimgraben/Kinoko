@@ -102,7 +102,8 @@ export interface MapAdapter {
   /** Opacity of a role: 0 is transparent, 1 is opaque. */
   setOpacity(role: Role, value: number): void;
   fitBounds(bounds: Bounds, padding: Padding): void;
-  setPadding(padding: Padding): void;
+  /** `still` changes only the visible part of the canvas: the map stays where it is on the screen. */
+  setPadding(padding: Padding, still?: boolean): void;
   centerOn(point: readonly [number, number], zoom: number): void;
   extent(): { zoom: number; extent: Viewbox } | null;
   onMove(handler: () => void): void;
@@ -476,8 +477,18 @@ export class MapLibreAdapter implements MapAdapter {
     map.fitBounds(bounds as [[number, number], [number, number]], { duration: 0 });
   }
 
-  setPadding(padding: Padding): void {
-    this.map?.easeTo({ padding: padding, duration: 220 });
+  setPadding(padding: Padding, still = false): void {
+    const map = this.map;
+    if (!map) return;
+    if (!still) {
+      map.easeTo({ padding: padding, duration: 220 });
+      return;
+    }
+    // The point under the new centre becomes the centre, so the picture does not move.
+    const box = map.getContainer();
+    const x = padding.left + (box.clientWidth - padding.left - padding.right) / 2;
+    const y = padding.top + (box.clientHeight - padding.top - padding.bottom) / 2;
+    map.jumpTo({ padding: padding, center: map.unproject([x, y]) });
   }
 
   centerOn(point: readonly [number, number], zoom: number): void {

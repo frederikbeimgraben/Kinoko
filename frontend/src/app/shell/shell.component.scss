@@ -72,23 +72,17 @@
   display: none;
 }
 
-// Kit `.desk`: the rail, a pane of the section width, and the map pane in the rest.
-// The shell sets `--size-column` on the root element for each section.
+// The map keeps its size under a section that covers it, so it shows again without a new size.
+.shell__map--covered {
+  visibility: hidden;
+}
+
+// Kit `.desk`: the rail, a pane of the section width (`--size-column`), and the map pane in the rest.
+// As in the STUPA workflow, rail and gutters are one ground, and each pane is a round sheet on it.
 .shell--column {
   grid-template-rows: minmax(0, 1fr);
   grid-template-columns: var(--size-rail) var(--size-column) minmax(0, 1fr);
   background: var(--desk);
-
-  // Kit `.pane.map.on-mid`: next to a middle pane the map pane is on `--surface-mid`.
-  &::before {
-    grid-area: 1 / 3 / 2 / 4;
-    background: var(--surface-mid);
-    content: '';
-  }
-
-  &[data-pane='panel']::before {
-    content: none;
-  }
 }
 
 // The map is behind the column and fills the full shell. It puts its canvas next to the column.
@@ -103,11 +97,16 @@
   block-size: 100%;
 }
 
-// Kit `.pane.middle`: the tab content is on `--surface-mid` and covers the map panel.
+// Kit `.pane.middle`: the tab content is a sheet on `--surface-mid`, with the 16 px gutter of the map pane.
+// No clip path: it would also cut the fixed sheets and dialogs of the tab.
 .shell--column .shell__content {
   z-index: 1;
   grid-area: 1 / 2 / 2 / 3;
+  margin-block: 16px;
+  margin-inline-end: 16px;
+  overflow: hidden;
   background: var(--surface-mid);
+  border-radius: var(--r-sheet);
 }
 
 // A section with its own detail pane fills the column and the map area.

@@ -25,10 +25,32 @@ describe('ApiClient', () => {
     api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
     api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
     http.expectOne('/api/photos/eins/list').flush(new Blob(['x']));
+
+    expect(got).toHaveLength(2);
+    http.verify();
+  });
+
+  it('gibt eine geladene Datei beim nächsten Mal aus dem Speicher', () => {
+    const { api, http } = build();
+    const got: Blob[] = [];
+
     api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+    http.expectOne('/api/photos/eins/list').flush(new Blob(['x']));
+    api.getBlob('/photos/eins/list').subscribe((blob) => got.push(blob));
+
+    expect(got).toHaveLength(2);
+    expect(got[1]).toBe(got[0]);
+    http.verify();
+  });
+
+  it('behält keine fehlgeschlagene Datei', () => {
+    const { api, http } = build();
+
+    api.getBlob('/photos/eins/list').subscribe({ error: () => undefined });
+    http.expectOne('/api/photos/eins/list').flush(null, { status: 404, statusText: 'Not Found' });
+    api.getBlob('/photos/eins/list').subscribe({ error: () => undefined });
     http.expectOne('/api/photos/eins/list').flush(new Blob(['y']));
 
-    expect(got).toHaveLength(3);
     http.verify();
   });
 

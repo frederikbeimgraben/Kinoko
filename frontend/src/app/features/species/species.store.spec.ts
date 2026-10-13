@@ -89,6 +89,27 @@ describe('SpeciesStore', () => {
     i18n.setLocale('de');
   });
 
+  it('liest das Bündel nur einmal vom Gerät, so bleiben die Arten beim nächsten Besuch dieselben', async () => {
+    const setup = build({ bundle: LOCAL, etag: 'w/"eins"' });
+    const first = setup.state.loadBundle();
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
+    });
+    await first;
+    const species = setup.state.species();
+    const reads = vi.spyOn(setup.offline, 'get');
+
+    const second = setup.state.loadBundle();
+    await vi.waitFor(() => {
+      setup.http.expectOne(BUNDLE_PATH).flush(null, { status: NOT_MODIFIED, statusText: 'Not Modified' });
+    });
+    await second;
+
+    expect(reads).not.toHaveBeenCalledWith('catalog', 'bundle');
+    expect(setup.state.species()).toBe(species);
+    setup.http.verify();
+  });
+
   it('nennt Palette und Achsen aus dem Bündel', async () => {
     const setup = build({ bundle: speciesBundle([PENNY_BUN], { edibility: { edible: 7 } }) });
     void setup.state.loadBundle();

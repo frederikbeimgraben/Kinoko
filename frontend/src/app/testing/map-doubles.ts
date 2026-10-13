@@ -27,6 +27,8 @@ export class MapAdapterDouble implements MapAdapter {
   readonly opacity = new Map<Role, number>();
   centered: { point: readonly [number, number]; zoom: number } | null = null;
   padding: Padding[] = [];
+  /** For each padding: true when the map stayed still on the screen. */
+  stillPadding: boolean[] = [];
   fitted: { bounds: Bounds; padding: Padding }[] = [];
   movement: (() => void) | null = null;
   destroyed = false;
@@ -83,8 +85,9 @@ export class MapAdapterDouble implements MapAdapter {
     this.fitted.push({ bounds, padding });
   }
 
-  setPadding(padding: Padding): void {
+  setPadding(padding: Padding, still = false): void {
     this.padding.push(padding);
+    this.stillPadding.push(still);
   }
 
   extent(): { zoom: number; extent: Viewbox } | null {
